@@ -1,0 +1,28 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+COPY turbo.json ./
+COPY apps/api/package*.json ./apps/api/
+COPY packages/*/package*.json ./packages/*/
+
+# Install dependencies
+RUN npm install
+
+# Copy source code
+COPY apps/api ./apps/api
+COPY packages ./packages
+
+# Generate Prisma client
+RUN cd packages/database && npm run db:generate
+
+# Build API
+RUN cd apps/api && npm run build
+
+WORKDIR /app/apps/api
+
+EXPOSE 5000
+
+CMD ["npm", "start"]
