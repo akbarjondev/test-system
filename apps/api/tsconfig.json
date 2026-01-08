@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@test-system/shared/*": ["../../packages/shared/*"],
+      "@test-system/types": ["../../packages/types/index.ts"],
+      "@test-system/database/*": ["../../packages/database/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
+
