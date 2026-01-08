@@ -1,0 +1,26 @@
+{
+  "name": "@test-system/shared",
+  "version": "1.0.0",
+  "private": true,
+  "main": "auth.ts",
+  "types": "auth.ts",
+  "exports": {
+    "./auth": "./auth.ts"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "jsonwebtoken": "^9.0.3"
+  }
+}
