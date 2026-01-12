@@ -1,0 +1,17 @@
+{
+  "name": "@test-system/admin-dashboard",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "echo \"Add your dev command here\"",
+    "build": "echo \"Add your build command here\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  }
+}

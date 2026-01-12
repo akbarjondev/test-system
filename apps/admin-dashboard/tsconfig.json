@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "@repo/typescript-config/base.json",
+  "extends": "@repo/typescript-config/react-library.json",
   "compilerOptions": {
-    "outDir": "./dist",
+    "outDir": "dist",
     "baseUrl": ".",
     "paths": {
       "@test-system/shared/*": ["../../packages/shared/*"],
@@ -10,8 +10,6 @@
       "@test-system/database/*": ["../../packages/database/*"]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"],
-  "files": ["src/types/express.d.ts"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }
-

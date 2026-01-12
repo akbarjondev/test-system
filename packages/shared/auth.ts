@@ -1,3 +1,4 @@
+import { User } from "@test-system/database/prisma/generated/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -12,14 +13,15 @@ export const comparePassword = async (
   return bcrypt.compare(password, hash);
 };
 
-export const generateToken = (userId: string): string => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET || "secret", {
+export const generateToken = (user: Omit<User, "password">): string => {
+  return jwt.sign({ ...user }, process.env.JWT_SECRET || "secret", {
     expiresIn: "7d",
   });
 };
 
-export const verifyToken = (token: string): { userId: string } => {
-  return jwt.verify(token, process.env.JWT_SECRET || "secret") as {
-    userId: string;
-  };
+export const verifyToken = (token: string): Omit<User, "password"> => {
+  return jwt.verify(token, process.env.JWT_SECRET || "secret") as Omit<
+    User,
+    "password"
+  >;
 };
