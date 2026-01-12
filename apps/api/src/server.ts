@@ -3,7 +3,8 @@ import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth";
-// import testRoutes from "./routes/tests";
+import testsRoutes from "./routes/tests";
+import questionsRoutes from "./routes/questions";
 
 dotenv.config();
 
@@ -17,9 +18,11 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
-// app.use("/api/tests", testRoutes);
+// app.use("/api/users", usersRoutes); // to create student users
+app.use("/api/tests", testsRoutes);
+app.use("/api", questionsRoutes);
 
-app.get("/health", (req, res) => {
+app.get("/health", (_, res) => {
   res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 

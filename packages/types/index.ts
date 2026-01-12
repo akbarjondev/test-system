@@ -12,3 +12,20 @@ export interface AuthResponse {
     createdAt: Date;
   };
 }
+
+export interface QuestionOption {
+  text: string;
+  isCorrect: boolean;
+  order: number;
+  explanation?: string;
+}
+
+export interface CreateQuestionRequest {
+  text: string;
+  options: QuestionOption[];
+}
+
+export interface UpdateQuestionRequest {
+  text?: string;
+  options?: QuestionOption[];
+}
