@@ -132,7 +132,11 @@ exports.Prisma.TestScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
-  score: 'score',
+  pointsPerQuestion: 'pointsPerQuestion',
+  timeLimitMinutes: 'timeLimitMinutes',
+  isAlwaysAvailable: 'isAlwaysAvailable',
+  availableFrom: 'availableFrom',
+  availableUntil: 'availableUntil',
   createdById: 'createdById',
   createdAt: 'createdAt'
 };
