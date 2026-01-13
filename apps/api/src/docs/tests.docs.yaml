@@ -1,0 +1,173 @@
+paths:
+  /api/tests:
+    post:
+      summary: Create a new test
+      tags: [Tests]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTestRequest'
+      responses:
+        '201':
+          description: Test created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Test'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      summary: Get all tests
+      tags: [Tests]
+      security:
+        - bearerAuth: []
+      description: |
+        - ADMIN: Returns all tests
+        - STUDENT: Returns only tests they have attempted
+      responses:
+        '200':
+          description: List of tests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Test'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tests/{testId}:
+    get:
+      summary: Get a test by ID
+      tags: [Tests]
+      security:
+        - bearerAuth: []
+      description: Returns test with questions, options, and creator info. Anyone can view any test.
+      parameters:
+        - in: path
+          name: testId
+          required: true
+          schema:
+            type: string
+          description: Test ID
+      responses:
+        '200':
+          description: Test details with relations
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Test'
+                  - type: object
+                    properties:
+                      createdBy:
+                        $ref: '#/components/schemas/User'
+                      questions:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Question'
+        '404':
+          description: Test not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Update a test
+      tags: [Tests]
+      security:
+        - bearerAuth: []
+      description: Only test creator or ADMIN can update
+      parameters:
+        - in: path
+          name: testId
+          required: true
+          schema:
+            type: string
+          description: Test ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTestRequest'
+      responses:
+        '200':
+          description: Test updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Test'
+        '403':
+          description: Unauthorized - not test creator or admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Test not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Delete a test
+      tags: [Tests]
+      security:
+        - bearerAuth: []
+      description: Only test creator or ADMIN can delete. Cascades to questions and options.
+      parameters:
+        - in: path
+          name: testId
+          required: true
+          schema:
+            type: string
+          description: Test ID
+      responses:
+        '204':
+          description: Test deleted successfully
+        '403':
+          description: Unauthorized - not test creator or admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Test not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

@@ -1,0 +1,332 @@
+paths:
+  /api/tests/{testId}/attempts/start:
+    post:
+      summary: Start a test attempt
+      tags: [Attempts]
+      security:
+        - bearerAuth: []
+      description: |
+        Creates a new test attempt for a student. Questions are shuffled randomly.
+        Only students can start attempts. Validates test availability.
+      parameters:
+        - in: path
+          name: testId
+          required: true
+          schema:
+            type: string
+          description: Test ID
+      responses:
+        '201':
+          description: Test attempt started successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartAttemptResponse'
+        '400':
+          description: Test has no questions or is not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Only students can start test attempts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Test not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tests/{testId}/attempts/current:
+    get:
+      summary: Get current active attempt for a test
+      tags: [Attempts]
+      security:
+        - bearerAuth: []
+      description: Returns active (not submitted) attempt with shuffled questions. Validates time limit.
+      parameters:
+        - in: path
+          name: testId
+          required: true
+          schema:
+            type: string
+          description: Test ID
+      responses:
+        '200':
+          description: Current attempt with questions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartAttemptResponse'
+        '400':
+          description: Time limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: No active attempt found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/attempts/{attemptId}/answers:
+    post:
+      summary: Submit an answer for a question
+      tags: [Attempts]
+      security:
+        - bearerAuth: []
+      description: |
+        Submits or updates an answer for a question in an active attempt.
+        Validates time limit - returns error if exceeded.
+      parameters:
+        - in: path
+          name: attemptId
+          required: true
+          schema:
+            type: string
+          description: Attempt ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitAnswerRequest'
+      responses:
+        '200':
+          description: Answer submitted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Time limit exceeded, invalid question/option, or attempt already submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Unauthorized - attempt does not belong to user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Attempt not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/attempts/{attemptId}/submit:
+    post:
+      summary: Submit the test attempt
+      tags: [Attempts]
+      security:
+        - bearerAuth: []
+      description: |
+        Submits the test attempt, calculates score based on correct answers.
+        Score = sum of pointsEarned for all answers.
+        Points per question = test.pointsPerQuestion (defaults to 1 if null).
+      parameters:
+        - in: path
+          name: attemptId
+          required: true
+          schema:
+            type: string
+          description: Attempt ID
+      responses:
+        '200':
+          description: Test submitted successfully with calculated score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmitTestResponse'
+        '400':
+          description: Attempt already submitted or not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Unauthorized - attempt does not belong to user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Attempt not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/attempts/{attemptId}/results:
+    get:
+      summary: Get attempt results after submission
+      tags: [Attempts]
+      security:
+        - bearerAuth: []
+      description: Returns detailed results with correct answers, score, and points earned per question.
+      parameters:
+        - in: path
+          name: attemptId
+          required: true
+          schema:
+            type: string
+          description: Attempt ID
+      responses:
+        '200':
+          description: Attempt results with answers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttemptResult'
+        '400':
+          description: Attempt has not been submitted yet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Unauthorized - attempt does not belong to user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Attempt not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/attempts/my-attempts:
+    get:
+      summary: Get all attempts for current student
+      tags: [Attempts]
+      security:
+        - bearerAuth: []
+      description: Returns all test attempts (submitted and active) for the authenticated student.
+      responses:
+        '200':
+          description: List of student's attempts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/TestAttempt'
+                    - type: object
+                      properties:
+                        test:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            title:
+                              type: string
+                            timeLimitMinutes:
+                              type: integer
+                            pointsPerQuestion:
+                              type: number
+                              nullable: true
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/tests/{testId}/attempts:
+    get:
+      summary: Get all attempts for a test
+      tags: [Attempts]
+      security:
+        - bearerAuth: []
+      description: Only test creator or ADMIN can view all attempts for a test.
+      parameters:
+        - in: path
+          name: testId
+          required: true
+          schema:
+            type: string
+          description: Test ID
+      responses:
+        '200':
+          description: List of all attempts for the test
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/TestAttempt'
+                    - type: object
+                      properties:
+                        student:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            email:
+                              type: string
+                            role:
+                              type: string
+        '403':
+          description: Unauthorized - not test creator or admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Test not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

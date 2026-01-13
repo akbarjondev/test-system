@@ -1,0 +1,205 @@
+paths:
+  /api/tests/{testId}/questions:
+    post:
+      summary: Create a question with options for a test
+      tags: [Questions]
+      security:
+        - bearerAuth: []
+      description: Only test creator or ADMIN can add questions. Must have at least 2 options, exactly one correct option.
+      parameters:
+        - in: path
+          name: testId
+          required: true
+          schema:
+            type: string
+          description: Test ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateQuestionRequest'
+      responses:
+        '201':
+          description: Question created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        '400':
+          description: Validation error (e.g., less than 2 options, not exactly one correct option)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Unauthorized - not test creator or admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Test not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      summary: Get all questions for a test
+      tags: [Questions]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: testId
+          required: true
+          schema:
+            type: string
+          description: Test ID
+      responses:
+        '200':
+          description: List of questions with options
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Question'
+        '404':
+          description: Test not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/questions/{questionId}:
+    get:
+      summary: Get a question by ID
+      tags: [Questions]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: questionId
+          required: true
+          schema:
+            type: string
+          description: Question ID
+      responses:
+        '200':
+          description: Question details with options
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        '404':
+          description: Question not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Update a question and its options
+      tags: [Questions]
+      security:
+        - bearerAuth: []
+      description: Only test creator or ADMIN can update. Updates replace all options.
+      parameters:
+        - in: path
+          name: questionId
+          required: true
+          schema:
+            type: string
+          description: Question ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateQuestionRequest'
+      responses:
+        '200':
+          description: Question updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Unauthorized - not test creator or admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Question or test not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Delete a question
+      tags: [Questions]
+      security:
+        - bearerAuth: []
+      description: Only test creator or ADMIN can delete. Cascades to options.
+      parameters:
+        - in: path
+          name: questionId
+          required: true
+          schema:
+            type: string
+          description: Question ID
+      responses:
+        '204':
+          description: Question deleted successfully
+        '403':
+          description: Unauthorized - not test creator or admin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Question or test not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
