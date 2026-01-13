@@ -3,7 +3,10 @@ import {
   Question,
   Option,
 } from "@test-system/database/prisma/generated/client";
-import { AttemptsRepository, AttemptWithRelations } from "src/repositories/attempts.repository";
+import {
+  AttemptsRepository,
+  AttemptWithRelations,
+} from "src/repositories/attempts.repository";
 import { TestsRepository } from "src/repositories/tests.repository";
 import { QuestionsRepository } from "src/repositories/questions.repository";
 import { UserRole } from "src/types/enums";
@@ -39,9 +42,7 @@ export class AttemptsService {
     // }
 
     // Shuffle questions using Fisher-Yates algorithm
-    const shuffledQuestionIds = this.shuffleArray(
-      questions.map((q) => q.id)
-    );
+    const shuffledQuestionIds = this.shuffleArray(questions.map((q) => q.id));
 
     // Create attempt with shuffled questions
     const attempt = await AttemptsRepository.createAttempt({
@@ -218,7 +219,9 @@ export class AttemptsService {
   static async getAttemptResults(
     attemptId: string,
     studentId: string
-  ): Promise<AttemptWithRelations & { totalScore: number; maxPossibleScore: number }> {
+  ): Promise<
+    AttemptWithRelations & { totalScore: number; maxPossibleScore: number }
+  > {
     const attempt = await AttemptsRepository.getAttemptById(attemptId, true);
 
     if (!attempt) {
@@ -253,9 +256,7 @@ export class AttemptsService {
   /**
    * Get all attempts for a student
    */
-  static async getStudentAttempts(
-    studentId: string
-  ): Promise<TestAttempt[]> {
+  static async getStudentAttempts(studentId: string): Promise<TestAttempt[]> {
     return await AttemptsRepository.getAttemptsByStudent(studentId);
   }
 
@@ -292,7 +293,9 @@ export class AttemptsService {
     }
 
     const now = new Date();
-    const availableFrom = test.availableFrom ? new Date(test.availableFrom) : null;
+    const availableFrom = test.availableFrom
+      ? new Date(test.availableFrom)
+      : null;
     const availableUntil = test.availableUntil
       ? new Date(test.availableUntil)
       : null;
@@ -313,10 +316,7 @@ export class AttemptsService {
   /**
    * Check if time limit has been exceeded
    */
-  private static isTimeLimitExceeded(
-    attempt: TestAttempt,
-    test: any
-  ): boolean {
+  private static isTimeLimitExceeded(attempt: TestAttempt, test: any): boolean {
     const elapsedMinutes =
       (Date.now() - new Date(attempt.startedAt).getTime()) / (1000 * 60);
     return elapsedMinutes > test.timeLimitMinutes;
@@ -339,7 +339,10 @@ export class AttemptsService {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      [shuffled[i] as T, shuffled[j] as T] = [
+        shuffled[j] as T,
+        shuffled[i] as T,
+      ];
     }
     return shuffled;
   }

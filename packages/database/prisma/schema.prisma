@@ -38,12 +38,14 @@ model Test {
 }
 
 model Question {
-  id        String   @id @default(cuid())
-  testId    String
-  text      String
-  options   Option[]
-  test      Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  id            String         @id @default(cuid())
+  testId        String
+  text          String
+  options       Option[]
+  questionOrders QuestionOrder[]
+  answers       Answer[]
+  test          Test           @relation(fields: [testId], references: [id], onDelete: Cascade)
+  createdAt     DateTime       @default(now())
   
   @@map("questions")
 }
@@ -82,6 +84,7 @@ model QuestionOrder {
   questionId    String
   displayOrder  Int          // Shuffled order (0, 1, 2, 3...)
   attempt       TestAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question      Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
   
   @@unique([attemptId, displayOrder]) // Ensure unique display order per attempt
   @@unique([attemptId, questionId])   // Each question appears once per attempt
@@ -96,6 +99,7 @@ model Answer {
   pointsEarned  Float       @default(0) // Points earned for this answer (0 if wrong, full points if correct)
   answeredAt    DateTime    @default(now())
   attempt       TestAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question      Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
   
   @@unique([attemptId, questionId]) // One answer per question per attempt
   @@map("answers")

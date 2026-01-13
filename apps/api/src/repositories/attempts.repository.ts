@@ -193,9 +193,7 @@ export class AttemptsRepository {
     });
   }
 
-  static async getAttemptsByStudent(
-    studentId: string
-  ): Promise<TestAttempt[]> {
+  static async getAttemptsByStudent(studentId: string): Promise<TestAttempt[]> {
     return prisma.testAttempt.findMany({
       where: { studentId },
       include: {
@@ -242,7 +240,11 @@ export class AttemptsRepository {
       include: {
         question: {
           include: {
-            options: true, // Get all options, not just correct ones
+            options: {
+              orderBy: {
+                order: "asc",
+              },
+            },
           },
         },
       },
@@ -255,8 +257,7 @@ export class AttemptsRepository {
           (opt) => opt.isCorrect
         );
         const isCorrect =
-          answer.optionId !== null &&
-          answer.optionId === correctOption?.id;
+          answer.optionId !== null && answer.optionId === correctOption?.id;
         const pointsEarned = isCorrect ? pointsPerQuestion : 0;
 
         return prisma.answer.update({
