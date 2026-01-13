@@ -52,7 +52,8 @@ const options: swaggerJsdoc.Options = {
           type: "http",
           scheme: "bearer",
           bearerFormat: "JWT",
-          description: "Enter JWT token obtained from /api/auth/login or /api/auth/register",
+          description:
+            "Enter JWT token obtained from /api/auth/login or /api/auth/register",
         },
       },
       schemas: {
@@ -100,8 +101,16 @@ const options: swaggerJsdoc.Options = {
             pointsPerQuestion: { type: "number", nullable: true },
             timeLimitMinutes: { type: "integer" },
             isAlwaysAvailable: { type: "boolean" },
-            availableFrom: { type: "string", format: "date-time", nullable: true },
-            availableUntil: { type: "string", format: "date-time", nullable: true },
+            availableFrom: {
+              type: "string",
+              format: "date-time",
+              nullable: true,
+            },
+            availableUntil: {
+              type: "string",
+              format: "date-time",
+              nullable: true,
+            },
             createdById: { type: "string" },
             createdAt: { type: "string", format: "date-time" },
           },
@@ -115,8 +124,16 @@ const options: swaggerJsdoc.Options = {
             pointsPerQuestion: { type: "number", nullable: true },
             timeLimitMinutes: { type: "integer", minimum: 1 },
             isAlwaysAvailable: { type: "boolean", default: true },
-            availableFrom: { type: "string", format: "date-time", nullable: true },
-            availableUntil: { type: "string", format: "date-time", nullable: true },
+            availableFrom: {
+              type: "string",
+              format: "date-time",
+              nullable: true,
+            },
+            availableUntil: {
+              type: "string",
+              format: "date-time",
+              nullable: true,
+            },
           },
         },
         UpdateTestRequest: {
@@ -127,8 +144,16 @@ const options: swaggerJsdoc.Options = {
             pointsPerQuestion: { type: "number", nullable: true },
             timeLimitMinutes: { type: "integer", minimum: 1 },
             isAlwaysAvailable: { type: "boolean" },
-            availableFrom: { type: "string", format: "date-time", nullable: true },
-            availableUntil: { type: "string", format: "date-time", nullable: true },
+            availableFrom: {
+              type: "string",
+              format: "date-time",
+              nullable: true,
+            },
+            availableUntil: {
+              type: "string",
+              format: "date-time",
+              nullable: true,
+            },
           },
         },
         // Question schemas
@@ -197,7 +222,11 @@ const options: swaggerJsdoc.Options = {
             testId: { type: "string" },
             studentId: { type: "string" },
             startedAt: { type: "string", format: "date-time" },
-            submittedAt: { type: "string", format: "date-time", nullable: true },
+            submittedAt: {
+              type: "string",
+              format: "date-time",
+              nullable: true,
+            },
             score: { type: "number", nullable: true },
           },
         },
@@ -208,10 +237,17 @@ const options: swaggerJsdoc.Options = {
             testId: { type: "string" },
             studentId: { type: "string" },
             startedAt: { type: "string", format: "date-time" },
-            submittedAt: { type: "string", format: "date-time", nullable: true },
+            submittedAt: {
+              type: "string",
+              format: "date-time",
+              nullable: true,
+            },
             score: { type: "number", nullable: true },
             timeLimitMinutes: { type: "integer" },
-            timeRemaining: { type: "integer", description: "Time remaining in seconds" },
+            timeRemaining: {
+              type: "integer",
+              description: "Time remaining in seconds",
+            },
             questions: {
               type: "array",
               items: {
@@ -305,7 +341,9 @@ const options: swaggerJsdoc.Options = {
 
 // Generate base spec and merge with paths from YAML files
 const baseSpec = swaggerJsdoc(options);
-export const swaggerSpec = {
+const swaggerSpec = {
   ...baseSpec,
   paths,
 };
+
+export { swaggerSpec };
