@@ -62,31 +62,49 @@ pnpm exec turbo build --filter=docs
 
 ### Develop
 
-To develop all apps and packages, run the following command:
+This project requires multiple services running simultaneously. You'll need to open **3 separate terminal windows** to run the complete development environment.
 
-```
-cd my-turborepo
+#### Quick Start
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+1. **Terminal 1 - Start the Database**
+   ```bash
+   npm run docker:dev
+   ```
+   This starts the PostgreSQL database in a container. Wait until you see the database is ready before proceeding.
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+2. **Terminal 2 - Start Development Servers**
+   ```bash
+   npm run dev
+   ```
+   This runs Turborepo which starts all apps:
+   - **Admin Dashboard**: http://localhost:3000 (Next.js)
+   - **API Server**: http://localhost:5000 (Express)
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+3. **Terminal 3 - Open Prisma Studio** (Optional but recommended)
+   ```bash
+   cd packages/database
+   npm run db:studio
+   ```
+   Opens Prisma Studio at http://localhost:5555 for viewing and editing database records.
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+#### What's Running?
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+- **Database**: PostgreSQL on port 5432 (credentials: `postgres`/`password`, database: `testdb`)
+- **Admin Dashboard**: Next.js frontend on port 3000
+- **API**: Express backend on port 5000
+- **Prisma Studio**: Database GUI on port 5555
+
+#### Stopping Services
+
+- **Database**: Run `npm run docker:down` from the project root
+- **Development servers**: Press `Ctrl+C` in Terminal 2
+- **Prisma Studio**: Press `Ctrl+C` in Terminal 3
+
+#### Troubleshooting
+
+- Make sure the database is running before starting the dev servers
+- If ports are already in use, check what's running on ports 3000, 5000, 5432, or 5555
+- The project uses Podman (not Docker) for container management
 
 ### Remote Caching
 
