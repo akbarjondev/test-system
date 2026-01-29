@@ -1,4 +1,3 @@
-import { User } from "@test-system/database/prisma/generated/client";
 import { verifyToken } from "@test-system/shared/auth";
 import { NextFunction, Request, Response } from "express";
 import { UsersService } from "src/services/users.service";
@@ -7,7 +6,7 @@ import { UserRole } from "src/types/enums";
 export const verifyTokenMiddleware = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
@@ -49,7 +48,7 @@ export const verifyTokenMiddleware = async (
 export const verifyAdminMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const user = req.user;
 

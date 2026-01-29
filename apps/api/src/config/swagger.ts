@@ -319,6 +319,30 @@ const options: swaggerJsdoc.Options = {
             },
           },
         },
+        // Pagination schemas
+        PaginationMeta: {
+          type: "object",
+          properties: {
+            page: { type: "integer", minimum: 1 },
+            limit: { type: "integer", minimum: 1, maximum: 100 },
+            total: { type: "integer", minimum: 0 },
+            totalPages: { type: "integer", minimum: 0 },
+            hasNext: { type: "boolean" },
+            hasPrev: { type: "boolean" },
+          },
+          required: ["page", "limit", "total", "totalPages", "hasNext", "hasPrev"],
+        },
+        PaginatedTestResponse: {
+          type: "object",
+          properties: {
+            data: {
+              type: "array",
+              items: { $ref: "#/components/schemas/Test" },
+            },
+            pagination: { $ref: "#/components/schemas/PaginationMeta" },
+          },
+          required: ["data", "pagination"],
+        },
         // Error schemas
         Error: {
           type: "object",

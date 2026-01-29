@@ -13,13 +13,16 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
+    "baseUrl": ".",
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@test-system/database/*": ["../../packages/database/*"],
+      "@test-system/types": ["../../packages/types/index.ts"]
     }
   },
   "include": [

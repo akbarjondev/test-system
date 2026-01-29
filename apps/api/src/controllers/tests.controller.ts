@@ -2,6 +2,7 @@ import { Test } from "@test-system/database/prisma/generated/client";
 import { Request, Response } from "express";
 import { TestsService } from "src/services/tests.service";
 import { UserRole } from "src/types/enums";
+import { PaginationParams } from "@test-system/types";
 
 export interface UpdateTestRequest {
   title?: string;
@@ -54,11 +55,21 @@ export class TestsController {
 
   static async getAllTests(req: Request, res: Response) {
     try {
-      const tests = await TestsService.getAllTests(
-        req.user.id,
-        req.user.role as UserRole
+      // Parse and validate pagination parameters
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const limit = Math.min(
+        100,
+        Math.max(1, parseInt(req.query.limit as string) || 20)
       );
-      return res.json(tests);
+
+      const pagination: PaginationParams = { page, limit };
+
+      const result = await TestsService.getAllTests(
+        req.user.id,
+        req.user.role as UserRole,
+        pagination
+      );
+      return res.json(result);
     } catch (error) {
       console.log(error);
       return res.status(500).json({ error: "Failed to fetch tests" });

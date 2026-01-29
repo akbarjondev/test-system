@@ -1,5 +1,6 @@
 import { prisma } from "@test-system/database/lib/prisma";
-import { Test, User } from "@test-system/database/prisma/generated/client";
+import { Option, Question, Test, User } from "@test-system/database/prisma/generated/client";
+import { PaginationParams, PaginatedResponse } from "@test-system/types";
 
 export interface UpdateTestData {
   title?: string;
@@ -18,17 +19,47 @@ export class TestsRepository {
     });
   }
 
-  static async getAllTests(): Promise<Test[]> {
-    return prisma.test.findMany({
-      orderBy: {
-        createdAt: "desc",
+  static async getAllTests(
+    pagination?: PaginationParams
+  ): Promise<PaginatedResponse<Test>> {
+    const page = pagination?.page ?? 1;
+    const limit = pagination?.limit ?? 20;
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      prisma.test.findMany({
+        skip,
+        take: limit,
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      prisma.test.count(),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
       },
-    });
+    };
   }
 
   static async getTestsByStudentAttempts(
-    studentId: string
-  ): Promise<Test[]> {
+    studentId: string,
+    pagination?: PaginationParams
+  ): Promise<PaginatedResponse<Test>> {
+    const page = pagination?.page ?? 1;
+    const limit = pagination?.limit ?? 20;
+    const skip = (page - 1) * limit;
+
     // Get all tests that the student has attempted
     const attempts = await prisma.testAttempt.findMany({
       where: {
@@ -43,25 +74,60 @@ export class TestsRepository {
     const testIds = attempts.map((attempt) => attempt.testId);
 
     if (testIds.length === 0) {
-      return [];
+      return {
+        data: [],
+        pagination: {
+          page,
+          limit,
+          total: 0,
+          totalPages: 0,
+          hasNext: false,
+          hasPrev: false,
+        },
+      };
     }
 
-    return prisma.test.findMany({
-      where: {
-        id: {
-          in: testIds,
+    const [data, total] = await Promise.all([
+      prisma.test.findMany({
+        where: {
+          id: {
+            in: testIds,
+          },
         },
+        skip,
+        take: limit,
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      prisma.test.count({
+        where: {
+          id: {
+            in: testIds,
+          },
+        },
+      }),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
       },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    };
   }
 
   static async getOneTest(
     id: string,
     includeRelations: boolean = false
-  ): Promise<(Test & { createdBy?: Omit<User, "password">; questions?: any[] }) | null> {
+  ): Promise<(Test & { createdBy?: Omit<User, "password">; questions?: (Question & { options: Option[] })[] }) | null> {
     return prisma.test.findUnique({
       where: {
         id,

@@ -1,0 +1,94 @@
+---
+name: uzbek-language-content
+description: Use Uzbek language for UI content while keeping technical names in English
+---
+
+# Uzbek Language Content Rule
+
+## Overview
+All user-facing content must be written in Uzbek language. Technical configurations, code structure, and naming conventions remain in English.
+
+## Use Uzbek for:
+- Button labels (e.g., "Kirish", "Chiqish", "Saqlash", "Bekor qilish")
+- Form labels and placeholders (e.g., "Elektron pochta", "Parol", "Ism")
+- Page titles and headings
+- Navigation menu items
+- Error messages and notifications
+- Success messages
+- Tooltips and help text
+- Table headers
+- Modal titles and content
+- Empty state messages
+- Confirmation dialogs
+
+## Keep English for:
+- Route names (e.g., `/login`, `/dashboard`, `/users`)
+- Folder and file names (e.g., `components/`, `page.tsx`)
+- Variable and function names
+- CSS class names
+- Environment variables
+- API endpoint paths
+- Database field names
+- Configuration keys
+- Code comments (optional, can be English or Uzbek)
+
+## Common Uzbek Translations
+
+### Authentication
+- Login → Kirish
+- Logout → Chiqish
+- Register → Ro'yxatdan o'tish
+- Password → Parol
+- Email → Elektron pochta
+- Forgot password → Parolni unutdingizmi?
+- Remember me → Meni eslab qol
+
+### Actions
+- Save → Saqlash
+- Cancel → Bekor qilish
+- Delete → O'chirish
+- Edit → Tahrirlash
+- Add → Qo'shish
+- Search → Qidirish
+- Filter → Filtrlash
+- Submit → Yuborish
+- Confirm → Tasdiqlash
+- Back → Orqaga
+- Next → Keyingi
+- Previous → Oldingi
+
+### Common UI
+- Dashboard → Boshqaruv paneli
+- Settings → Sozlamalar
+- Profile → Profil
+- Users → Foydalanuvchilar
+- Home → Bosh sahifa
+- Loading → Yuklanmoqda...
+- Error → Xatolik
+- Success → Muvaffaqiyat
+- Warning → Ogohlantirish
+- No data → Ma'lumot yo'q
+
+### Form Validation
+- Required field → Majburiy maydon
+- Invalid email → Noto'g'ri elektron pochta
+- Password too short → Parol juda qisqa
+- Passwords don't match → Parollar mos kelmaydi
+
+## Example
+
+```tsx
+// Correct: Uzbek content, English code structure
+export default function LoginPage() {
+  return (
+    <div>
+      <h1>Kirish</h1>
+      <form>
+        <Input placeholder="Elektron pochta" />
+        <Input placeholder="Parol" type="password" />
+        <Button type="submit">Kirish</Button>
+      </form>
+    </div>
+  );
+}
+```

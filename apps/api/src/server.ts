@@ -8,6 +8,7 @@ import authRoutes from "./routes/auth";
 import testsRoutes from "./routes/tests";
 import questionsRoutes from "./routes/questions";
 import attemptsRoutes from "./routes/attempts";
+import rateLimit from "express-rate-limit";
 
 dotenv.config();
 
@@ -18,6 +19,17 @@ const PORT = process.env.PORT || 5000;
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use(
+  rateLimit({
+    // @TODO: this is a temporary rate limit, we need to change it to a more secure one. And nned to check if the user is authenticated or not. Test with Telegram bot.
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: {
+      error: "Too many requests, please try again later",
+      code: "TOO_MANY_REQUESTS",
+    },
+  }),
+);
 
 // Swagger Documentation
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

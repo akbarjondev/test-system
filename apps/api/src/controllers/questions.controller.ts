@@ -29,7 +29,7 @@ export interface UpdateQuestionRequest {
 export class QuestionsController {
   static async createQuestion(
     req: Request<{ testId: string }, any, CreateQuestionRequest>,
-    res: Response
+    res: Response,
   ) {
     try {
       const { testId } = req.params;
@@ -48,7 +48,7 @@ export class QuestionsController {
           options,
         },
         req.user.id,
-        req.user.role as UserRole
+        req.user.role as UserRole,
       );
 
       return res.status(201).json(question);
@@ -76,7 +76,7 @@ export class QuestionsController {
 
   static async getQuestionsByTest(
     req: Request<{ testId: string }>,
-    res: Response
+    res: Response,
   ) {
     try {
       const { testId } = req.params;
@@ -95,7 +95,7 @@ export class QuestionsController {
 
   static async getQuestionById(
     req: Request<{ questionId: string }>,
-    res: Response
+    res: Response,
   ) {
     try {
       const { questionId } = req.params;
@@ -114,7 +114,7 @@ export class QuestionsController {
 
   static async updateQuestion(
     req: Request<{ questionId: string }, any, UpdateQuestionRequest>,
-    res: Response
+    res: Response,
   ) {
     try {
       const { questionId } = req.params;
@@ -124,7 +124,7 @@ export class QuestionsController {
         questionId,
         { text, options },
         req.user.id,
-        req.user.role as UserRole
+        req.user.role as UserRole,
       );
 
       return res.json(question);
@@ -155,14 +155,14 @@ export class QuestionsController {
 
   static async deleteQuestion(
     req: Request<{ questionId: string }>,
-    res: Response
+    res: Response,
   ) {
     try {
       const { questionId } = req.params;
       await QuestionsService.deleteQuestion(
         questionId,
         req.user.id,
-        req.user.role as UserRole
+        req.user.role as UserRole,
       );
 
       return res.status(204).send();

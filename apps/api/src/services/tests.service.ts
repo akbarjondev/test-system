@@ -4,6 +4,7 @@ import {
   UpdateTestData,
 } from "src/repositories/tests.repository";
 import { UserRole } from "src/types/enums";
+import { PaginationParams, PaginatedResponse } from "@test-system/types";
 
 export class TestsService {
   static async createTest(test: Omit<Test, "id" | "createdAt">) {
@@ -12,14 +13,15 @@ export class TestsService {
 
   static async getAllTests(
     userId: string,
-    userRole: UserRole
-  ): Promise<Test[]> {
+    userRole: UserRole,
+    pagination?: PaginationParams
+  ): Promise<PaginatedResponse<Test>> {
     if (userRole === UserRole.ADMIN) {
       // Admins see all tests
-      return await TestsRepository.getAllTests();
+      return await TestsRepository.getAllTests(pagination);
     } else {
       // Students see only tests they have attempted
-      return await TestsRepository.getTestsByStudentAttempts(userId);
+      return await TestsRepository.getTestsByStudentAttempts(userId, pagination);
     }
   }
 
