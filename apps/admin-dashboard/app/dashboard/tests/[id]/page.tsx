@@ -26,9 +26,15 @@ export default async function TestDetailPage({
 
   return (
     <section>
-      <div>
-        <span className="text-sm text-gray-500">Test nomi:</span>
+      <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">{testData.title}</h1>
+
+        <Button className="my-4" asChild>
+          <Link href={`${ROUTES.TESTS}/${id}/questions`}>
+            <PlusIcon className="size-4 inline-flex" />
+            Test savollarini qo&apos;shish
+          </Link>
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -60,20 +66,15 @@ export default async function TestDetailPage({
       </div>
 
       <div>
-        <Button className="my-4" asChild>
-          <Link href={`${ROUTES.TESTS}/${id}/questions`}>
-            <PlusIcon className="size-4 inline-flex" />
-            Savol qo&apos;shish
-          </Link>
-        </Button>
-
         {testData && testData.questions && testData.questions.length > 0 && (
           <div>
             <h2 className="text-lg font-bold mb-4">Savollar:</h2>
             <ul className="flex flex-col gap-4">
-              {testData.questions.map((question) => (
+              {testData.questions.map((question, index) => (
                 <li key={question.id}>
-                  <span>{question.text}</span>
+                  <span>
+                    {index + 1}. {question.text}
+                  </span>
                   <ul className="flex flex-row gap-2">
                     {question.options.map((option, index) => (
                       <li

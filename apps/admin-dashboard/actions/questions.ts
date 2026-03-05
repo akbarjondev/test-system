@@ -4,11 +4,11 @@ import { API_URL } from "@/config/constants";
 import { API_ROUTES } from "@/config/enums";
 import { getToken } from "@/lib/server-utils";
 import { z } from "zod";
-import { formSchema } from "@/definitions/questions";
+import { questionFormSchema } from "@/definitions/questions";
 
 export const createQuestion = async (
   testId: string,
-  data: z.infer<typeof formSchema>,
+  data: z.infer<typeof questionFormSchema>,
 ) => {
   try {
     const token = await getToken();

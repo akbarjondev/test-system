@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const formSchema = z.object({
+export const questionFormSchema = z.object({
   text: z.string().min(3, { message: "Savol matni bo'sh bo'lmasligi kerak" }),
   options: z
     .array(
@@ -26,4 +26,4 @@ export const formSchema = z.object({
     ),
 });
 
-export type FormQuestionState = z.infer<typeof formSchema>;
+export type QuestionFormState = z.infer<typeof questionFormSchema>;

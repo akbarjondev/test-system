@@ -1,3 +1,4 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormQuestion } from "./ui/FormQuestion";
 
 export default async function QuestionsPage({
@@ -9,8 +10,14 @@ export default async function QuestionsPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-10">Yangi savol qo'shish</h1>
-      <FormQuestion testId={id} />
+      <Card className="max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle>Test savollarini qo'shish</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <FormQuestion testId={id} />
+        </CardContent>
+      </Card>
     </div>
   );
 }

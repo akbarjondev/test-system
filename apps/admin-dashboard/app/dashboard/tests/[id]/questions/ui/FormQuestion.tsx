@@ -3,7 +3,13 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, useFieldArray, useForm } from "react-hook-form";
-import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -13,7 +19,7 @@ import { createQuestion } from "@/actions/questions";
 import { toast } from "sonner";
 import { ROUTES } from "@/config/enums";
 import { useRouter } from "next/navigation";
-import { formSchema } from "@/definitions/questions";
+import { questionFormSchema } from "@/definitions/questions";
 
 type FormQuestionProps = {
   testId: string;
@@ -21,8 +27,8 @@ type FormQuestionProps = {
 
 export const FormQuestion = ({ testId }: FormQuestionProps) => {
   const router = useRouter();
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof questionFormSchema>>({
+    resolver: zodResolver(questionFormSchema),
     mode: "onChange",
     defaultValues: {
       text: "",
@@ -42,7 +48,7 @@ export const FormQuestion = ({ testId }: FormQuestionProps) => {
     name: "options",
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: z.infer<typeof questionFormSchema>) => {
     const response = await createQuestion(testId, data);
 
     if (response.error) {
@@ -54,7 +60,7 @@ export const FormQuestion = ({ testId }: FormQuestionProps) => {
     }
   };
 
-  const onError = (errors: FieldErrors<z.infer<typeof formSchema>>) => {
+  const onError = (errors: FieldErrors<z.infer<typeof questionFormSchema>>) => {
     console.log("errors:", errors);
 
     // for isCorrect
@@ -72,7 +78,7 @@ export const FormQuestion = ({ testId }: FormQuestionProps) => {
     <form onSubmit={form.handleSubmit(onSubmit, onError)}>
       <FieldGroup>
         <FieldSet className="flex flex-col gap-4">
-          <FieldGroup className="max-w-md">
+          <FieldGroup>
             <Field>
               <FieldLabel>Savol matni</FieldLabel>
               <Input
@@ -81,11 +87,7 @@ export const FormQuestion = ({ testId }: FormQuestionProps) => {
                 autoFocus
                 placeholder="Savol matnini kiriting"
               />
-              {form.formState.errors.text && (
-                <p className="text-red-500 text-sm">
-                  {form.formState.errors.text.message}
-                </p>
-              )}
+              <FieldError errors={[form.formState.errors.text]} />
             </Field>
 
             {optionsFields.fields.map((field, index) => (
@@ -109,11 +111,10 @@ export const FormQuestion = ({ testId }: FormQuestionProps) => {
                         "border-red-500",
                     )}
                   />
-                  {form.formState.errors.options?.[index]?.text && (
-                    <p className="text-red-500 text-sm">
-                      {form.formState.errors.options?.[index]?.text.message}
-                    </p>
-                  )}
+                  <FieldError
+                    errors={[form.formState.errors.options?.[index]?.text]}
+                  />
+
                   <div className="flex gap-2 justify-between *:w-full">
                     <div>
                       <FieldLabel htmlFor={`options.${index}.isCorrect`}>
@@ -133,6 +134,11 @@ export const FormQuestion = ({ testId }: FormQuestionProps) => {
                           form.formState.errors.options?.[index]?.isCorrect &&
                             "border-red-500",
                         )}
+                      />
+                      <FieldError
+                        errors={[
+                          form.formState.errors.options?.[index]?.isCorrect,
+                        ]}
                       />
                     </div>
                     {/* TODO: Tartib raqamini qo'shish */}
@@ -170,6 +176,11 @@ export const FormQuestion = ({ testId }: FormQuestionProps) => {
                             "border-red-500",
                         )}
                       />
+                      <FieldError
+                        errors={[
+                          form.formState.errors.options?.[index]?.explanation,
+                        ]}
+                      />
                     </div>
                   </div>
                 </div>
@@ -192,7 +203,7 @@ export const FormQuestion = ({ testId }: FormQuestionProps) => {
               </Button>
             )}
           </FieldGroup>
-          <div className="flex justify-between gap-2 max-w-md mt-10">
+          <div className="flex justify-between gap-2 mt-10">
             <Button type="submit" className="flex-1">
               Saqlash
             </Button>
