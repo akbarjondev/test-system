@@ -16,6 +16,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { createTest } from "@/actions/tests";
+import { toast } from "sonner";
 
 const testFormSchema = z.object({
   title: z
@@ -49,11 +51,11 @@ export const FormTest = () => {
     },
   });
 
-  console.log(form.watch());
-
   const onSubmit = async (data: z.input<typeof testFormSchema>) => {
-    // const response = await createTest(data);
-    console.log(data);
+    const response = await createTest(data);
+    if (response?.error) {
+      toast.error(response.error);
+    }
   };
 
   return (
@@ -88,7 +90,9 @@ export const FormTest = () => {
               Har bir savol uchun hisoblanadigan bal. Masalan: 2.1
             </FieldDescription>
             <Input
-              {...form.register("pointsPerQuestion")}
+              {...form.register("pointsPerQuestion", { valueAsNumber: true })}
+              type="number"
+              step="0.1"
               className={cn(
                 form.formState.errors.pointsPerQuestion && "border-red-500",
               )}
@@ -99,7 +103,8 @@ export const FormTest = () => {
           <Field>
             <FieldLabel>Test vaqt limiti</FieldLabel>
             <Input
-              {...form.register("timeLimitMinutes")}
+              {...form.register("timeLimitMinutes", { valueAsNumber: true })}
+              type="number"
               className={cn(
                 form.formState.errors.timeLimitMinutes && "border-red-500",
               )}

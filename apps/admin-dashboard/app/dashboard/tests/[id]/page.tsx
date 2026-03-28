@@ -111,7 +111,7 @@ const getOptionVariant = (index: number) => {
       return "b)";
     case 2:
       return "c)";
-    case 4:
+    case 3:
       return "d)";
     default:
       return "";

@@ -8,7 +8,7 @@ export function proxy(req: NextRequest) {
     const path = req.nextUrl.pathname
 
     // if coming path is protected, check if user is authenticated
-    if(protectedRoutes.includes(path as ROUTES)) {
+    if(protectedRoutes.some((route) => path === route || path.startsWith(route + "/"))) {
         const token = req.cookies.get('token')
         if(!token) {
             return NextResponse.redirect(new URL(ROUTES.LOGIN, req.nextUrl))
