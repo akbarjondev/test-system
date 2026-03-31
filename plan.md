@@ -1,8 +1,8 @@
 # test-system — Master Roadmap
 
 **Project:** Online quiz/test platform. Uzbek-language, educational use.
-**Monorepo:** Turborepo — `apps/api` (Express 5), `apps/admin-dashboard` (Next.js 16), `apps/telegram-bot` (student UI), `packages/database` (Prisma/PostgreSQL).
-**Architecture decision:** The Telegram bot IS the student-facing UI. There is no separate student web portal.
+**Monorepo:** Turborepo — `apps/api` (Express 5), `apps/admin-dashboard` (Next.js 16), `apps/telegram-bot` (student UI), `apps/flutter-student` (mobile student app), `packages/database` (Prisma/PostgreSQL).
+**Architecture decision:** Students have two channels — Telegram bot (Phase 3) and Flutter mobile app (Phase 8). No web student portal.
 
 ---
 
@@ -17,6 +17,7 @@
 | 5 | [Testing](plans/phase-5-testing.md) | Automated test coverage across API and dashboard | Phase 1–4 |
 | 6 | [DevOps & Deployment](plans/phase-6-devops.md) | Full stack containerized and deployed to production | Phase 1–5 |
 | 7 | [Polish & Observability](plans/phase-7-polish.md) | Monitoring, cleanup, accessibility, i18n | Phase 6 |
+| 8 | [Flutter Student App](plans/phase-8-flutter-app.md) | Native mobile app for students (login, browse, solve tests) | Phase 4, 6 |
 
 ---
 
@@ -33,6 +34,6 @@
 ## Key Constraints
 
 - UI language is Uzbek throughout
-- Students interact exclusively via Telegram bot (no web student portal)
+- Students have two channels: Telegram bot (Phase 3) and Flutter app (Phase 8)
 - Admin dashboard is web-only (Next.js)
 - PostgreSQL is the only supported database
