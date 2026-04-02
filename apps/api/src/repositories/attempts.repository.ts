@@ -230,6 +230,41 @@ export class AttemptsRepository {
     });
   }
 
+  static async getAllAttempts(
+    pagination?: { page?: number; limit?: number }
+  ): Promise<{ data: any[]; pagination: { page: number; limit: number; total: number; totalPages: number; hasNext: boolean; hasPrev: boolean } }> {
+    const page = pagination?.page ?? 1;
+    const limit = pagination?.limit ?? 20;
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      prisma.testAttempt.findMany({
+        skip,
+        take: limit,
+        orderBy: { submittedAt: "desc" },
+        include: {
+          student: { select: { email: true } },
+          test: { select: { title: true, pointsPerQuestion: true, questions: { select: { id: true } } } },
+        },
+      }),
+      prisma.testAttempt.count(),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+    };
+  }
+
   static async calculateAnswerPoints(
     attemptId: string,
     pointsPerQuestion: number

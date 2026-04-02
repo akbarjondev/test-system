@@ -20,8 +20,8 @@ export class TestsService {
       // Admins see all tests
       return await TestsRepository.getAllTests(pagination);
     } else {
-      // Students see only tests they have attempted
-      return await TestsRepository.getTestsByStudentAttempts(userId, pagination);
+      // Students see all currently available tests
+      return await TestsRepository.getAvailableTests(pagination);
     }
   }
 

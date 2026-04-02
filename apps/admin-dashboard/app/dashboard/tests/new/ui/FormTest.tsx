@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { createTest } from "@/actions/tests";
 import { toast } from "sonner";
@@ -31,13 +31,13 @@ const testFormSchema = z.object({
   timeLimitMinutes: z
     .number()
     .min(1, { message: "Test vaqt limiti 1 daqiqadan kam bo'lmasligi kerak" }),
-  isAlwaysAvailable: z.boolean().default(true),
+  isAlwaysAvailable: z.boolean(),
   availableFrom: z.date().optional(),
   availableUntil: z.date().optional(),
 });
 
 export const FormTest = () => {
-  const form = useForm<z.input<typeof testFormSchema>>({
+  const form = useForm<z.infer<typeof testFormSchema>>({
     resolver: zodResolver(testFormSchema),
     mode: "onChange",
     defaultValues: {
@@ -51,7 +51,9 @@ export const FormTest = () => {
     },
   });
 
-  const onSubmit = async (data: z.input<typeof testFormSchema>) => {
+  const isAlwaysAvailable = form.watch("isAlwaysAvailable");
+
+  const onSubmit = async (data: z.infer<typeof testFormSchema>) => {
     const response = await createTest(data);
     if (response?.error) {
       toast.error(response.error);
@@ -140,18 +142,26 @@ export const FormTest = () => {
             </div>
           </Field>
 
-          {!form.getValues("isAlwaysAvailable") && (
+          {!isAlwaysAvailable && (
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="availableFrom">
                   Test mavjud bo'lishini boshlangan vaqt
                 </FieldLabel>
-                <Input
-                  {...form.register("availableFrom")}
-                  className={cn(
-                    form.formState.errors.availableFrom && "border-red-500",
+                <Controller
+                  control={form.control}
+                  name="availableFrom"
+                  render={({ field }) => (
+                    <Input
+                      id="availableFrom"
+                      type="date"
+                      className={cn(form.formState.errors.availableFrom && "border-red-500")}
+                      value={field.value ? field.value.toISOString().split("T")[0] : ""}
+                      onChange={(e) =>
+                        field.onChange(e.target.value ? new Date(e.target.value) : undefined)
+                      }
+                    />
                   )}
-                  placeholder="Test mavjud bo'lishini boshlangan vaqtini kiriting"
                 />
                 <FieldError errors={[form.formState.errors.availableFrom]} />
               </Field>
@@ -159,12 +169,20 @@ export const FormTest = () => {
                 <FieldLabel htmlFor="availableUntil">
                   Test mavjud bo'lishini tugatilgan vaqt
                 </FieldLabel>
-                <Input
-                  {...form.register("availableUntil")}
-                  className={cn(
-                    form.formState.errors.availableUntil && "border-red-500",
+                <Controller
+                  control={form.control}
+                  name="availableUntil"
+                  render={({ field }) => (
+                    <Input
+                      id="availableUntil"
+                      type="date"
+                      className={cn(form.formState.errors.availableUntil && "border-red-500")}
+                      value={field.value ? field.value.toISOString().split("T")[0] : ""}
+                      onChange={(e) =>
+                        field.onChange(e.target.value ? new Date(e.target.value) : undefined)
+                      }
+                    />
                   )}
-                  placeholder="Test mavjud bo'lishini tugatilgan vaqtini kiriting"
                 />
                 <FieldError errors={[form.formState.errors.availableUntil]} />
               </Field>

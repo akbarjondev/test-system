@@ -7,6 +7,7 @@ export enum ROUTES {
   STUDENTS = "/dashboard/students",
   STUDENT_DASHBOARD = "/dashboard/student",
   TESTS_NEW = "/dashboard/tests/new",
+  ATTEMPTS = "/dashboard/attempts",
 }
 
 export enum API_ROUTES {

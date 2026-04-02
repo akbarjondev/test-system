@@ -5,8 +5,10 @@ import { cn, formatDuration } from "@/lib/utils";
 import Link from "next/link";
 import { API_URL } from "@/config/constants";
 import { TestWithRelations } from "@test-system/types";
-import { PlusIcon } from "lucide-react";
+import { PencilIcon, PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DeleteTestButton } from "./ui/DeleteTestButton";
+import { DeleteQuestionButton } from "./ui/DeleteQuestionButton";
 
 export default async function TestDetailPage({
   params,
@@ -16,28 +18,28 @@ export default async function TestDetailPage({
   const { id } = await params;
   const token = await getToken();
 
-  // get test by id
   const test = await fetch(`${API_URL}${API_ROUTES.TESTS}/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
   const testData = (await test.json()) as unknown as TestWithRelations;
 
   return (
     <section>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">{testData.title}</h1>
 
-        <Button className="my-4" asChild>
-          <Link href={`${ROUTES.TESTS}/${id}/questions`}>
-            <PlusIcon className="size-4 inline-flex" />
-            Test savollarini qo&apos;shish
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`${ROUTES.TESTS}/${id}/edit`}>
+              <PencilIcon className="size-4 mr-1" />
+              Tahrirlash
+            </Link>
+          </Button>
+          <DeleteTestButton testId={id} />
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 mb-6">
         <div>
           <span className="text-sm text-gray-500">Izoh:</span>
           <p>{testData.description}</p>
@@ -65,55 +67,73 @@ export default async function TestDetailPage({
         </div>
       </div>
 
-      <div>
-        {testData && testData.questions && testData.questions.length > 0 && (
-          <div>
-            <h2 className="text-lg font-bold mb-4">Savollar:</h2>
-            <ul className="flex flex-col gap-4">
-              {testData.questions.map((question, index) => (
-                <li key={question.id}>
-                  <span>
+      <div className="flex gap-2 mb-6">
+        <Button asChild>
+          <Link href={`${ROUTES.TESTS}/${id}/questions`}>
+            <PlusIcon className="size-4 mr-1" />
+            Savol qo&apos;shish
+          </Link>
+        </Button>
+        <Button variant="outline" asChild>
+          <Link href={`${ROUTES.TESTS}/${id}/results`}>
+            Natijalarni ko&apos;rish
+          </Link>
+        </Button>
+      </div>
+
+      {testData.questions && testData.questions.length > 0 && (
+        <div>
+          <h2 className="text-lg font-bold mb-4">Savollar:</h2>
+          <ul className="flex flex-col gap-4">
+            {testData.questions.map((question, index) => (
+              <li key={question.id} className="border rounded-md p-3">
+                <div className="flex justify-between items-start mb-2">
+                  <span className="font-medium">
                     {index + 1}. {question.text}
                   </span>
-                  <ul className="flex flex-row gap-2">
-                    {question.options.map((option, index) => (
-                      <li
-                        key={option.id}
-                        className={cn(
-                          option.isCorrect ? "text-green-500" : "text-red-500",
-                          "flex flex-row items-center gap-2",
-                        )}
+                  <div className="flex gap-1 ml-2 shrink-0">
+                    <Button variant="outline" size="icon" asChild>
+                      <Link
+                        href={`${ROUTES.TESTS}/${id}/questions/${question.id}/edit`}
                       >
-                        <span>{getOptionVariant(index)}</span>
-                        <span>{option.text}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  {/* <span>{question.explanation}</span> */}
-                  {/* <Button className="cursor-pointer hover:bg-red-500" size={"icon"} onClick={() => deleteQuestion(question.id)}>
-                        <Trash2Icon className="size-4" />
-                    </Button> */}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
+                        <PencilIcon className="size-4" />
+                      </Link>
+                    </Button>
+                    <DeleteQuestionButton
+                      questionId={question.id}
+                      testId={id}
+                    />
+                  </div>
+                </div>
+                <ul className="flex flex-row gap-2 flex-wrap">
+                  {question.options.map((option, optIdx) => (
+                    <li
+                      key={option.id}
+                      className={cn(
+                        option.isCorrect ? "text-green-600" : "text-red-500",
+                        "flex flex-row items-center gap-1 text-sm",
+                      )}
+                    >
+                      <span>{getOptionVariant(optIdx)}</span>
+                      <span>{option.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
   );
 }
 
 const getOptionVariant = (index: number) => {
   switch (index) {
-    case 0:
-      return "a)";
-    case 1:
-      return "b)";
-    case 2:
-      return "c)";
-    case 3:
-      return "d)";
-    default:
-      return "";
+    case 0: return "a)";
+    case 1: return "b)";
+    case 2: return "c)";
+    case 3: return "d)";
+    default: return "";
   }
 };

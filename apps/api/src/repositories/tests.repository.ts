@@ -52,6 +52,50 @@ export class TestsRepository {
     };
   }
 
+  static async getAvailableTests(
+    pagination?: PaginationParams
+  ): Promise<PaginatedResponse<Test>> {
+    const page = pagination?.page ?? 1;
+    const limit = pagination?.limit ?? 20;
+    const skip = (page - 1) * limit;
+    const now = new Date();
+
+    const where = {
+      OR: [
+        { isAlwaysAvailable: true },
+        {
+          isAlwaysAvailable: false,
+          availableFrom: { lte: now },
+          availableUntil: { gte: now },
+        },
+      ],
+    };
+
+    const [data, total] = await Promise.all([
+      prisma.test.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.test.count({ where }),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+    };
+  }
+
   static async getTestsByStudentAttempts(
     studentId: string,
     pagination?: PaginationParams

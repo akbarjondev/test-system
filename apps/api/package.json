@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "nodemon --watch src --exec \"ts-node -r tsconfig-paths/register\" src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "seed:admin": "ts-node -r tsconfig-paths/register src/scripts/seed-admin.ts"
   },
   "keywords": [],
   "author": "",
