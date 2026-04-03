@@ -1,22 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(ls /c/Users/akbarali_tojiyev/Documents/projects/test-system/apps/admin-dashboard/app/dashboard/tests/[id]/questions/)",
-      "Bash(ls:*)",
-      "Bash(podman --version)",
-      "Bash(podman ps:*)",
-      "Bash(podman machine:*)",
-      "Bash(npm run:*)",
-      "Bash(podman compose:*)",
-      "Bash(podman run:*)",
-      "Bash(podman exec:*)",
-      "Bash(npx prisma:*)",
-      "Bash(npx turbo:*)",
-      "Bash(find /c/Users/akbarali_tojiyev/Documents/projects/test-system/apps/admin-dashboard -name tsconfig*.json ! -path */node_modules/*)",
-      "Bash(xargs cat:*)",
-      "Bash(netstat -ano)",
-      "Bash(taskkill:*)",
-      "Bash(cmd //c \"taskkill /PID 33528 /F\")"
+      "Skill(codemie:codemie-commit)"
     ]
   }
 }

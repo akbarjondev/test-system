@@ -113,7 +113,7 @@ Client
 
 ## Artifacts Index
 
-Detailed reference docs in `/artifacts/`:
+Detailed reference docs in `/artifacts/`: 
 
 | File                               | Contents                                              |
 |------------------------------------|-------------------------------------------------------|
