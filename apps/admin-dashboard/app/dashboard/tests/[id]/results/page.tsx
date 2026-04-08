@@ -1,6 +1,7 @@
-import { API_ROUTES } from "@/config/enums";
+import { API_ROUTES, ROUTES } from "@/config/enums";
 import { API_URL } from "@/config/constants";
-import { getToken } from "@/lib/server-utils";
+import { getAuthOrRedirect } from "@/lib/server-utils";
+import { redirect } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -28,7 +29,7 @@ export default async function TestResultsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const token = await getToken();
+  const token = await getAuthOrRedirect();
 
   const [testRes, attemptsRes] = await Promise.all([
     fetch(`${API_URL}${API_ROUTES.TESTS}/${id}`, {
@@ -38,6 +39,11 @@ export default async function TestResultsPage({
       headers: { Authorization: `Bearer ${token}` },
     }),
   ]);
+
+  if (testRes.status === 401 || testRes.status === 403) redirect(ROUTES.LOGIN);
+  if (!testRes.ok) throw new Error("Test ma'lumotlarini yuklashda xatolik yuz berdi");
+  if (attemptsRes.status === 401 || attemptsRes.status === 403) redirect(ROUTES.LOGIN);
+  if (!attemptsRes.ok) throw new Error("Natijalarni yuklashda xatolik yuz berdi");
 
   const test = (await testRes.json()) as TestWithRelations;
   const attempts = (await attemptsRes.json()) as Attempt[];

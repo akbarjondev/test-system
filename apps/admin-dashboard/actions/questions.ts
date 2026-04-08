@@ -26,8 +26,11 @@ export const createQuestion = async (
       },
     );
 
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({})) as { error?: string };
+      return { error: err.error ?? "Failed to create question" };
+    }
     const responseData = await response.json();
-
     return responseData;
   } catch (error) {
     if (error instanceof Error) {
@@ -53,9 +56,9 @@ export const updateQuestion = async (
       },
     });
 
-    const responseData = await response.json();
-    if (responseData.error) {
-      return { error: responseData.error };
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({})) as { error?: string };
+      return { error: err.error ?? "Failed to update question" };
     }
 
     redirect(`${ROUTES.TESTS}/${testId}`);

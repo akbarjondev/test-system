@@ -38,12 +38,11 @@ export const createTest = async (
       },
     });
 
-    const responseData = await response.json();
-
-    if (responseData.error) {
-      return { error: responseData.error };
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({})) as { error?: string };
+      return { error: err.error ?? "Failed to create test" };
     }
-
+    const responseData = await response.json();
     redirect(`${ROUTES.TESTS}/${responseData.id}`);
   } catch (error) {
     if (error instanceof Error) {
@@ -72,9 +71,9 @@ export const updateTest = async (
       },
     });
 
-    const responseData = await response.json();
-    if (responseData.error) {
-      return { error: responseData.error };
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({})) as { error?: string };
+      return { error: err.error ?? "Failed to update test" };
     }
 
     redirect(`${ROUTES.TESTS}/${testId}`);

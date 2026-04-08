@@ -1,5 +1,7 @@
 import { API_URL } from "@/config/constants";
-import { getToken } from "@/lib/server-utils";
+import { getAuthOrRedirect } from "@/lib/server-utils";
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/config/enums";
 import {
   Table,
   TableBody,
@@ -19,12 +21,14 @@ type User = {
 };
 
 export default async function StudentsPage() {
-  const token = await getToken();
+  const token = await getAuthOrRedirect();
 
   const res = await fetch(`${API_URL}/api/users`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
   });
+  if (res.status === 401 || res.status === 403) redirect(ROUTES.LOGIN);
+  if (!res.ok) throw new Error("Foydalanuvchilarni yuklashda xatolik yuz berdi");
   const users = (await res.json()) as User[];
 
   return (

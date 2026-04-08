@@ -19,7 +19,8 @@ import {
 } from "@/components/ui/pagination";
 import { EyeIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
-import { getToken } from "@/lib/server-utils";
+import { getAuthOrRedirect } from "@/lib/server-utils";
+import { redirect } from "next/navigation";
 import { formatDuration } from "@/lib/utils";
 import { API_URL } from "@/config/constants";
 import { Button } from "@/components/ui/button";
@@ -32,9 +33,8 @@ export default async function TestsPage({
   const { page, limit } = await searchParams;
   const pageNumber = page ? parseInt(page) : 1;
   const limitNumber = limit ? parseInt(limit) : 20;
-  const token = await getToken();
+  const token = await getAuthOrRedirect();
 
-  // @TODO: refactor this fetch as a function and add try-catch block
   const tests = await fetch(
     `${API_URL}${API_ROUTES.TESTS}?page=${pageNumber}&limit=${limitNumber}`,
     {
@@ -43,6 +43,8 @@ export default async function TestsPage({
       },
     },
   );
+  if (tests.status === 401 || tests.status === 403) redirect(ROUTES.LOGIN);
+  if (!tests.ok) throw new Error("Testlarni yuklashda xatolik yuz berdi");
   const testsData = (await tests.json()) as unknown as PaginatedResponse<Test>;
 
   return (

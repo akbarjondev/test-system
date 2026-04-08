@@ -1,5 +1,7 @@
 import { API_URL } from "@/config/constants";
-import { getToken } from "@/lib/server-utils";
+import { getAuthOrRedirect } from "@/lib/server-utils";
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/config/enums";
 import { Card } from "@/components/ui/card";
 import { FormEditQuestion } from "./ui/FormEditQuestion";
 import { Question, Option } from "@test-system/database/prisma/generated/client";
@@ -12,11 +14,13 @@ export default async function EditQuestionPage({
   params: Promise<{ id: string; questionId: string }>;
 }) {
   const { id, questionId } = await params;
-  const token = await getToken();
+  const token = await getAuthOrRedirect();
 
   const res = await fetch(`${API_URL}/api/questions/${questionId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+  if (res.status === 401 || res.status === 403) redirect(ROUTES.LOGIN);
+  if (!res.ok) throw new Error("Savol ma'lumotlarini yuklashda xatolik yuz berdi");
   const question = (await res.json()) as QuestionWithOptions;
 
   return (

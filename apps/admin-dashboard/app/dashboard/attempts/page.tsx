@@ -1,5 +1,7 @@
 import { API_URL } from "@/config/constants";
-import { getToken } from "@/lib/server-utils";
+import { getAuthOrRedirect } from "@/lib/server-utils";
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/config/enums";
 import {
   Table,
   TableBody,
@@ -29,12 +31,14 @@ type PaginatedAttempts = {
 };
 
 export default async function AttemptsPage() {
-  const token = await getToken();
+  const token = await getAuthOrRedirect();
 
   const res = await fetch(`${API_URL}/api/attempts?limit=50`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
   });
+  if (res.status === 401 || res.status === 403) redirect(ROUTES.LOGIN);
+  if (!res.ok) throw new Error("Natijalarni yuklashda xatolik yuz berdi");
 
   const result = (await res.json()) as PaginatedAttempts;
   const attempts = result.data ?? [];

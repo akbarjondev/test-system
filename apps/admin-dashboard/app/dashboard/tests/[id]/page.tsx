@@ -1,5 +1,6 @@
 import { API_ROUTES, ROUTES } from "@/config/enums";
-import { getToken } from "@/lib/server-utils";
+import { getAuthOrRedirect } from "@/lib/server-utils";
+import { redirect } from "next/navigation";
 import dayjs from "dayjs";
 import { cn, formatDuration } from "@/lib/utils";
 import Link from "next/link";
@@ -16,11 +17,13 @@ export default async function TestDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const token = await getToken();
+  const token = await getAuthOrRedirect();
 
   const test = await fetch(`${API_URL}${API_ROUTES.TESTS}/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+  if (test.status === 401 || test.status === 403) redirect(ROUTES.LOGIN);
+  if (!test.ok) throw new Error("Test ma'lumotlarini yuklashda xatolik yuz berdi");
   const testData = (await test.json()) as unknown as TestWithRelations;
 
   return (

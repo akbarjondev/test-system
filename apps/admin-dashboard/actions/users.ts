@@ -20,8 +20,10 @@ export const updateUserRole = async (
       },
     });
 
-    const data = await response.json();
-    if (data.error) return { error: data.error };
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({})) as { error?: string };
+      return { error: err.error ?? "Failed to update role" };
+    }
 
     revalidatePath(ROUTES.STUDENTS);
     return {};
