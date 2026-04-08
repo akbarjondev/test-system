@@ -1,6 +1,6 @@
 # General Best Practices — Full Reference
 
-12 rules across 2 categories. Each rule has an incorrect example, a correct example, and context.
+15 rules across 3 categories. Each rule has an incorrect example, a correct example, and context.
 
 ---
 
