@@ -5,7 +5,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -109,4 +108,13 @@ model Answer {
 enum Role {
   ADMIN
   STUDENT
+}
+
+model BotSession {
+  key       String   @id  // Telegram chat ID as string key
+  value     String       // Serialized session JSON
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("bot_sessions")
 }

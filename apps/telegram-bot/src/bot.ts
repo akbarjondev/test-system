@@ -1,7 +1,9 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { Bot, Context, InlineKeyboard, session, SessionFlavor } from "grammy";
+import express from "express";
+import { Bot, Context, InlineKeyboard, session, SessionFlavor, webhookCallback } from "grammy";
+import { prisma } from "@test-system/database/lib/prisma";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -65,7 +67,24 @@ if (!TOKEN) {
 
 const bot = new Bot<Ctx>(TOKEN as string);
 
-bot.use(session({ initial: (): SessionData => ({ state: "idle" }) }));
+const botSessionStorage = {
+  async read(key: string) {
+    const row = await prisma.botSession.findUnique({ where: { key } });
+    return row ? (JSON.parse(row.value) as SessionData) : undefined;
+  },
+  async write(key: string, value: SessionData) {
+    await prisma.botSession.upsert({
+      where: { key },
+      update: { value: JSON.stringify(value) },
+      create: { key, value: JSON.stringify(value) },
+    });
+  },
+  async delete(key: string) {
+    await prisma.botSession.deleteMany({ where: { key } });
+  },
+};
+
+bot.use(session({ initial: (): SessionData => ({ state: "idle" }), storage: botSessionStorage }));
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -414,5 +433,22 @@ function escapeMarkdown(text: string): string {
 
 // ─── Start ────────────────────────────────────────────────────────────────────
 
-bot.start();
-console.log("🤖 Telegram bot ishga tushdi!");
+if (process.env.NODE_ENV === "production") {
+  const WEBHOOK_URL = process.env.WEBHOOK_URL;
+  if (!WEBHOOK_URL) {
+    process.exit(1);
+  }
+
+  const webhookApp = express();
+  webhookApp.use(express.json());
+
+  bot.api.setWebhook(`${WEBHOOK_URL}/webhook`);
+
+  webhookApp.post("/webhook", webhookCallback(bot, "express"));
+  webhookApp.get("/health", (_: any, res: any) => res.json({ status: "OK" }));
+
+  const PORT = process.env.PORT || 3001;
+  webhookApp.listen(PORT);
+} else {
+  bot.start();
+}

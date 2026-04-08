@@ -5,7 +5,7 @@ import { prisma } from "@test-system/database/lib/prisma";
 import { hashPassword } from "@test-system/shared/auth";
 
 async function main() {
-  const [email, password] = process.argv.slice(2);
+  const [email, password] = ["admin@example.com", "password123"];
 
   if (!email || !password) {
     console.error("Usage: ts-node seed-admin.ts <email> <password>");

@@ -48,6 +48,11 @@ export type QuestionOrder = $Result.DefaultSelection<Prisma.$QuestionOrderPayloa
  * 
  */
 export type Answer = $Result.DefaultSelection<Prisma.$AnswerPayload>
+/**
+ * Model BotSession
+ * 
+ */
+export type BotSession = $Result.DefaultSelection<Prisma.$BotSessionPayload>
 
 /**
  * Enums
@@ -252,6 +257,16 @@ export class PrismaClient<
     * ```
     */
   get answer(): Prisma.AnswerDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.botSession`: Exposes CRUD operations for the **BotSession** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BotSessions
+    * const botSessions = await prisma.botSession.findMany()
+    * ```
+    */
+  get botSession(): Prisma.BotSessionDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -692,7 +707,8 @@ export namespace Prisma {
     Option: 'Option',
     TestAttempt: 'TestAttempt',
     QuestionOrder: 'QuestionOrder',
-    Answer: 'Answer'
+    Answer: 'Answer',
+    BotSession: 'BotSession'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -708,7 +724,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "test" | "question" | "option" | "testAttempt" | "questionOrder" | "answer"
+      modelProps: "user" | "test" | "question" | "option" | "testAttempt" | "questionOrder" | "answer" | "botSession"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1230,6 +1246,80 @@ export namespace Prisma {
           }
         }
       }
+      BotSession: {
+        payload: Prisma.$BotSessionPayload<ExtArgs>
+        fields: Prisma.BotSessionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BotSessionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BotSessionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BotSessionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BotSessionPayload>
+          }
+          findFirst: {
+            args: Prisma.BotSessionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BotSessionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BotSessionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BotSessionPayload>
+          }
+          findMany: {
+            args: Prisma.BotSessionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BotSessionPayload>[]
+          }
+          create: {
+            args: Prisma.BotSessionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BotSessionPayload>
+          }
+          createMany: {
+            args: Prisma.BotSessionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BotSessionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BotSessionPayload>[]
+          }
+          delete: {
+            args: Prisma.BotSessionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BotSessionPayload>
+          }
+          update: {
+            args: Prisma.BotSessionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BotSessionPayload>
+          }
+          deleteMany: {
+            args: Prisma.BotSessionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BotSessionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BotSessionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BotSessionPayload>[]
+          }
+          upsert: {
+            args: Prisma.BotSessionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BotSessionPayload>
+          }
+          aggregate: {
+            args: Prisma.BotSessionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBotSession>
+          }
+          groupBy: {
+            args: Prisma.BotSessionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BotSessionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BotSessionCountArgs<ExtArgs>
+            result: $Utils.Optional<BotSessionCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1345,6 +1435,7 @@ export namespace Prisma {
     testAttempt?: TestAttemptOmit
     questionOrder?: QuestionOrderOmit
     answer?: AnswerOmit
+    botSession?: BotSessionOmit
   }
 
   /* Types for Logging */
@@ -9518,6 +9609,988 @@ export namespace Prisma {
 
 
   /**
+   * Model BotSession
+   */
+
+  export type AggregateBotSession = {
+    _count: BotSessionCountAggregateOutputType | null
+    _min: BotSessionMinAggregateOutputType | null
+    _max: BotSessionMaxAggregateOutputType | null
+  }
+
+  export type BotSessionMinAggregateOutputType = {
+    key: string | null
+    value: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type BotSessionMaxAggregateOutputType = {
+    key: string | null
+    value: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type BotSessionCountAggregateOutputType = {
+    key: number
+    value: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type BotSessionMinAggregateInputType = {
+    key?: true
+    value?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type BotSessionMaxAggregateInputType = {
+    key?: true
+    value?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type BotSessionCountAggregateInputType = {
+    key?: true
+    value?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type BotSessionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BotSession to aggregate.
+     */
+    where?: BotSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BotSessions to fetch.
+     */
+    orderBy?: BotSessionOrderByWithRelationInput | BotSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BotSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BotSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BotSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BotSessions
+    **/
+    _count?: true | BotSessionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BotSessionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BotSessionMaxAggregateInputType
+  }
+
+  export type GetBotSessionAggregateType<T extends BotSessionAggregateArgs> = {
+        [P in keyof T & keyof AggregateBotSession]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBotSession[P]>
+      : GetScalarType<T[P], AggregateBotSession[P]>
+  }
+
+
+
+
+  export type BotSessionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BotSessionWhereInput
+    orderBy?: BotSessionOrderByWithAggregationInput | BotSessionOrderByWithAggregationInput[]
+    by: BotSessionScalarFieldEnum[] | BotSessionScalarFieldEnum
+    having?: BotSessionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BotSessionCountAggregateInputType | true
+    _min?: BotSessionMinAggregateInputType
+    _max?: BotSessionMaxAggregateInputType
+  }
+
+  export type BotSessionGroupByOutputType = {
+    key: string
+    value: string
+    createdAt: Date
+    updatedAt: Date
+    _count: BotSessionCountAggregateOutputType | null
+    _min: BotSessionMinAggregateOutputType | null
+    _max: BotSessionMaxAggregateOutputType | null
+  }
+
+  type GetBotSessionGroupByPayload<T extends BotSessionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BotSessionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BotSessionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BotSessionGroupByOutputType[P]>
+            : GetScalarType<T[P], BotSessionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BotSessionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    key?: boolean
+    value?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["botSession"]>
+
+  export type BotSessionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    key?: boolean
+    value?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["botSession"]>
+
+  export type BotSessionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    key?: boolean
+    value?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["botSession"]>
+
+  export type BotSessionSelectScalar = {
+    key?: boolean
+    value?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type BotSessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"key" | "value" | "createdAt" | "updatedAt", ExtArgs["result"]["botSession"]>
+
+  export type $BotSessionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BotSession"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      key: string
+      value: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["botSession"]>
+    composites: {}
+  }
+
+  type BotSessionGetPayload<S extends boolean | null | undefined | BotSessionDefaultArgs> = $Result.GetResult<Prisma.$BotSessionPayload, S>
+
+  type BotSessionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BotSessionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BotSessionCountAggregateInputType | true
+    }
+
+  export interface BotSessionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BotSession'], meta: { name: 'BotSession' } }
+    /**
+     * Find zero or one BotSession that matches the filter.
+     * @param {BotSessionFindUniqueArgs} args - Arguments to find a BotSession
+     * @example
+     * // Get one BotSession
+     * const botSession = await prisma.botSession.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BotSessionFindUniqueArgs>(args: SelectSubset<T, BotSessionFindUniqueArgs<ExtArgs>>): Prisma__BotSessionClient<$Result.GetResult<Prisma.$BotSessionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one BotSession that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BotSessionFindUniqueOrThrowArgs} args - Arguments to find a BotSession
+     * @example
+     * // Get one BotSession
+     * const botSession = await prisma.botSession.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BotSessionFindUniqueOrThrowArgs>(args: SelectSubset<T, BotSessionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BotSessionClient<$Result.GetResult<Prisma.$BotSessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BotSession that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BotSessionFindFirstArgs} args - Arguments to find a BotSession
+     * @example
+     * // Get one BotSession
+     * const botSession = await prisma.botSession.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BotSessionFindFirstArgs>(args?: SelectSubset<T, BotSessionFindFirstArgs<ExtArgs>>): Prisma__BotSessionClient<$Result.GetResult<Prisma.$BotSessionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BotSession that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BotSessionFindFirstOrThrowArgs} args - Arguments to find a BotSession
+     * @example
+     * // Get one BotSession
+     * const botSession = await prisma.botSession.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BotSessionFindFirstOrThrowArgs>(args?: SelectSubset<T, BotSessionFindFirstOrThrowArgs<ExtArgs>>): Prisma__BotSessionClient<$Result.GetResult<Prisma.$BotSessionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more BotSessions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BotSessionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BotSessions
+     * const botSessions = await prisma.botSession.findMany()
+     * 
+     * // Get first 10 BotSessions
+     * const botSessions = await prisma.botSession.findMany({ take: 10 })
+     * 
+     * // Only select the `key`
+     * const botSessionWithKeyOnly = await prisma.botSession.findMany({ select: { key: true } })
+     * 
+     */
+    findMany<T extends BotSessionFindManyArgs>(args?: SelectSubset<T, BotSessionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BotSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a BotSession.
+     * @param {BotSessionCreateArgs} args - Arguments to create a BotSession.
+     * @example
+     * // Create one BotSession
+     * const BotSession = await prisma.botSession.create({
+     *   data: {
+     *     // ... data to create a BotSession
+     *   }
+     * })
+     * 
+     */
+    create<T extends BotSessionCreateArgs>(args: SelectSubset<T, BotSessionCreateArgs<ExtArgs>>): Prisma__BotSessionClient<$Result.GetResult<Prisma.$BotSessionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many BotSessions.
+     * @param {BotSessionCreateManyArgs} args - Arguments to create many BotSessions.
+     * @example
+     * // Create many BotSessions
+     * const botSession = await prisma.botSession.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BotSessionCreateManyArgs>(args?: SelectSubset<T, BotSessionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many BotSessions and returns the data saved in the database.
+     * @param {BotSessionCreateManyAndReturnArgs} args - Arguments to create many BotSessions.
+     * @example
+     * // Create many BotSessions
+     * const botSession = await prisma.botSession.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many BotSessions and only return the `key`
+     * const botSessionWithKeyOnly = await prisma.botSession.createManyAndReturn({
+     *   select: { key: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BotSessionCreateManyAndReturnArgs>(args?: SelectSubset<T, BotSessionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BotSessionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a BotSession.
+     * @param {BotSessionDeleteArgs} args - Arguments to delete one BotSession.
+     * @example
+     * // Delete one BotSession
+     * const BotSession = await prisma.botSession.delete({
+     *   where: {
+     *     // ... filter to delete one BotSession
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BotSessionDeleteArgs>(args: SelectSubset<T, BotSessionDeleteArgs<ExtArgs>>): Prisma__BotSessionClient<$Result.GetResult<Prisma.$BotSessionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one BotSession.
+     * @param {BotSessionUpdateArgs} args - Arguments to update one BotSession.
+     * @example
+     * // Update one BotSession
+     * const botSession = await prisma.botSession.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BotSessionUpdateArgs>(args: SelectSubset<T, BotSessionUpdateArgs<ExtArgs>>): Prisma__BotSessionClient<$Result.GetResult<Prisma.$BotSessionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more BotSessions.
+     * @param {BotSessionDeleteManyArgs} args - Arguments to filter BotSessions to delete.
+     * @example
+     * // Delete a few BotSessions
+     * const { count } = await prisma.botSession.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BotSessionDeleteManyArgs>(args?: SelectSubset<T, BotSessionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BotSessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BotSessionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BotSessions
+     * const botSession = await prisma.botSession.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BotSessionUpdateManyArgs>(args: SelectSubset<T, BotSessionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BotSessions and returns the data updated in the database.
+     * @param {BotSessionUpdateManyAndReturnArgs} args - Arguments to update many BotSessions.
+     * @example
+     * // Update many BotSessions
+     * const botSession = await prisma.botSession.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more BotSessions and only return the `key`
+     * const botSessionWithKeyOnly = await prisma.botSession.updateManyAndReturn({
+     *   select: { key: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BotSessionUpdateManyAndReturnArgs>(args: SelectSubset<T, BotSessionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BotSessionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one BotSession.
+     * @param {BotSessionUpsertArgs} args - Arguments to update or create a BotSession.
+     * @example
+     * // Update or create a BotSession
+     * const botSession = await prisma.botSession.upsert({
+     *   create: {
+     *     // ... data to create a BotSession
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BotSession we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BotSessionUpsertArgs>(args: SelectSubset<T, BotSessionUpsertArgs<ExtArgs>>): Prisma__BotSessionClient<$Result.GetResult<Prisma.$BotSessionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of BotSessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BotSessionCountArgs} args - Arguments to filter BotSessions to count.
+     * @example
+     * // Count the number of BotSessions
+     * const count = await prisma.botSession.count({
+     *   where: {
+     *     // ... the filter for the BotSessions we want to count
+     *   }
+     * })
+    **/
+    count<T extends BotSessionCountArgs>(
+      args?: Subset<T, BotSessionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BotSessionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BotSession.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BotSessionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BotSessionAggregateArgs>(args: Subset<T, BotSessionAggregateArgs>): Prisma.PrismaPromise<GetBotSessionAggregateType<T>>
+
+    /**
+     * Group by BotSession.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BotSessionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BotSessionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BotSessionGroupByArgs['orderBy'] }
+        : { orderBy?: BotSessionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BotSessionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBotSessionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BotSession model
+   */
+  readonly fields: BotSessionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BotSession.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BotSessionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BotSession model
+   */
+  interface BotSessionFieldRefs {
+    readonly key: FieldRef<"BotSession", 'String'>
+    readonly value: FieldRef<"BotSession", 'String'>
+    readonly createdAt: FieldRef<"BotSession", 'DateTime'>
+    readonly updatedAt: FieldRef<"BotSession", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BotSession findUnique
+   */
+  export type BotSessionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BotSession
+     */
+    select?: BotSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BotSession
+     */
+    omit?: BotSessionOmit<ExtArgs> | null
+    /**
+     * Filter, which BotSession to fetch.
+     */
+    where: BotSessionWhereUniqueInput
+  }
+
+  /**
+   * BotSession findUniqueOrThrow
+   */
+  export type BotSessionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BotSession
+     */
+    select?: BotSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BotSession
+     */
+    omit?: BotSessionOmit<ExtArgs> | null
+    /**
+     * Filter, which BotSession to fetch.
+     */
+    where: BotSessionWhereUniqueInput
+  }
+
+  /**
+   * BotSession findFirst
+   */
+  export type BotSessionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BotSession
+     */
+    select?: BotSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BotSession
+     */
+    omit?: BotSessionOmit<ExtArgs> | null
+    /**
+     * Filter, which BotSession to fetch.
+     */
+    where?: BotSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BotSessions to fetch.
+     */
+    orderBy?: BotSessionOrderByWithRelationInput | BotSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BotSessions.
+     */
+    cursor?: BotSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BotSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BotSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BotSessions.
+     */
+    distinct?: BotSessionScalarFieldEnum | BotSessionScalarFieldEnum[]
+  }
+
+  /**
+   * BotSession findFirstOrThrow
+   */
+  export type BotSessionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BotSession
+     */
+    select?: BotSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BotSession
+     */
+    omit?: BotSessionOmit<ExtArgs> | null
+    /**
+     * Filter, which BotSession to fetch.
+     */
+    where?: BotSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BotSessions to fetch.
+     */
+    orderBy?: BotSessionOrderByWithRelationInput | BotSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BotSessions.
+     */
+    cursor?: BotSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BotSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BotSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BotSessions.
+     */
+    distinct?: BotSessionScalarFieldEnum | BotSessionScalarFieldEnum[]
+  }
+
+  /**
+   * BotSession findMany
+   */
+  export type BotSessionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BotSession
+     */
+    select?: BotSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BotSession
+     */
+    omit?: BotSessionOmit<ExtArgs> | null
+    /**
+     * Filter, which BotSessions to fetch.
+     */
+    where?: BotSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BotSessions to fetch.
+     */
+    orderBy?: BotSessionOrderByWithRelationInput | BotSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BotSessions.
+     */
+    cursor?: BotSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BotSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BotSessions.
+     */
+    skip?: number
+    distinct?: BotSessionScalarFieldEnum | BotSessionScalarFieldEnum[]
+  }
+
+  /**
+   * BotSession create
+   */
+  export type BotSessionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BotSession
+     */
+    select?: BotSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BotSession
+     */
+    omit?: BotSessionOmit<ExtArgs> | null
+    /**
+     * The data needed to create a BotSession.
+     */
+    data: XOR<BotSessionCreateInput, BotSessionUncheckedCreateInput>
+  }
+
+  /**
+   * BotSession createMany
+   */
+  export type BotSessionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BotSessions.
+     */
+    data: BotSessionCreateManyInput | BotSessionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BotSession createManyAndReturn
+   */
+  export type BotSessionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BotSession
+     */
+    select?: BotSessionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BotSession
+     */
+    omit?: BotSessionOmit<ExtArgs> | null
+    /**
+     * The data used to create many BotSessions.
+     */
+    data: BotSessionCreateManyInput | BotSessionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BotSession update
+   */
+  export type BotSessionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BotSession
+     */
+    select?: BotSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BotSession
+     */
+    omit?: BotSessionOmit<ExtArgs> | null
+    /**
+     * The data needed to update a BotSession.
+     */
+    data: XOR<BotSessionUpdateInput, BotSessionUncheckedUpdateInput>
+    /**
+     * Choose, which BotSession to update.
+     */
+    where: BotSessionWhereUniqueInput
+  }
+
+  /**
+   * BotSession updateMany
+   */
+  export type BotSessionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BotSessions.
+     */
+    data: XOR<BotSessionUpdateManyMutationInput, BotSessionUncheckedUpdateManyInput>
+    /**
+     * Filter which BotSessions to update
+     */
+    where?: BotSessionWhereInput
+    /**
+     * Limit how many BotSessions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BotSession updateManyAndReturn
+   */
+  export type BotSessionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BotSession
+     */
+    select?: BotSessionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BotSession
+     */
+    omit?: BotSessionOmit<ExtArgs> | null
+    /**
+     * The data used to update BotSessions.
+     */
+    data: XOR<BotSessionUpdateManyMutationInput, BotSessionUncheckedUpdateManyInput>
+    /**
+     * Filter which BotSessions to update
+     */
+    where?: BotSessionWhereInput
+    /**
+     * Limit how many BotSessions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BotSession upsert
+   */
+  export type BotSessionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BotSession
+     */
+    select?: BotSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BotSession
+     */
+    omit?: BotSessionOmit<ExtArgs> | null
+    /**
+     * The filter to search for the BotSession to update in case it exists.
+     */
+    where: BotSessionWhereUniqueInput
+    /**
+     * In case the BotSession found by the `where` argument doesn't exist, create a new BotSession with this data.
+     */
+    create: XOR<BotSessionCreateInput, BotSessionUncheckedCreateInput>
+    /**
+     * In case the BotSession was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BotSessionUpdateInput, BotSessionUncheckedUpdateInput>
+  }
+
+  /**
+   * BotSession delete
+   */
+  export type BotSessionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BotSession
+     */
+    select?: BotSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BotSession
+     */
+    omit?: BotSessionOmit<ExtArgs> | null
+    /**
+     * Filter which BotSession to delete.
+     */
+    where: BotSessionWhereUniqueInput
+  }
+
+  /**
+   * BotSession deleteMany
+   */
+  export type BotSessionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BotSessions to delete
+     */
+    where?: BotSessionWhereInput
+    /**
+     * Limit how many BotSessions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * BotSession without action
+   */
+  export type BotSessionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BotSession
+     */
+    select?: BotSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BotSession
+     */
+    omit?: BotSessionOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -9612,6 +10685,16 @@ export namespace Prisma {
   };
 
   export type AnswerScalarFieldEnum = (typeof AnswerScalarFieldEnum)[keyof typeof AnswerScalarFieldEnum]
+
+
+  export const BotSessionScalarFieldEnum: {
+    key: 'key',
+    value: 'value',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type BotSessionScalarFieldEnum = (typeof BotSessionScalarFieldEnum)[keyof typeof BotSessionScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -10185,6 +11268,53 @@ export namespace Prisma {
     answeredAt?: DateTimeWithAggregatesFilter<"Answer"> | Date | string
   }
 
+  export type BotSessionWhereInput = {
+    AND?: BotSessionWhereInput | BotSessionWhereInput[]
+    OR?: BotSessionWhereInput[]
+    NOT?: BotSessionWhereInput | BotSessionWhereInput[]
+    key?: StringFilter<"BotSession"> | string
+    value?: StringFilter<"BotSession"> | string
+    createdAt?: DateTimeFilter<"BotSession"> | Date | string
+    updatedAt?: DateTimeFilter<"BotSession"> | Date | string
+  }
+
+  export type BotSessionOrderByWithRelationInput = {
+    key?: SortOrder
+    value?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BotSessionWhereUniqueInput = Prisma.AtLeast<{
+    key?: string
+    AND?: BotSessionWhereInput | BotSessionWhereInput[]
+    OR?: BotSessionWhereInput[]
+    NOT?: BotSessionWhereInput | BotSessionWhereInput[]
+    value?: StringFilter<"BotSession"> | string
+    createdAt?: DateTimeFilter<"BotSession"> | Date | string
+    updatedAt?: DateTimeFilter<"BotSession"> | Date | string
+  }, "key">
+
+  export type BotSessionOrderByWithAggregationInput = {
+    key?: SortOrder
+    value?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: BotSessionCountOrderByAggregateInput
+    _max?: BotSessionMaxOrderByAggregateInput
+    _min?: BotSessionMinOrderByAggregateInput
+  }
+
+  export type BotSessionScalarWhereWithAggregatesInput = {
+    AND?: BotSessionScalarWhereWithAggregatesInput | BotSessionScalarWhereWithAggregatesInput[]
+    OR?: BotSessionScalarWhereWithAggregatesInput[]
+    NOT?: BotSessionScalarWhereWithAggregatesInput | BotSessionScalarWhereWithAggregatesInput[]
+    key?: StringWithAggregatesFilter<"BotSession"> | string
+    value?: StringWithAggregatesFilter<"BotSession"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"BotSession"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"BotSession"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -10644,6 +11774,55 @@ export namespace Prisma {
     optionId?: NullableStringFieldUpdateOperationsInput | string | null
     pointsEarned?: FloatFieldUpdateOperationsInput | number
     answeredAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BotSessionCreateInput = {
+    key: string
+    value: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BotSessionUncheckedCreateInput = {
+    key: string
+    value: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BotSessionUpdateInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BotSessionUncheckedUpdateInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BotSessionCreateManyInput = {
+    key: string
+    value: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BotSessionUpdateManyMutationInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BotSessionUncheckedUpdateManyInput = {
+    key?: StringFieldUpdateOperationsInput | string
+    value?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -11204,6 +12383,27 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type BotSessionCountOrderByAggregateInput = {
+    key?: SortOrder
+    value?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BotSessionMaxOrderByAggregateInput = {
+    key?: SortOrder
+    value?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BotSessionMinOrderByAggregateInput = {
+    key?: SortOrder
+    value?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type TestCreateNestedManyWithoutCreatedByInput = {

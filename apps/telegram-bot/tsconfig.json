@@ -3,7 +3,12 @@
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "paths": {
+      "@test-system/database/*": ["../../packages/database/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

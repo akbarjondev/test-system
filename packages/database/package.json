@@ -5,13 +5,15 @@
   "main": "prisma/generated/client/index.js",
   "types": "prisma/generated/client/index.d.ts",
   "exports": {
-    "./generated/client": "./prisma/generated/client/index.js"
+    "./generated/client": "./prisma/generated/client/index.js",
+    "./lib/prisma": "./lib/prisma.ts"
   },
   "scripts": {
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:reset": "prisma migrate reset"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.2.0",
