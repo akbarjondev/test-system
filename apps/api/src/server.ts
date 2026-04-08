@@ -8,9 +8,12 @@ import authRoutes from "./routes/auth";
 import testsRoutes from "./routes/tests";
 import questionsRoutes from "./routes/questions";
 import attemptsRoutes from "./routes/attempts";
+import usersRoutes from "./routes/users";
 import rateLimit from "express-rate-limit";
+import { validateEnv } from "./config/env";
 
 dotenv.config();
+validateEnv();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -40,7 +43,7 @@ app.get("/api-docs.json", (_, res) => {
 
 // Routes
 app.use("/api/auth", authRoutes);
-// app.use("/api/users", usersRoutes); // to create student users
+app.use("/api/users", usersRoutes);
 app.use("/api/tests", testsRoutes);
 app.use("/api", questionsRoutes);
 app.use("/api", attemptsRoutes);

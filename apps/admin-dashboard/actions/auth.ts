@@ -42,12 +42,11 @@ export const login = async (
       },
     );
 
-    const responseData = await response.json();
-    if (responseData.error) {
-      return {
-        message: mapError(responseData.error satisfies string),
-      };
+    if (!response.ok) {
+      const responseData = await response.json().catch(() => ({})) as { error?: string };
+      return { message: mapError(responseData.error ?? "Login failed") };
     }
+    const responseData = await response.json();
 
     const { token, user } = responseData as {
       token: string;

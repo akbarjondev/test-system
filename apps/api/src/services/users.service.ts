@@ -26,4 +26,14 @@ export class UsersService {
   static async getUserById(id: string): Promise<User | null> {
     return UsersRepository.getUserById(id);
   }
+
+  static async getAllUsers(): Promise<User[]> {
+    return UsersRepository.getAllUsers();
+  }
+
+  static async updateUserRole(id: string, role: User["role"]): Promise<User> {
+    const user = await UsersRepository.getUserById(id);
+    if (!user) throw new Error("User not found");
+    return UsersRepository.updateUserRole(id, role);
+  }
 }

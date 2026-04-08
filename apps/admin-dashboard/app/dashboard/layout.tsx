@@ -1,7 +1,5 @@
-import { ROUTES } from "@/config/enums";
-import Link from "next/link";
-import { LogoutButton } from "./ui/LogoutButton";
-import { BackButton } from "./ui/BackButton";
+import { Sidebar } from "./ui/Sidebar";
+import { ConditionalBackButton } from "./ui/ConditionalBackButton";
 
 export default function DashboardLayout({
   children,
@@ -9,31 +7,13 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col min-h-screen w-full">
-      <header className="bg-white dark:bg-black p-4 flex justify-between items-center">
-        {/* @TODO: add breadcrumbs and logo*/}
+    <div className="flex min-h-screen w-full bg-zinc-50 dark:bg-zinc-950">
+      <Sidebar />
 
-        <nav className="flex items-center gap-4">
-          <Link href={ROUTES.DASHBOARD}>Bosh sahifa</Link>
-          <Link href={ROUTES.TESTS}>Testlar</Link>
-          <Link href={ROUTES.STUDENTS}>O&apos;quvchilar</Link>
-        </nav>
-
-        <LogoutButton />
-      </header>
-
-      <main className="flex-1 p-4">
-        <div className="mb-4">
-          <BackButton />
-        </div>
+      <main className="flex-1 overflow-y-auto p-6">
+        <ConditionalBackButton />
         {children}
       </main>
-
-      <footer className="bg-white dark:bg-black p-4">
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          &copy; {new Date().getFullYear()} Test tizimi.
-        </p>
-      </footer>
     </div>
   );
 }

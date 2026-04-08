@@ -109,3 +109,12 @@ enum Role {
   ADMIN
   STUDENT
 }
+
+model BotSession {
+  key       String   @id // Telegram chat ID as string key
+  value     String // Serialized session JSON
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("bot_sessions")
+}

@@ -182,6 +182,13 @@ exports.Prisma.AnswerScalarFieldEnum = {
   answeredAt: 'answeredAt'
 };
 
+exports.Prisma.BotSessionScalarFieldEnum = {
+  key: 'key',
+  value: 'value',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -208,7 +215,8 @@ exports.Prisma.ModelName = {
   Option: 'Option',
   TestAttempt: 'TestAttempt',
   QuestionOrder: 'QuestionOrder',
-  Answer: 'Answer'
+  Answer: 'Answer',
+  BotSession: 'BotSession'
 };
 
 /**

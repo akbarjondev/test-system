@@ -75,4 +75,42 @@ export class UsersController {
       res.status(500).json({ error: "Internal server error" });
     }
   }
+
+  static async getAllUsers(req: Request, res: Response) {
+    try {
+      const users = await UsersService.getAllUsers();
+      return res.json(
+        users.map((u) => ({
+          id: u.id,
+          email: u.email,
+          role: u.role,
+          createdAt: u.createdAt,
+        }))
+      );
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
+  static async updateUserRole(
+    req: Request<{ userId: string }, {}, { role: string }>,
+    res: Response
+  ) {
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    if (role !== "ADMIN" && role !== "STUDENT") {
+      return res.status(400).json({ error: "Role must be ADMIN or STUDENT" });
+    }
+
+    try {
+      const user = await UsersService.updateUserRole(userId, role as User["role"]);
+      return res.json({ id: user.id, email: user.email, role: user.role });
+    } catch (error: any) {
+      if (error.message === "User not found") {
+        return res.status(404).json({ error: "User not found" });
+      }
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
 }

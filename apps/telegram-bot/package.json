@@ -1,0 +1,23 @@
+{
+  "name": "@test-system/telegram-bot",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "ts-node -r tsconfig-paths/register src/bot.ts",
+    "build": "tsc",
+    "start": "node dist/bot.js"
+  },
+  "dependencies": {
+    "@test-system/database": "*",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "grammy": "^1.36.3"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "@types/express": "^5.0.6",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.3"
+  }
+}

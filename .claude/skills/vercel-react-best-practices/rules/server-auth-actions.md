@@ -5,6 +5,11 @@ impactDescription: prevents unauthorized access to server mutations
 tags: server, server-actions, authentication, security, authorization
 ---
 
+> **Project override (test-system)**: Server actions in `apps/admin-dashboard/actions/` do NOT
+> access the database directly. They call the Express API via `proxy.ts`. Replace the `db.*` calls
+> in the examples below with `await fetch('/api/...')` calls through the proxy. All auth and
+> authorization is enforced by `verifyTokenMiddleware` / `verifyAdminMiddleware` in the API layer.
+
 ## Authenticate Server Actions Like API Routes
 
 **Impact: CRITICAL (prevents unauthorized access to server mutations)**

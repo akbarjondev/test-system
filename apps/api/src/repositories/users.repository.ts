@@ -19,4 +19,12 @@ export class UsersRepository {
   static async getUserById(id: string): Promise<User | null> {
     return prisma.user.findUnique({ where: { id } });
   }
+
+  static async getAllUsers(): Promise<User[]> {
+    return prisma.user.findMany({ orderBy: { createdAt: "desc" } });
+  }
+
+  static async updateUserRole(id: string, role: User["role"]): Promise<User> {
+    return prisma.user.update({ where: { id }, data: { role } });
+  }
 }

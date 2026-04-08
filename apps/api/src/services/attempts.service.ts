@@ -254,6 +254,13 @@ export class AttemptsService {
   }
 
   /**
+   * Get all attempts across all tests (admin only)
+   */
+  static async getAllAttempts(pagination?: { page?: number; limit?: number }) {
+    return await AttemptsRepository.getAllAttempts(pagination);
+  }
+
+  /**
    * Get all attempts for a student
    */
   static async getStudentAttempts(studentId: string): Promise<TestAttempt[]> {

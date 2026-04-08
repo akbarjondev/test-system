@@ -9,6 +9,22 @@ export interface SubmitAnswerRequest {
 
 export class AttemptsController {
   /**
+   * Get all attempts across all tests (admin only)
+   * GET /api/attempts
+   */
+  static async getAllAttempts(req: Request, res: Response) {
+    try {
+      const page = req.query.page ? Number(req.query.page) : undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : undefined;
+
+      const result = await AttemptsService.getAllAttempts({ page, limit });
+      return res.json(result);
+    } catch (error) {
+      return res.status(500).json({ error: "Failed to fetch attempts" });
+    }
+  }
+
+  /**
    * Start a test attempt
    * POST /api/tests/:testId/attempts/start
    */
