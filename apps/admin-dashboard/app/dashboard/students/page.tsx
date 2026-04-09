@@ -16,6 +16,8 @@ import { ChangeRoleButton } from "./ui/ChangeRoleButton";
 type User = {
   id: string;
   email: string | null;
+  fullName: string | null;
+  phone: string | null;
   role: "ADMIN" | "STUDENT";
   createdAt: string;
 };
@@ -42,17 +44,21 @@ export default async function StudentsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>#</TableHead>
+              <TableHead>Ism</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Telefon</TableHead>
               <TableHead>Rol</TableHead>
               <TableHead>Ro&apos;yxatdan o&apos;tgan sana</TableHead>
-              <TableHead>Amалlar</TableHead>
+              <TableHead>Amallar</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {users.map((user, index) => (
               <TableRow key={user.id}>
                 <TableCell>{index + 1}</TableCell>
-                <TableCell>{user.email ?? ''}</TableCell>
+                <TableCell>{user.fullName ?? '—'}</TableCell>
+                <TableCell>{user.email ?? '—'}</TableCell>
+                <TableCell>{user.phone ?? '—'}</TableCell>
                 <TableCell>
                   <span
                     className={

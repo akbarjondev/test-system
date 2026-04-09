@@ -275,7 +275,7 @@ export const FormEditTest = ({ test }: { test: Test }) => {
               <div className="flex items-center gap-2">
                 <Checkbox
                   id="allowOnlyOneAttempt"
-                  checked={form.getValues("allowOnlyOneAttempt")}
+                  checked={form.watch("allowOnlyOneAttempt")}
                   onCheckedChange={() =>
                     form.setValue(
                       "allowOnlyOneAttempt",

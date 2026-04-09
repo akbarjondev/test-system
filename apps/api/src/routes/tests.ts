@@ -7,7 +7,7 @@ import { createTestSchema, updateTestSchema, testUnlockSchema } from "src/config
 const router = express.Router();
 router.use(verifyTokenMiddleware);
 
-router.post("/unlock", validate(testUnlockSchema), verifyTokenMiddleware, TestsController.unlockTest);
+router.post("/unlock", validate(testUnlockSchema), TestsController.unlockTest);
 router.post("/", validate(createTestSchema), TestsController.createTest);
 router.get("/", TestsController.getAllTests);
 router.get("/:testId", TestsController.getTestById);

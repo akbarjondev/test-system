@@ -2,7 +2,14 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-import { Bot, Context, InlineKeyboard, session, SessionFlavor, webhookCallback } from "grammy";
+import {
+  Bot,
+  Context,
+  InlineKeyboard,
+  session,
+  SessionFlavor,
+  webhookCallback,
+} from "grammy";
 import { prisma } from "@test-system/database/lib/prisma";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -83,12 +90,13 @@ const botSessionStorage = {
   },
 };
 
-bot.use(session({ initial: (): SessionData => ({}), storage: botSessionStorage }));
+bot.use(
+  session({ initial: (): SessionData => ({}), storage: botSessionStorage }),
+);
 
 // ─── Global error handler ─────────────────────────────────────────────────────
 
 bot.catch((err) => {
-  console.error("Bot error:", err.error);
   try {
     err.ctx.reply("Xatolik yuz berdi. Iltimos qayta urinib ko'ring.");
   } catch {
@@ -125,7 +133,7 @@ async function sendQuestion(ctx: Ctx) {
   const current = currentQuestionIndex + 1;
   const labels = ["A", "B", "C", "D", "E", "F"];
 
-  const questionText = `❓ *Savol ${current}/${total}*\n\n${question.text}`;
+  const questionText = `❓ *Savol ${current}/${total}*\n\n${escapeMarkdown(question.text)}`;
 
   ctx.session.currentQuestionText = questionText;
   ctx.session.currentOptions = question.options.map((opt, i) => ({
@@ -136,16 +144,26 @@ async function sendQuestion(ctx: Ctx) {
 
   const keyboard = new InlineKeyboard();
   for (let i = 0; i < question.options.length; i++) {
-    keyboard.text(`${labels[i]}) ${question.options[i]!.text}`, `ans:${i}`).row();
+    keyboard
+      .text(`${labels[i]}) ${question.options[i]!.text}`, `ans:${i}`)
+      .row();
   }
 
-  await ctx.reply(questionText, { reply_markup: keyboard, parse_mode: "Markdown" });
+  await ctx.reply(questionText, {
+    reply_markup: keyboard,
+    parse_mode: "Markdown",
+  });
 }
 
 async function showAlreadyAttemptedMessage(ctx: Ctx, testId: string) {
   try {
     // Fetch student's previous attempts to find score for this test
-    const attemptsData = await api("GET", "/api/attempts/my-attempts", undefined, ctx.session.token);
+    const attemptsData = await api(
+      "GET",
+      "/api/attempts/my-attempts",
+      undefined,
+      ctx.session.token,
+    );
     const allAttempts: any[] = Array.isArray(attemptsData) ? attemptsData : [];
     const prevAttempt = allAttempts.find(
       (a: any) => a.testId === testId && a.submittedAt !== null,
@@ -153,7 +171,19 @@ async function showAlreadyAttemptedMessage(ctx: Ctx, testId: string) {
 
     if (prevAttempt && prevAttempt.score !== null) {
       // Fetch test details to get question count for maxScore calculation
-      const test = await api("GET", `/api/tests/${testId}`, undefined, ctx.session.token);
+      const test = await api(
+        "GET",
+        `/api/tests/${testId}`,
+        undefined,
+        ctx.session.token,
+      );
+      if (!test || test.error) {
+        await ctx.reply(
+          `✅ Siz bu testni allaqachon topshirgansiz!\n\nSizning natijangiz: ${prevAttempt.score}`,
+        );
+        await showMainMenu(ctx);
+        return;
+      }
       const questionCount: number = test.questions?.length ?? 0;
       const pointsPerQ: number = test.pointsPerQuestion ?? 1;
       const score: number = prevAttempt.score ?? 0;
@@ -177,20 +207,22 @@ async function submitTest(ctx: Ctx) {
   const attempt = ctx.session.currentAttempt;
   if (!attempt) return;
 
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (ctx.session.token) headers["Authorization"] = `Bearer ${ctx.session.token}`;
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (ctx.session.token)
+    headers["Authorization"] = `Bearer ${ctx.session.token}`;
 
   const response = await fetch(`${API_URL}/api/attempts/${attempt.id}/submit`, {
     method: "POST",
     headers,
     body: JSON.stringify({}),
   });
-  const result = await response.json() as any;
-
-  ctx.session.currentAttempt = undefined;
+  const result = (await response.json()) as any;
 
   if (response.status === 403 && result.code === "TIME_LIMIT_EXCEEDED") {
-    await ctx.reply("⏱ Vaqt tugadi! Afsuski, javoblaringiz qabul qilinmadi.");
+    ctx.session.currentAttempt = undefined;
+    await ctx.reply("⏰ Vaqt tugadi! Afsuski, javoblaringiz qabul qilinmadi.");
     await showMainMenu(ctx);
     return;
   }
@@ -200,6 +232,8 @@ async function submitTest(ctx: Ctx) {
     await showMainMenu(ctx);
     return;
   }
+
+  ctx.session.currentAttempt = undefined;
 
   const score = result.totalScore ?? result.score ?? 0;
   const maxScore = result.maxPossibleScore ?? 0;
@@ -231,7 +265,7 @@ bot.command("start", async (ctx) => {
 
   ctx.session.step = "awaiting_name";
   ctx.session.fullName = undefined;
-  const sentName = await ctx.reply("Ismingizni va familiyangizni kiriting:");
+  const sentName = await ctx.reply("Ismingiz va familiyangizni kiriting:");
   ctx.session.lastBotMessageId = sentName.message_id;
 });
 
@@ -249,7 +283,9 @@ bot.callbackQuery("logout", async (ctx) => {
     ctx.session.fullName = undefined;
     ctx.session.currentAttempt = undefined;
 
-    await ctx.reply("Tizimdan chiqdingiz. 👋\n\nIsmingizni va familiyangizni kiriting:");
+    await ctx.reply(
+      "Tizimdan chiqdingiz. 👋\n\nIsmingiz va familiyangizni kiriting:",
+    );
   } catch (error) {
     try {
       await ctx.reply("Xatolik yuz berdi. Iltimos qayta urinib ko'ring.");
@@ -282,14 +318,17 @@ bot.on("message:text", async (ctx) => {
   }
 
   if (ctx.session.step === "awaiting_test_code") {
-    if (text.trim().length !== 3) {
-      await ctx.reply("Iltimos, 3 ta raqam kiriting.");
+    if (!/^\d{3}$/.test(text.trim())) {
+      await ctx.reply("Faqat 3 ta raqam kiriting.");
       await ctx.reply("Test kodini kiriting (3 ta raqam):");
       return;
     }
 
-    const headers: Record<string, string> = { "Content-Type": "application/json" };
-    if (ctx.session.token) headers["Authorization"] = `Bearer ${ctx.session.token}`;
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (ctx.session.token)
+      headers["Authorization"] = `Bearer ${ctx.session.token}`;
 
     let response: Response;
     try {
@@ -314,7 +353,7 @@ bot.on("message:text", async (ctx) => {
       return;
     }
 
-    const test = await response.json() as any;
+    const test = (await response.json()) as any;
 
     ctx.session.unlockedTestId = test.id;
     ctx.session.step = "ready";
@@ -335,7 +374,9 @@ bot.on("message:text", async (ctx) => {
 
     await ctx.reply(infoMessage, {
       reply_markup: {
-        inline_keyboard: [[{ text: "Boshlash ▶️", callback_data: "start_unlocked_test" }]],
+        inline_keyboard: [
+          [{ text: "Boshlash ▶️", callback_data: "start_unlocked_test" }],
+        ],
       },
     });
     return;
@@ -365,7 +406,7 @@ bot.on("message:contact", async (ctx) => {
       });
       ctx.session.step = "awaiting_name";
       ctx.session.fullName = undefined;
-      await ctx.reply("Ismingizni va familiyangizni kiriting:");
+      await ctx.reply("Ismingiz va familiyangizni kiriting:");
       return;
     }
 
@@ -374,12 +415,6 @@ bot.on("message:contact", async (ctx) => {
 
     try {
       await ctx.api.deleteMessage(ctx.chat!.id, ctx.session.lastBotMessageId!);
-    } catch {
-      // Message already deleted or too old — ignore
-    }
-
-    try {
-      await ctx.deleteMessage();
     } catch {
       // Message already deleted or too old — ignore
     }
@@ -433,6 +468,12 @@ bot.callbackQuery("start_unlocked_test", async (ctx) => {
       // Query expired — ignore silently
     }
 
+    if (!ctx.session.token) {
+      await ctx.reply("Iltimos, avval tizimga kiring.");
+      await showMainMenu(ctx);
+      return;
+    }
+
     const testId = ctx.session.unlockedTestId;
     if (!testId) {
       await ctx.reply("Test topilmadi. Iltimos kodni qayta kiriting.");
@@ -441,15 +482,21 @@ bot.callbackQuery("start_unlocked_test", async (ctx) => {
       return;
     }
 
-    const headers: Record<string, string> = { "Content-Type": "application/json" };
-    if (ctx.session.token) headers["Authorization"] = `Bearer ${ctx.session.token}`;
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (ctx.session.token)
+      headers["Authorization"] = `Bearer ${ctx.session.token}`;
 
-    const startRes = await fetch(`${API_URL}/api/tests/${testId}/attempts/start`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({}),
-    });
-    const attempt = await startRes.json() as any;
+    const startRes = await fetch(
+      `${API_URL}/api/tests/${testId}/attempts/start`,
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({}),
+      },
+    );
+    const attempt = (await startRes.json()) as any;
 
     if (startRes.status === 409 && attempt.code === "ATTEMPT_ALREADY_EXISTS") {
       await showAlreadyAttemptedMessage(ctx, testId);
@@ -469,7 +516,9 @@ bot.callbackQuery("start_unlocked_test", async (ctx) => {
       currentQuestionIndex: 0,
     };
 
-    await ctx.reply("✅ Test boshlandi! Har bir savol uchun to'g'ri javobni tanlang.");
+    await ctx.reply(
+      "✅ Test boshlandi! Har bir savol uchun to'g'ri javobni tanlang.",
+    );
     await sendQuestion(ctx);
   } catch (error) {
     try {
@@ -594,15 +643,21 @@ bot.callbackQuery(/^start:(.+)$/, async (ctx) => {
     }
     const testId = ctx.match[1]!;
 
-    const headers: Record<string, string> = { "Content-Type": "application/json" };
-    if (ctx.session.token) headers["Authorization"] = `Bearer ${ctx.session.token}`;
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (ctx.session.token)
+      headers["Authorization"] = `Bearer ${ctx.session.token}`;
 
-    const startRes = await fetch(`${API_URL}/api/tests/${testId}/attempts/start`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({}),
-    });
-    const attempt = await startRes.json() as any;
+    const startRes = await fetch(
+      `${API_URL}/api/tests/${testId}/attempts/start`,
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({}),
+      },
+    );
+    const attempt = (await startRes.json()) as any;
 
     if (startRes.status === 409 && attempt.code === "ATTEMPT_ALREADY_EXISTS") {
       await showAlreadyAttemptedMessage(ctx, testId);
@@ -621,7 +676,9 @@ bot.callbackQuery(/^start:(.+)$/, async (ctx) => {
       currentQuestionIndex: 0,
     };
 
-    await ctx.reply("✅ Test boshlandi! Har bir savol uchun to'g'ri javobni tanlang.");
+    await ctx.reply(
+      "✅ Test boshlandi! Har bir savol uchun to'g'ri javobni tanlang.",
+    );
     await sendQuestion(ctx);
   } catch (error) {
     console.error("Handler error:", error);
@@ -676,7 +733,9 @@ bot.callbackQuery(/^ans:(\d+)$/, async (ctx) => {
       // Query expired — ignore silently
     }
 
-    const label = (ctx.session.currentOptions ?? [])[optionIndex]?.label ?? String.fromCharCode(65 + optionIndex);
+    const label =
+      (ctx.session.currentOptions ?? [])[optionIndex]?.label ??
+      String.fromCharCode(65 + optionIndex);
     const optionText = option.text;
     const questionText = ctx.session.currentQuestionText ?? question.text;
 

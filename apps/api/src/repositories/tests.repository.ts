@@ -1,5 +1,10 @@
 import { prisma } from "@test-system/database/lib/prisma";
-import { Option, Question, Test, User } from "@test-system/database/prisma/generated/client";
+import {
+  Option,
+  Question,
+  Test,
+  User,
+} from "@test-system/database/prisma/generated/client";
 import { PaginationParams, PaginatedResponse } from "@test-system/types";
 
 export interface UpdateTestData {
@@ -23,7 +28,7 @@ export class TestsRepository {
   }
 
   static async getAllTests(
-    pagination?: PaginationParams
+    pagination?: PaginationParams,
   ): Promise<PaginatedResponse<Test>> {
     const page = pagination?.page ?? 1;
     const limit = pagination?.limit ?? 20;
@@ -56,7 +61,7 @@ export class TestsRepository {
   }
 
   static async getAvailableTests(
-    pagination?: PaginationParams
+    pagination?: PaginationParams,
   ): Promise<PaginatedResponse<Test>> {
     const page = pagination?.page ?? 1;
     const limit = pagination?.limit ?? 20;
@@ -101,7 +106,7 @@ export class TestsRepository {
 
   static async getTestsByStudentAttempts(
     studentId: string,
-    pagination?: PaginationParams
+    pagination?: PaginationParams,
   ): Promise<PaginatedResponse<Test>> {
     const page = pagination?.page ?? 1;
     const limit = pagination?.limit ?? 20;
@@ -173,8 +178,14 @@ export class TestsRepository {
 
   static async getOneTest(
     id: string,
-    includeRelations: boolean = false
-  ): Promise<(Test & { createdBy?: Omit<User, "password">; questions?: (Question & { options: Option[] })[] }) | null> {
+    includeRelations: boolean = false,
+  ): Promise<
+    | (Test & {
+        createdBy?: Omit<User, "password">;
+        questions?: (Question & { options: Option[] })[];
+      })
+    | null
+  > {
     return prisma.test.findUnique({
       where: {
         id,
@@ -206,10 +217,7 @@ export class TestsRepository {
     });
   }
 
-  static async updateTest(
-    id: string,
-    data: UpdateTestData
-  ): Promise<Test> {
+  static async updateTest(id: string, data: UpdateTestData): Promise<Test> {
     return prisma.test.update({
       where: {
         id,

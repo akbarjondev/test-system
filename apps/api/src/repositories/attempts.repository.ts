@@ -118,7 +118,10 @@ export class AttemptsRepository {
       where: {
         testId,
         studentId,
-        submittedAt: { not: null },
+        OR: [
+          { submittedAt: { not: null } },
+          { timedOutAt: { not: null } },
+        ],
       },
     });
   }

@@ -147,8 +147,6 @@ export class AttemptsController {
 
       return res.json(formattedAttempt);
     } catch (error: any) {
-      console.log(error);
-
       if (error.message === "No active attempt found") {
         return res.status(404).json({ error: error.message });
       }
@@ -193,8 +191,6 @@ export class AttemptsController {
 
       return res.status(200).json({ message: "Answer submitted successfully" });
     } catch (error: any) {
-      console.log(error);
-
       if (error.message === "Attempt not found") {
         return res.status(404).json({ error: error.message });
       }
@@ -236,6 +232,7 @@ export class AttemptsController {
       const studentId = req.user.id;
 
       const result = await AttemptsService.submitTest(attemptId, studentId);
+      const passed = result.passingScore != null ? result.totalScore >= result.passingScore : null;
 
       return res.json({
         id: result.id,
@@ -245,11 +242,10 @@ export class AttemptsController {
         submittedAt: result.submittedAt,
         score: result.totalScore,
         maxPossibleScore: result.maxPossibleScore,
+        passed,
         message: "Test submitted successfully",
       });
     } catch (error: any) {
-      console.log(error);
-
       if (error.message === "Attempt not found") {
         return res.status(404).json({ error: error.message });
       }
@@ -320,8 +316,6 @@ export class AttemptsController {
 
       return res.json(formattedResult);
     } catch (error: any) {
-      console.log(error);
-
       if (error.message === "Attempt not found") {
         return res.status(404).json({ error: error.message });
       }
@@ -350,7 +344,6 @@ export class AttemptsController {
 
       return res.json(attempts);
     } catch (error) {
-      console.log(error);
       return res.status(500).json({ error: "Failed to fetch attempts" });
     }
   }
@@ -376,8 +369,6 @@ export class AttemptsController {
 
       return res.json(attempts);
     } catch (error: any) {
-      console.log(error);
-
       if (error.message === "Test not found") {
         return res.status(404).json({ error: error.message });
       }

@@ -39,9 +39,6 @@ function formatTimeTaken(startedAt: string, endedAt: string | null): string {
 }
 
 function NatijaCell({ attempt }: { attempt: AttemptRow }) {
-  if (attempt.timedOutAt) {
-    return <Badge variant="warning">Vaqt tugadi</Badge>;
-  }
   if (attempt.status === "in_progress") {
     return <Badge variant="outline">Jarayonda</Badge>;
   }
@@ -50,6 +47,9 @@ function NatijaCell({ attempt }: { attempt: AttemptRow }) {
   }
   if (attempt.passed === false) {
     return <Badge variant="error">O&apos;tmadi</Badge>;
+  }
+  if (attempt.status === "submitted") {
+    return <Badge variant="outline">Topshirildi</Badge>;
   }
   return null;
 }

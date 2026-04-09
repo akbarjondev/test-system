@@ -31,7 +31,7 @@ const columns: ColumnDef<User>[] = [
       return role === "ADMIN" ? (
         <Badge className="bg-blue-100 text-blue-800">O&apos;qituvchi</Badge>
       ) : (
-        <Badge variant="outline">Talaba</Badge>
+        <Badge className="bg-gray-100 text-gray-800">Talaba</Badge>
       );
     },
   },

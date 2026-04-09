@@ -155,7 +155,7 @@ export class AttemptsService {
   static async submitTest(
     attemptId: string,
     studentId: string
-  ): Promise<TestAttempt & { totalScore: number; maxPossibleScore: number }> {
+  ): Promise<TestAttempt & { totalScore: number; maxPossibleScore: number; passingScore: number | null }> {
     // Validate attempt exists and belongs to student
     const attempt = await AttemptsRepository.getAttemptById(attemptId, true);
     if (!attempt) {
@@ -220,6 +220,7 @@ export class AttemptsService {
       ...submittedAttempt,
       totalScore,
       maxPossibleScore,
+      passingScore: test.passingScore ?? null,
     };
   }
 

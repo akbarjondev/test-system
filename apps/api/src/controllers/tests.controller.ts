@@ -67,7 +67,7 @@ export class TestsController {
       // Parse and validate pagination parameters
       const page = Math.max(1, parseInt(req.query.page as string) || 1);
       const limit = Math.min(
-        100,
+        1000,
         Math.max(1, parseInt(req.query.limit as string) || 20)
       );
 
