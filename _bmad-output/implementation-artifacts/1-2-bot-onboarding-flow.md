@@ -1,6 +1,6 @@
 # Story 1.2: Bot Onboarding Flow
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -25,33 +25,33 @@ So that I can start taking tests without typing a password.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Update grammY session type in `apps/telegram-bot/src/bot.ts`
-  - [ ] Add `fullName?: string` to session state type for temporary storage during onboarding
-  - [ ] Add `token?: string` to session state (already used — confirm existing field name)
-  - [ ] Add `step?: "awaiting_name" | "awaiting_phone" | "ready"` to session to track onboarding progress
+- [x] Task 1: Update grammY session type in `apps/telegram-bot/src/bot.ts`
+  - [x] Add `fullName?: string` to session state type for temporary storage during onboarding
+  - [x] Add `token?: string` to session state (already used — confirm existing field name)
+  - [x] Add `step?: "awaiting_name" | "awaiting_phone" | "ready"` to session to track onboarding progress
 
-- [ ] Task 2: Handle `/start` command — check session state
-  - [ ] If `session.token` exists → skip onboarding, show main menu (call `showMainMenu(ctx)`)
-  - [ ] If no token → set `session.step = "awaiting_name"`, send message "Ismingizni va familiyangizni kiriting:"
-  - [ ] Remove all email/password auth logic from `/start` handler
+- [x] Task 2: Handle `/start` command — check session state
+  - [x] If `session.token` exists → skip onboarding, show main menu (call `showMainMenu(ctx)`)
+  - [x] If no token → set `session.step = "awaiting_name"`, send message "Ismingizni va familiyangizni kiriting:"
+  - [x] Remove all email/password auth logic from `/start` handler
 
-- [ ] Task 3: Handle text messages — `awaiting_name` step
-  - [ ] Add `bot.on("message:text")` handler that checks `session.step === "awaiting_name"`
-  - [ ] Store `ctx.message.text` as `session.fullName`
-  - [ ] Set `session.step = "awaiting_phone"`
-  - [ ] Send phone request with ReplyKeyboardMarkup: `{ keyboard: [[{ text: "📞 Raqamni ulashish", request_contact: true }]], resize_keyboard: true, one_time_keyboard: true }`
-  - [ ] Message text: "Telefon raqamingizni ulashing:"
+- [x] Task 3: Handle text messages — `awaiting_name` step
+  - [x] Add `bot.on("message:text")` handler that checks `session.step === "awaiting_name"`
+  - [x] Store `ctx.message.text` as `session.fullName`
+  - [x] Set `session.step = "awaiting_phone"`
+  - [x] Send phone request with ReplyKeyboardMarkup: `{ keyboard: [[{ text: "📞 Raqamni ulashish", request_contact: true }]], resize_keyboard: true, one_time_keyboard: true }`
+  - [x] Message text: "Telefon raqamingizni ulashing:"
 
-- [ ] Task 4: Handle contact share — `awaiting_phone` step
-  - [ ] Add `bot.on("message:contact")` handler
-  - [ ] Extract `ctx.message.contact.phone_number` and `ctx.from.id` (as string for telegramId)
-  - [ ] Call `POST /api/auth/telegram` with `{ telegramId: String(ctx.from.id), fullName: session.fullName, phone: ctx.message.contact.phone_number }`
-  - [ ] On success: store `token` in session, set `session.step = "ready"`, remove keyboard with `ReplyKeyboardRemove`, show main menu
-  - [ ] On API error: send Uzbek error message "Ro'yxatdan o'tishda xatolik. Qayta urinib ko'ring." and reset `session.step = "awaiting_name"`
+- [x] Task 4: Handle contact share — `awaiting_phone` step
+  - [x] Add `bot.on("message:contact")` handler
+  - [x] Extract `ctx.message.contact.phone_number` and `ctx.from.id` (as string for telegramId)
+  - [x] Call `POST /api/auth/telegram` with `{ telegramId: String(ctx.from.id), fullName: session.fullName, phone: ctx.message.contact.phone_number }`
+  - [x] On success: store `token` in session, set `session.step = "ready"`, remove keyboard with `ReplyKeyboardRemove`, show main menu
+  - [x] On API error: send Uzbek error message "Ro'yxatdan o'tishda xatolik. Qayta urinib ko'ring." and reset `session.step = "awaiting_name"`
 
-- [ ] Task 5: Update `showMainMenu` helper (or create it)
-  - [ ] Display inline keyboard with test-related options in Uzbek
-  - [ ] Example buttons: "📝 Testni boshlash", "📊 Natijalarim"
+- [x] Task 5: Update `showMainMenu` helper (or create it)
+  - [x] Display inline keyboard with test-related options in Uzbek
+  - [x] Example buttons: "📝 Testlar ro'yxati", "🚪 Chiqish" (already existed, kept as-is)
 
 ## Dev Notes
 
@@ -146,4 +146,12 @@ claude-sonnet-4-6
 
 ### Completion Notes List
 
+- Replaced email/password session state fields (`state`, `tempEmail`) with new onboarding fields (`step`, `fullName`)
+- Removed `register` and `login` callback query handlers entirely
+- Updated `logout` handler to reset to `step = "awaiting_name"` and prompt for name again instead of showing old auth keyboard
+- `showMainMenu` already had Uzbek buttons ("📝 Testlar ro'yxati", "🚪 Chiqish") — kept as-is, satisfies acceptance criteria
+- TypeScript compiles cleanly with no errors
+
 ### File List
+
+- `apps/telegram-bot/src/bot.ts`

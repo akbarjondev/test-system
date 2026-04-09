@@ -1,6 +1,6 @@
 # Story 1.1: Telegram Auto-Registration API
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -202,3 +202,14 @@ claude-sonnet-4-6
 ### Completion Notes List
 
 ### File List
+
+- `packages/database/prisma/schema.prisma` — Made `email` and `password` nullable; added `telegramId`, `fullName`, `phone` fields to User model
+- `packages/database/prisma/migrations/20260409000000_add_telegram_identity_to_users/migration.sql` — Migration SQL for schema changes
+- `packages/types/index.ts` — Updated `AuthUser` interface: `email` nullable, added `fullName`, `phone`, `telegramId` fields
+- `apps/api/src/config/schemas.ts` — Added `telegramAuthSchema`
+- `apps/api/src/repositories/users.repository.ts` — Added `findByTelegramId` and `createTelegramUser` methods
+- `apps/api/src/services/users.service.ts` — Added `findOrCreateByTelegram` method; guarded nullable `email`/`password` in `createUser`
+- `apps/api/src/controllers/users.controller.ts` — Added `telegramAuth` static method; updated `login` response to include new fields; guarded nullable `password` in `comparePassword`
+- `apps/api/src/routes/auth.ts` — Registered `POST /telegram` route with `telegramAuthSchema` validation
+- `apps/admin-dashboard/app/dashboard/students/page.tsx` — Updated `User` type to allow `email: string | null`; added null guard on display
+- `apps/admin-dashboard/app/dashboard/students/ui/ChangeRoleButton.tsx` — Updated `User` type to allow `email: string | null`; added null guard in confirm dialog

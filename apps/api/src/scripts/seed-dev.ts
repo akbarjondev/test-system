@@ -221,13 +221,13 @@ async function main() {
   for (const s of STUDENTS) {
     const existing = await prisma.user.findUnique({ where: { email: s.email } });
     if (existing) {
-      students.push({ id: existing.id, email: existing.email });
+      students.push({ id: existing.id, email: existing.email ?? "" });
     } else {
       const hashed = await hashPassword(s.password);
       const user = await prisma.user.create({
         data: { email: s.email, password: hashed, role: "STUDENT" },
       });
-      students.push({ id: user.id, email: user.email });
+      students.push({ id: user.id, email: user.email ?? "" });
     }
   }
 

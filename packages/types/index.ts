@@ -7,7 +7,10 @@ export interface LoginRequest {
 
 export interface AuthUser {
   id: string;
-  email: string;
+  email: string | null;
+  fullName: string | null;
+  phone: string | null;
+  telegramId: string | null;
   role: "ADMIN" | "STUDENT";
   createdAt: Date;
 }

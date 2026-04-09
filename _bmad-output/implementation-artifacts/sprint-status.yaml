@@ -44,10 +44,10 @@ story_location: _bmad-output/implementation-artifacts
 development_status:
   # ─── Epic 1: Simplified Student Onboarding ───────────────────────────────
   epic-1: in-progress
-  1-1-telegram-auto-registration-api: ready-for-dev
-  1-2-bot-onboarding-flow: ready-for-dev
-  1-3-bot-global-error-handling: ready-for-dev
-  1-4-clean-messages-after-authentication: ready-for-dev
+  1-1-telegram-auto-registration-api: done
+  1-2-bot-onboarding-flow: done
+  1-3-bot-global-error-handling: done
+  1-4-clean-messages-after-authentication: done
   epic-1-retrospective: optional
 
   # ─── Epic 2: Test Access Control ─────────────────────────────────────────

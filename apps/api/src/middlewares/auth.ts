@@ -28,7 +28,7 @@ export const verifyTokenMiddleware = async (
     req.user = user;
 
     // check if user exits
-    const isUserExist = await UsersService.getUserByEmail(user.email);
+    const isUserExist = await UsersService.getUserById(user.id);
 
     if (!isUserExist) {
       return res.status(404).json({

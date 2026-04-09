@@ -1,6 +1,6 @@
 # Story 1.4: Clean Messages After Authentication
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -22,23 +22,23 @@ So that the chat stays clean and uncluttered.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Delete message after successful contact/phone handling
-  - [ ] In the `message:contact` handler (from Story 1.2), after receiving the API token:
-  - [ ] Call `await ctx.deleteMessage()` wrapped in try/catch
-  - [ ] On success: proceed to show main menu
-  - [ ] On error (catch): log error silently, still proceed to show main menu
+- [x] Task 1: Delete message after successful contact/phone handling
+  - [x] In the `message:contact` handler (from Story 1.2), after receiving the API token:
+  - [x] Call `await ctx.deleteMessage()` wrapped in try/catch
+  - [x] On success: proceed to show main menu
+  - [x] On error (catch): log error silently, still proceed to show main menu
 
-- [ ] Task 2: Delete phone request keyboard message
-  - [ ] Track the message ID of the keyboard request message using `ctx.message.message_id - 1` or by storing it in session
-  - [ ] Alternative: use `ctx.deleteMessage()` which deletes the contact message itself, and separately delete the bot's prompt message (stored in session.lastBotMessageId)
-  - [ ] Store the bot's last message ID in session when sending the phone request: `session.lastBotMessageId = (await ctx.reply(...)).message_id`
+- [x] Task 2: Delete phone request keyboard message
+  - [x] Track the message ID of the keyboard request message using `ctx.message.message_id - 1` or by storing it in session
+  - [x] Alternative: use `ctx.deleteMessage()` which deletes the contact message itself, and separately delete the bot's prompt message (stored in session.lastBotMessageId)
+  - [x] Store the bot's last message ID in session when sending the phone request: `session.lastBotMessageId = (await ctx.reply(...)).message_id`
 
-- [ ] Task 3: Use `ctx.api.deleteMessage()` for bot-sent messages
-  - [ ] For messages the bot sent (prompts, keyboards), use `ctx.api.deleteMessage(ctx.chat.id, session.lastBotMessageId)`
-  - [ ] Wrap in try/catch — silently ignore failures
+- [x] Task 3: Use `ctx.api.deleteMessage()` for bot-sent messages
+  - [x] For messages the bot sent (prompts, keyboards), use `ctx.api.deleteMessage(ctx.chat.id, session.lastBotMessageId)`
+  - [x] Wrap in try/catch — silently ignore failures
 
-- [ ] Task 4: Update session type to include `lastBotMessageId`
-  - [ ] Add `lastBotMessageId?: number` to `SessionData` interface
+- [x] Task 4: Update session type to include `lastBotMessageId`
+  - [x] Add `lastBotMessageId?: number` to `SessionData` interface
 
 ## Dev Notes
 
@@ -104,3 +104,5 @@ claude-sonnet-4-6
 ### Completion Notes List
 
 ### File List
+
+- `apps/telegram-bot/src/bot.ts`

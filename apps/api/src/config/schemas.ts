@@ -48,3 +48,9 @@ export const submitAnswerSchema = z.object({
 export const updateUserRoleSchema = z.object({
   role: z.enum(["ADMIN", "STUDENT"]),
 });
+
+export const telegramAuthSchema = z.object({
+  telegramId: z.string().min(1),
+  fullName: z.string().min(1),
+  phone: z.string().min(1),
+});

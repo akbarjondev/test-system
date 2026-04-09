@@ -9,8 +9,11 @@ datasource db {
 
 model User {
   id           String        @id @default(cuid())
-  email        String        @unique
-  password     String
+  email        String?       @unique
+  password     String?
+  telegramId   String?       @unique
+  fullName     String?
+  phone        String?       @unique
   role         Role          @default(STUDENT)
   createdAt    DateTime      @default(now())
   tests        Test[]
