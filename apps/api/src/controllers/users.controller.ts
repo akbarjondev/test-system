@@ -47,7 +47,7 @@ export class UsersController {
         return res.status(401).json({ error: "Invalid credentials" });
       }
 
-      const isValid = await comparePassword(password, user.password);
+      const isValid = await comparePassword(password, user.password ?? "");
       if (!isValid) {
         return res.status(401).json({ error: "Invalid credentials" });
       }
@@ -55,6 +55,9 @@ export class UsersController {
       const token = generateToken({
         id: user.id,
         email: user.email,
+        fullName: user.fullName,
+        phone: user.phone,
+        telegramId: user.telegramId,
         role: user.role as "ADMIN" | "STUDENT",
         createdAt: user.createdAt,
       });
@@ -64,14 +67,16 @@ export class UsersController {
         user: {
           id: user.id,
           email: user.email,
+          fullName: user.fullName,
+          phone: user.phone,
+          telegramId: user.telegramId,
           role: user.role as "ADMIN" | "STUDENT",
           createdAt: user.createdAt,
         },
       };
 
       res.json(response);
-    } catch (error) {
-      console.log(error);
+    } catch {
       res.status(500).json({ error: "Internal server error" });
     }
   }
@@ -87,6 +92,27 @@ export class UsersController {
           createdAt: u.createdAt,
         }))
       );
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
+  static async telegramAuth(req: Request, res: Response) {
+    try {
+      const { telegramId, fullName, phone } = req.body;
+      const user = await UsersService.findOrCreateByTelegram({ telegramId, fullName, phone });
+      const token = generateToken(user);
+      return res.status(200).json({
+        token,
+        user: {
+          id: user.id,
+          fullName: user.fullName,
+          phone: user.phone,
+          telegramId: user.telegramId,
+          role: user.role,
+          createdAt: user.createdAt,
+        },
+      });
     } catch (error) {
       return res.status(500).json({ error: "Internal server error" });
     }

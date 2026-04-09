@@ -2,7 +2,7 @@ import { User } from "@test-system/database/prisma/generated/client";
 import { prisma } from "@test-system/database/lib/prisma";
 
 export class UsersRepository {
-  static async createUser(user: Omit<User, "id" | "createdAt">): Promise<User> {
+  static async createUser(user: { email: string; password: string; role: User["role"] }): Promise<User> {
     return prisma.user.create({
       data: {
         email: user.email,
@@ -14,6 +14,25 @@ export class UsersRepository {
 
   static async getUserByEmail(email: string): Promise<User | null> {
     return prisma.user.findUnique({ where: { email } });
+  }
+
+  static async findByTelegramId(telegramId: string): Promise<User | null> {
+    return prisma.user.findUnique({ where: { telegramId } });
+  }
+
+  static async createTelegramUser(data: {
+    telegramId: string;
+    fullName: string;
+    phone: string;
+  }): Promise<User> {
+    return prisma.user.create({
+      data: {
+        telegramId: data.telegramId,
+        fullName: data.fullName,
+        phone: data.phone,
+        role: "STUDENT",
+      },
+    });
   }
 
   static async getUserById(id: string): Promise<User | null> {

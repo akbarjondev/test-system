@@ -16,13 +16,9 @@ interface AttemptQuestion {
 
 interface SessionData {
   token?: string;
-  state:
-    | "idle"
-    | "reg_email"
-    | "reg_password"
-    | "login_email"
-    | "login_password";
-  tempEmail?: string;
+  fullName?: string;
+  step?: "awaiting_name" | "awaiting_phone" | "ready";
+  lastBotMessageId?: number;
   currentAttempt?: {
     id: string;
     testId: string;
@@ -84,7 +80,18 @@ const botSessionStorage = {
   },
 };
 
-bot.use(session({ initial: (): SessionData => ({ state: "idle" }), storage: botSessionStorage }));
+bot.use(session({ initial: (): SessionData => ({}), storage: botSessionStorage }));
+
+// ─── Global error handler ─────────────────────────────────────────────────────
+
+bot.catch((err) => {
+  console.error("Bot error:", err.error);
+  try {
+    err.ctx.reply("Xatolik yuz berdi. Iltimos qayta urinib ko'ring.");
+  } catch {
+    // ignore reply failure
+  }
+});
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -159,7 +166,6 @@ async function submitTest(ctx: Ctx) {
 // ─── Commands ─────────────────────────────────────────────────────────────────
 
 bot.command("start", async (ctx) => {
-  ctx.session.state = "idle";
   ctx.session.currentAttempt = undefined;
 
   if (ctx.session.token) {
@@ -168,261 +174,340 @@ bot.command("start", async (ctx) => {
     return;
   }
 
-  const keyboard = new InlineKeyboard()
-    .text("📝 Ro'yxatdan o'tish", "register")
-    .row()
-    .text("🔑 Kirish", "login");
-
-  await ctx.reply(
-    "Xush kelibsiz! 👋\n\nTest tizimiga kirish uchun ro'yxatdan o'ting yoki tizimga kiring.",
-    { reply_markup: keyboard },
-  );
+  ctx.session.step = "awaiting_name";
+  ctx.session.fullName = undefined;
+  const sentName = await ctx.reply("Ismingizni va familiyangizni kiriting:");
+  ctx.session.lastBotMessageId = sentName.message_id;
 });
 
 // ─── Auth callbacks ───────────────────────────────────────────────────────────
 
-bot.callbackQuery("register", async (ctx) => {
-  await ctx.answerCallbackQuery();
-  ctx.session.state = "reg_email";
-  await ctx.reply("Email manzilingizni kiriting:");
-});
-
-bot.callbackQuery("login", async (ctx) => {
-  await ctx.answerCallbackQuery();
-  ctx.session.state = "login_email";
-  await ctx.reply("Email manzilingizni kiriting:");
-});
-
 bot.callbackQuery("logout", async (ctx) => {
-  await ctx.answerCallbackQuery();
-  ctx.session.token = undefined;
-  ctx.session.state = "idle";
-  ctx.session.currentAttempt = undefined;
+  try {
+    try {
+      await ctx.answerCallbackQuery();
+    } catch {
+      // Query expired — ignore silently
+    }
+    ctx.session.token = undefined;
+    ctx.session.step = "awaiting_name";
+    ctx.session.fullName = undefined;
+    ctx.session.currentAttempt = undefined;
 
-  const keyboard = new InlineKeyboard()
-    .text("📝 Ro'yxatdan o'tish", "register")
-    .row()
-    .text("🔑 Kirish", "login");
-
-  await ctx.reply("Tizimdan chiqdingiz. 👋", { reply_markup: keyboard });
+    await ctx.reply("Tizimdan chiqdingiz. 👋\n\nIsmingizni va familiyangizni kiriting:");
+  } catch (error) {
+    try {
+      await ctx.reply("Xatolik yuz berdi. Iltimos qayta urinib ko'ring.");
+    } catch {
+      // ignore reply failure
+    }
+  }
 });
 
-// ─── Text message handler (state machine) ────────────────────────────────────
+// ─── Text message handler (onboarding: awaiting_name step) ───────────────────
 
 bot.on("message:text", async (ctx) => {
   const text = ctx.message.text;
 
   if (text.startsWith("/")) return; // ignore commands
 
-  const { state } = ctx.session;
+  if (ctx.session.step === "awaiting_name") {
+    ctx.session.fullName = text.trim();
+    ctx.session.step = "awaiting_phone";
 
-  if (state === "reg_email") {
-    ctx.session.tempEmail = text.trim();
-    ctx.session.state = "reg_password";
-    await ctx.reply("Parol kiriting (kamida 6 ta belgi):");
-    return;
-  }
-
-  if (state === "reg_password") {
-    const email = ctx.session.tempEmail!;
-    const password = text;
-
-    const data = await api("POST", "/api/auth/register", { email, password });
-
-    if (data.error) {
-      await ctx.reply(`❌ Xatolik: ${data.error}\n\n/start bosing.`);
-      ctx.session.state = "idle";
-      return;
-    }
-
-    ctx.session.token = data.token;
-    ctx.session.state = "idle";
-    ctx.session.tempEmail = undefined;
-    await ctx.reply("✅ Muvaffaqiyatli ro'yxatdan o'tdingiz!");
-    await showMainMenu(ctx);
-    return;
-  }
-
-  if (state === "login_email") {
-    ctx.session.tempEmail = text.trim();
-    ctx.session.state = "login_password";
-    await ctx.reply("Parolingizni kiriting:");
-    return;
-  }
-
-  if (state === "login_password") {
-    const email = ctx.session.tempEmail!;
-    const password = text;
-
-    const data = await api("POST", "/api/auth/login", { email, password });
-
-    if (data.error) {
-      await ctx.reply(`❌ Xatolik: ${data.error}\n\n/start bosing.`);
-      ctx.session.state = "idle";
-      return;
-    }
-
-    ctx.session.token = data.token;
-    ctx.session.state = "idle";
-    ctx.session.tempEmail = undefined;
-    await ctx.reply("✅ Muvaffaqiyatli kirdingiz!");
-    await showMainMenu(ctx);
+    const sentPhone = await ctx.reply("Telefon raqamingizni ulashing:", {
+      reply_markup: {
+        keyboard: [[{ text: "📞 Raqamni ulashish", request_contact: true }]],
+        resize_keyboard: true,
+        one_time_keyboard: true,
+      },
+    });
+    ctx.session.lastBotMessageId = sentPhone.message_id;
     return;
   }
 
   // Default: show hint
-  await ctx.reply('Iltimos, menyudan foydalaning yoki /start bosing.');
+  await ctx.reply("Iltimos, menyudan foydalaning yoki /start bosing.");
+});
+
+// ─── Contact handler (onboarding: awaiting_phone step) ───────────────────────
+
+bot.on("message:contact", async (ctx) => {
+  try {
+    const phone = ctx.message.contact.phone_number;
+    const telegramId = String(ctx.from!.id);
+    const fullName = ctx.session.fullName ?? "";
+
+    const data = await api("POST", "/api/auth/telegram", {
+      telegramId,
+      fullName,
+      phone,
+    });
+
+    if (data.error) {
+      await ctx.reply("Ro'yxatdan o'tishda xatolik. Qayta urinib ko'ring.", {
+        reply_markup: { remove_keyboard: true },
+      });
+      ctx.session.step = "awaiting_name";
+      ctx.session.fullName = undefined;
+      await ctx.reply("Ismingizni va familiyangizni kiriting:");
+      return;
+    }
+
+    ctx.session.token = data.token;
+    ctx.session.step = "ready";
+
+    try {
+      await ctx.api.deleteMessage(ctx.chat!.id, ctx.session.lastBotMessageId!);
+    } catch {
+      // Message already deleted or too old — ignore
+    }
+
+    try {
+      await ctx.deleteMessage();
+    } catch {
+      // Message already deleted or too old — ignore
+    }
+
+    await ctx.reply("Xush kelibsiz! 👋", {
+      reply_markup: { remove_keyboard: true },
+    });
+    await showMainMenu(ctx);
+  } catch (error) {
+    try {
+      await ctx.reply("Xatolik yuz berdi. Iltimos qayta urinib ko'ring.");
+    } catch {
+      // ignore reply failure
+    }
+  }
 });
 
 // ─── Tests list ───────────────────────────────────────────────────────────────
 
 bot.callbackQuery("tests", async (ctx) => {
-  await ctx.answerCallbackQuery();
+  try {
+    try {
+      await ctx.answerCallbackQuery();
+    } catch {
+      // Query expired — ignore silently
+    }
 
-  if (!ctx.session.token) {
-    await ctx.reply("Iltimos avval tizimga kiring. /start");
-    return;
+    if (!ctx.session.token) {
+      await ctx.reply("Iltimos avval tizimga kiring. /start");
+      return;
+    }
+
+    const data = await api("GET", "/api/tests", undefined, ctx.session.token);
+
+    if (data.error) {
+      await ctx.reply(`❌ Xatolik: ${data.error}`);
+      return;
+    }
+
+    // API returns paginated { data: [], pagination: {} } or flat array
+    const tests: any[] = Array.isArray(data) ? data : (data.data ?? []);
+
+    if (tests.length === 0) {
+      await ctx.reply("Hozircha testlar yo'q.");
+      return;
+    }
+
+    const keyboard = new InlineKeyboard();
+    for (const test of tests) {
+      keyboard.text(`📋 ${test.title}`, `test:${test.id}`).row();
+    }
+    keyboard.text("◀️ Orqaga", "back_main");
+
+    await ctx.reply("Mavjud testlar:", { reply_markup: keyboard });
+  } catch (error) {
+    console.error("Handler error:", error);
+    try {
+      await ctx.reply("Xatolik yuz berdi. Iltimos qayta urinib ko'ring.");
+    } catch {
+      // ignore reply failure
+    }
   }
-
-  const data = await api("GET", "/api/tests", undefined, ctx.session.token);
-
-  if (data.error) {
-    await ctx.reply(`❌ Xatolik: ${data.error}`);
-    return;
-  }
-
-  // API returns paginated { data: [], pagination: {} } or flat array
-  const tests: any[] = Array.isArray(data) ? data : (data.data ?? []);
-
-  if (tests.length === 0) {
-    await ctx.reply("Hozircha testlar yo'q.");
-    return;
-  }
-
-  const keyboard = new InlineKeyboard();
-  for (const test of tests) {
-    keyboard.text(`📋 ${test.title}`, `test:${test.id}`).row();
-  }
-  keyboard.text("◀️ Orqaga", "back_main");
-
-  await ctx.reply("Mavjud testlar:", { reply_markup: keyboard });
 });
 
 // ─── Test detail ─────────────────────────────────────────────────────────────
 
 bot.callbackQuery(/^test:(.+)$/, async (ctx) => {
-  await ctx.answerCallbackQuery();
-  const testId = ctx.match[1]!;
+  try {
+    try {
+      await ctx.answerCallbackQuery();
+    } catch {
+      // Query expired — ignore silently
+    }
+    const testId = ctx.match[1]!;
 
-  const test = await api(
-    "GET",
-    `/api/tests/${testId}`,
-    undefined,
-    ctx.session.token,
-  );
+    const test = await api(
+      "GET",
+      `/api/tests/${testId}`,
+      undefined,
+      ctx.session.token,
+    );
 
-  if (test.error) {
-    await ctx.reply("❌ Test topilmadi.");
-    return;
+    if (test.error) {
+      await ctx.reply("❌ Test topilmadi.");
+      return;
+    }
+
+    const questionCount = test.questions?.length ?? 0;
+
+    const keyboard = new InlineKeyboard()
+      .text("▶️ Testni boshlash", `start:${testId}`)
+      .row()
+      .text("◀️ Orqaga", "tests");
+
+    const availability = test.isAlwaysAvailable
+      ? "Har doim"
+      : `${new Date(test.availableFrom).toLocaleDateString("uz")} – ${new Date(test.availableUntil).toLocaleDateString("uz")}`;
+
+    const msg =
+      `📋 *${escapeMarkdown(test.title)}*\n` +
+      (test.description ? `\n${escapeMarkdown(test.description)}\n` : "") +
+      `\n⏱ Vaqt: ${test.timeLimitMinutes} daqiqa` +
+      `\n📊 Savollar: ${questionCount}` +
+      `\n🎯 Har bir savol: ${test.pointsPerQuestion} ball` +
+      `\n📅 Mavjudligi: ${availability}`;
+
+    await ctx.reply(msg, {
+      reply_markup: keyboard,
+      parse_mode: "Markdown",
+    });
+  } catch (error) {
+    console.error("Handler error:", error);
+    try {
+      await ctx.reply("Xatolik yuz berdi. Iltimos qayta urinib ko'ring.");
+    } catch {
+      // ignore reply failure
+    }
   }
-
-  const questionCount = test.questions?.length ?? 0;
-
-  const keyboard = new InlineKeyboard()
-    .text("▶️ Testni boshlash", `start:${testId}`)
-    .row()
-    .text("◀️ Orqaga", "tests");
-
-  const availability = test.isAlwaysAvailable
-    ? "Har doim"
-    : `${new Date(test.availableFrom).toLocaleDateString("uz")} – ${new Date(test.availableUntil).toLocaleDateString("uz")}`;
-
-  const msg =
-    `📋 *${escapeMarkdown(test.title)}*\n` +
-    (test.description ? `\n${escapeMarkdown(test.description)}\n` : "") +
-    `\n⏱ Vaqt: ${test.timeLimitMinutes} daqiqa` +
-    `\n📊 Savollar: ${questionCount}` +
-    `\n🎯 Har bir savol: ${test.pointsPerQuestion} ball` +
-    `\n📅 Mavjudligi: ${availability}`;
-
-  await ctx.reply(msg, {
-    reply_markup: keyboard,
-    parse_mode: "Markdown",
-  });
 });
 
 // ─── Start test ───────────────────────────────────────────────────────────────
 
 bot.callbackQuery(/^start:(.+)$/, async (ctx) => {
-  await ctx.answerCallbackQuery();
-  const testId = ctx.match[1]!;
+  try {
+    try {
+      await ctx.answerCallbackQuery();
+    } catch {
+      // Query expired — ignore silently
+    }
+    const testId = ctx.match[1]!;
 
-  const attempt = await api(
-    "POST",
-    `/api/tests/${testId}/attempts/start`,
-    {},
-    ctx.session.token,
-  );
+    const attempt = await api(
+      "POST",
+      `/api/tests/${testId}/attempts/start`,
+      {},
+      ctx.session.token,
+    );
 
-  if (attempt.error) {
-    await ctx.reply(`❌ Testni boshlab bo'lmadi: ${attempt.error}`);
-    return;
+    if (attempt.error) {
+      await ctx.reply(`❌ Testni boshlab bo'lmadi: ${attempt.error}`);
+      return;
+    }
+
+    ctx.session.currentAttempt = {
+      id: attempt.id,
+      testId,
+      questions: attempt.questions,
+      currentQuestionIndex: 0,
+    };
+
+    await ctx.reply("✅ Test boshlandi! Har bir savol uchun to'g'ri javobni tanlang.");
+    await sendQuestion(ctx);
+  } catch (error) {
+    console.error("Handler error:", error);
+    try {
+      await ctx.reply("Xatolik yuz berdi. Iltimos qayta urinib ko'ring.");
+    } catch {
+      // ignore reply failure
+    }
   }
-
-  ctx.session.currentAttempt = {
-    id: attempt.id,
-    testId,
-    questions: attempt.questions,
-    currentQuestionIndex: 0,
-  };
-
-  await ctx.reply("✅ Test boshlandi! Har bir savol uchun to'g'ri javobni tanlang.");
-  await sendQuestion(ctx);
 });
 
 // ─── Answer handler ───────────────────────────────────────────────────────────
 
 bot.callbackQuery(/^ans:(\d+)$/, async (ctx) => {
-  const attempt = ctx.session.currentAttempt;
+  try {
+    const attempt = ctx.session.currentAttempt;
 
-  if (!attempt) {
-    await ctx.answerCallbackQuery("Test topilmadi. /start bosing.");
-    return;
+    if (!attempt) {
+      try {
+        await ctx.answerCallbackQuery("Test topilmadi. /start bosing.");
+      } catch {
+        // Query expired — ignore silently
+      }
+      return;
+    }
+
+    const optionIndex = parseInt(ctx.match[1]!);
+    const question = attempt.questions[attempt.currentQuestionIndex];
+
+    if (!question) {
+      try {
+        await ctx.answerCallbackQuery();
+      } catch {
+        // Query expired — ignore silently
+      }
+      return;
+    }
+
+    const option = question.options[optionIndex];
+    if (!option) {
+      try {
+        await ctx.answerCallbackQuery("Noto'g'ri variant.");
+      } catch {
+        // Query expired — ignore silently
+      }
+      return;
+    }
+
+    try {
+      await ctx.answerCallbackQuery("✓ Javob qabul qilindi");
+    } catch {
+      // Query expired — ignore silently
+    }
+
+    await api(
+      "POST",
+      `/api/attempts/${attempt.id}/answers`,
+      { questionId: question.questionId, optionId: option.id },
+      ctx.session.token,
+    );
+
+    ctx.session.currentAttempt!.currentQuestionIndex += 1;
+
+    await sendQuestion(ctx);
+  } catch (error) {
+    console.error("Handler error:", error);
+    try {
+      await ctx.reply("Xatolik yuz berdi. Iltimos qayta urinib ko'ring.");
+    } catch {
+      // ignore reply failure
+    }
   }
-
-  const optionIndex = parseInt(ctx.match[1]!);
-  const question = attempt.questions[attempt.currentQuestionIndex];
-
-  if (!question) {
-    await ctx.answerCallbackQuery();
-    return;
-  }
-
-  const option = question.options[optionIndex];
-  if (!option) {
-    await ctx.answerCallbackQuery("Noto'g'ri variant.");
-    return;
-  }
-
-  await ctx.answerCallbackQuery("✓ Javob qabul qilindi");
-
-  await api(
-    "POST",
-    `/api/attempts/${attempt.id}/answers`,
-    { questionId: question.questionId, optionId: option.id },
-    ctx.session.token,
-  );
-
-  ctx.session.currentAttempt!.currentQuestionIndex += 1;
-
-  await sendQuestion(ctx);
 });
 
 // ─── Back to main menu ────────────────────────────────────────────────────────
 
 bot.callbackQuery("back_main", async (ctx) => {
-  await ctx.answerCallbackQuery();
-  await showMainMenu(ctx);
+  try {
+    try {
+      await ctx.answerCallbackQuery();
+    } catch {
+      // Query expired — ignore silently
+    }
+    await showMainMenu(ctx);
+  } catch (error) {
+    console.error("Handler error:", error);
+    try {
+      await ctx.reply("Xatolik yuz berdi. Iltimos qayta urinib ko'ring.");
+    } catch {
+      // ignore reply failure
+    }
+  }
 });
 
 // ─── Utility ─────────────────────────────────────────────────────────────────
@@ -450,5 +535,8 @@ if (process.env.NODE_ENV === "production") {
   const PORT = process.env.PORT || 3001;
   webhookApp.listen(PORT);
 } else {
-  bot.start();
+  bot.start().catch((error) => {
+    console.error("Bot startup error:", error);
+    process.exit(1);
+  });
 }

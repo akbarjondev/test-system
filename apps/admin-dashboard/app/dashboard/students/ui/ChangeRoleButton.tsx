@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
 
-type User = { id: string; email: string; role: "ADMIN" | "STUDENT" };
+type User = { id: string; email: string | null; role: "ADMIN" | "STUDENT" };
 
 export function ChangeRoleButton({ user }: { user: User }) {
   const [pending, setPending] = useState(false);
@@ -13,7 +13,7 @@ export function ChangeRoleButton({ user }: { user: User }) {
   const toggle = async () => {
     const newRole = user.role === "ADMIN" ? "STUDENT" : "ADMIN";
     const label = newRole === "ADMIN" ? "Admin" : "O'quvchi";
-    if (!confirm(`${user.email} rolini ${label} ga o'zgartirasizmi?`)) return;
+    if (!confirm(`${user.email ?? ''} rolini ${label} ga o'zgartirasizmi?`)) return;
 
     setPending(true);
     const result = await updateUserRole(user.id, newRole);
