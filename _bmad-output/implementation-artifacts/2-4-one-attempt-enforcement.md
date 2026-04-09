@@ -1,6 +1,6 @@
 # Story 2.4: One-Attempt Enforcement
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -24,33 +24,33 @@ So that I understand why I cannot retake it.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Add repository method to `apps/api/src/repositories/attempts.repository.ts`
-  - [ ] Add `findCompletedAttemptByTestAndStudent(testId: string, studentId: string): Promise<TestAttempt | null>`
-  - [ ] Query: `prisma.testAttempt.findFirst({ where: { testId, studentId, submittedAt: { not: null } } })`
+- [x] Task 1: Add repository method to `apps/api/src/repositories/attempts.repository.ts`
+  - [x] Add `findCompletedAttemptByTestAndStudent(testId: string, studentId: string): Promise<TestAttempt | null>`
+  - [x] Query: `prisma.testAttempt.findFirst({ where: { testId, studentId, submittedAt: { not: null } } })`
 
-- [ ] Task 2: Update `AttemptsService.startTest` in `apps/api/src/services/attempts.service.ts`
-  - [ ] After `validateTestAvailability(test)`, add one-attempt check:
+- [x] Task 2: Update `AttemptsService.startTest` in `apps/api/src/services/attempts.service.ts`
+  - [x] After `validateTestAvailability(test)`, add one-attempt check:
     ```ts
     if (test.allowOnlyOneAttempt) {
       const existing = await AttemptsRepository.findCompletedAttemptByTestAndStudent(testId, studentId);
       if (existing) throw new Error("ATTEMPT_ALREADY_EXISTS");
     }
     ```
-  - [ ] Remove or replace the commented-out duplicate check (lines 38-41 in current file)
+  - [x] Remove or replace the commented-out duplicate check (lines 38-41 in current file)
 
-- [ ] Task 3: Update `AttemptsController.startTest` in `apps/api/src/controllers/attempts.controller.ts`
-  - [ ] In the catch block for `startTest`, handle `ATTEMPT_ALREADY_EXISTS` error:
+- [x] Task 3: Update `AttemptsController.startTest` in `apps/api/src/controllers/attempts.controller.ts`
+  - [x] In the catch block for `startTest`, handle `ATTEMPT_ALREADY_EXISTS` error:
     ```ts
     if (error.message === "ATTEMPT_ALREADY_EXISTS") {
       return res.status(409).json({ error: "Siz bu testni allaqachon topshirgansiz", code: "ATTEMPT_ALREADY_EXISTS" });
     }
     ```
 
-- [ ] Task 4: Update bot to handle 409 response
-  - [ ] In the bot's `start_unlocked_test` (or equivalent) handler, after calling `POST /api/tests/{testId}/attempts/start`:
-  - [ ] If response status is 409: fetch the previous attempt using `GET /api/attempts/student` or the attempt data returned in error body
-  - [ ] Display message: "✅ Siz bu testni allaqachon topshirgansiz!\n\nSizning natijangiz: {score} / {maxScore} ({percent}%)"
-  - [ ] Show main menu after displaying the result
+- [x] Task 4: Update bot to handle 409 response
+  - [x] In the bot's `start_unlocked_test` (or equivalent) handler, after calling `POST /api/tests/{testId}/attempts/start`:
+  - [x] If response status is 409: fetch the previous attempt using `GET /api/attempts/my-attempts` and test details for question count
+  - [x] Display message: "✅ Siz bu testni allaqachon topshirgansiz!\n\nSizning natijangiz: {score} / {maxScore} ({percent}%)"
+  - [x] Show main menu after displaying the result
 
 ## Dev Notes
 
@@ -126,6 +126,24 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
+_None_
+
 ### Completion Notes List
 
+- Task 1: Added `findCompletedAttemptByTestAndStudent` to `AttemptsRepository` — queries for a completed (submittedAt IS NOT NULL) attempt for the given testId+studentId combination.
+- Task 2: Added one-attempt enforcement block in `AttemptsService.startTest` after `validateTestAvailability`. Removed the stale commented-out block that was there previously.
+- Task 3: Added `ATTEMPT_ALREADY_EXISTS` handler in `AttemptsController.startTest` catch block (before other error checks) returning 409 with Uzbek message and code.
+- Task 4: Refactored both `start:` (test-detail flow) and `start_unlocked_test` (unlock flow) handlers to use raw `fetch` instead of the `api()` helper so the HTTP status code is accessible. Extracted shared `showAlreadyAttemptedMessage(ctx, testId)` helper that fetches the student's past attempts from `/api/attempts/my-attempts`, finds the one matching the test, fetches test details for question count, then displays the formatted score message before showing the main menu.
+- TypeScript compilation passes cleanly (`tsc --noEmit`) for both `apps/api` and `apps/telegram-bot`.
+- Pre-existing `@repo/ui` lint failure is unrelated to this story.
+
 ### File List
+
+- apps/api/src/repositories/attempts.repository.ts
+- apps/api/src/services/attempts.service.ts
+- apps/api/src/controllers/attempts.controller.ts
+- apps/telegram-bot/src/bot.ts
+
+## Change Log
+
+- 2026-04-09: Story 2.4 implemented — one-attempt enforcement in API (409 ATTEMPT_ALREADY_EXISTS) and bot 409 handler with previous score display (Amelia / claude-sonnet-4-6)

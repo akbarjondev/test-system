@@ -27,10 +27,13 @@ model Test {
   title             String
   description       String?
   pointsPerQuestion Float?        // Points per correct answer (renamed from score)
-  timeLimitMinutes  Int           @default(30) // Required: time limit in minutes (default 30 for existing records)
-  isAlwaysAvailable Boolean       @default(true) // If false, use scheduled dates
+  timeLimitMinutes    Int           @default(30) // Required: time limit in minutes (default 30 for existing records)
+  testPassword        String?                    // Optional 3-digit access code
+  allowOnlyOneAttempt Boolean       @default(false) // If true, student can attempt only once
+  isAlwaysAvailable   Boolean       @default(true) // If false, use scheduled dates
   availableFrom     DateTime?     // When test becomes available (if scheduled)
   availableUntil    DateTime?     // When test becomes unavailable (if scheduled)
+  passingScore      Float?                             // Minimum score to pass (null = no threshold)
   createdById       String
   createdAt         DateTime      @default(now())
   createdBy         User          @relation(fields: [createdById], references: [id])
@@ -72,6 +75,7 @@ model TestAttempt {
   studentId       String
   startedAt       DateTime        @default(now())
   submittedAt     DateTime?
+  timedOutAt      DateTime?                            // Set when attempt ends due to time limit expiration
   score           Float?
   questionOrders  QuestionOrder[] // Shuffled order of questions for this attempt
   answers         Answer[]        // Student's answers

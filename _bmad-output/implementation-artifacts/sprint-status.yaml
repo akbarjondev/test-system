@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-04-09
-last_updated: 2026-04-09 (all stories ready-for-dev)
+last_updated: 2026-04-09 # 2-4 marked review by Amelia
 project: test-system
 project_key: NOKEY
 tracking_system: file-system
@@ -52,32 +52,32 @@ development_status:
 
   # ─── Epic 2: Test Access Control ─────────────────────────────────────────
   epic-2: in-progress
-  2-1-test-password-one-attempt-schema: ready-for-dev
-  2-2-test-unlock-endpoint: ready-for-dev
-  2-3-bot-test-unlock-flow: ready-for-dev
-  2-4-one-attempt-enforcement: ready-for-dev
+  2-1-test-password-one-attempt-schema: review
+  2-2-test-unlock-endpoint: review
+  2-3-bot-test-unlock-flow: review
+  2-4-one-attempt-enforcement: review
   epic-2-retrospective: optional
 
   # ─── Epic 3: Reliable Test-Taking Experience ──────────────────────────────
   epic-3: in-progress
-  3-1-show-selected-answer-in-bot: ready-for-dev
-  3-2-time-limit-enforcement: ready-for-dev
+  3-1-show-selected-answer-in-bot: review
+  3-2-time-limit-enforcement: review
   epic-3-retrospective: optional
 
   # ─── Epic 4: Pass Threshold & Results ────────────────────────────────────
   epic-4: in-progress
-  4-1-pass-threshold-timed-out-schema: ready-for-dev
-  4-2-pass-threshold-api: ready-for-dev
-  4-3-pass-threshold-dashboard-form: ready-for-dev
-  4-4-pass-fail-results-in-dashboard: ready-for-dev
-  4-5-pass-fail-message-in-bot: ready-for-dev
+  4-1-pass-threshold-timed-out-schema: review
+  4-2-pass-threshold-api: review
+  4-3-pass-threshold-dashboard-form: review
+  4-4-pass-fail-results-in-dashboard: review
+  4-5-pass-fail-message-in-bot: review
   epic-4-retrospective: optional
 
   # ─── Epic 5: Teacher Dashboard Overhaul ──────────────────────────────────
   epic-5: in-progress
-  5-1-tests-list-page: ready-for-dev
-  5-2-test-create-edit-forms: ready-for-dev
-  5-3-test-results-page: ready-for-dev
-  5-4-users-list-page: ready-for-dev
-  5-5-navigation-layout: ready-for-dev
+  5-1-tests-list-page: review
+  5-2-test-create-edit-forms: review
+  5-3-test-results-page: review
+  5-4-users-list-page: review
+  5-5-navigation-layout: review
   epic-5-retrospective: optional

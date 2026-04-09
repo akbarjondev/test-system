@@ -12,6 +12,9 @@ export interface UpdateTestRequest {
   isAlwaysAvailable?: boolean;
   availableFrom?: string | null; // ISO date string
   availableUntil?: string | null; // ISO date string
+  testPassword?: string | null;
+  allowOnlyOneAttempt?: boolean;
+  passingScore?: number | null;
 }
 
 export class TestsController {
@@ -31,6 +34,9 @@ export class TestsController {
       isAlwaysAvailable,
       availableFrom,
       availableUntil,
+      testPassword,
+      allowOnlyOneAttempt,
+      passingScore,
     } = req.body;
 
     // Get user from request (set by auth middleware)
@@ -45,6 +51,9 @@ export class TestsController {
         isAlwaysAvailable: isAlwaysAvailable ?? true,
         availableFrom: availableFrom ? new Date(availableFrom) : null,
         availableUntil: availableUntil ? new Date(availableUntil) : null,
+        testPassword: testPassword ?? null,
+        allowOnlyOneAttempt: allowOnlyOneAttempt ?? false,
+        passingScore: passingScore ?? null,
       });
       return res.status(201).json(newTest);
     } catch (error) {
@@ -107,6 +116,9 @@ export class TestsController {
         isAlwaysAvailable,
         availableFrom,
         availableUntil,
+        testPassword,
+        allowOnlyOneAttempt,
+        passingScore,
       } = req.body;
 
       const updateData: any = {};
@@ -126,6 +138,9 @@ export class TestsController {
         updateData.availableUntil = availableUntil
           ? new Date(availableUntil)
           : null;
+      if (testPassword !== undefined) updateData.testPassword = testPassword ?? null;
+      if (allowOnlyOneAttempt !== undefined) updateData.allowOnlyOneAttempt = allowOnlyOneAttempt;
+      if (passingScore !== undefined) updateData.passingScore = passingScore ?? null;
 
       const test = await TestsService.updateTest(
         testId,
@@ -172,6 +187,19 @@ export class TestsController {
       }
 
       return res.status(500).json({ error: "Failed to delete test" });
+    }
+  }
+
+  static async unlockTest(req: Request, res: Response) {
+    try {
+      const test = await TestsService.unlockTest(req.body.testPassword);
+      const { testPassword: _, ...testData } = test;
+      return res.status(200).json(testData);
+    } catch (error) {
+      if (error instanceof Error && error.message === "TEST_NOT_FOUND") {
+        return res.status(404).json({ error: "Test topilmadi", code: "TEST_NOT_FOUND" });
+      }
+      return res.status(500).json({ error: "Internal server error" });
     }
   }
 }

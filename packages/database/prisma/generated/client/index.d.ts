@@ -2836,11 +2836,13 @@ export namespace Prisma {
   export type TestAvgAggregateOutputType = {
     pointsPerQuestion: number | null
     timeLimitMinutes: number | null
+    passingScore: number | null
   }
 
   export type TestSumAggregateOutputType = {
     pointsPerQuestion: number | null
     timeLimitMinutes: number | null
+    passingScore: number | null
   }
 
   export type TestMinAggregateOutputType = {
@@ -2849,9 +2851,12 @@ export namespace Prisma {
     description: string | null
     pointsPerQuestion: number | null
     timeLimitMinutes: number | null
+    testPassword: string | null
+    allowOnlyOneAttempt: boolean | null
     isAlwaysAvailable: boolean | null
     availableFrom: Date | null
     availableUntil: Date | null
+    passingScore: number | null
     createdById: string | null
     createdAt: Date | null
   }
@@ -2862,9 +2867,12 @@ export namespace Prisma {
     description: string | null
     pointsPerQuestion: number | null
     timeLimitMinutes: number | null
+    testPassword: string | null
+    allowOnlyOneAttempt: boolean | null
     isAlwaysAvailable: boolean | null
     availableFrom: Date | null
     availableUntil: Date | null
+    passingScore: number | null
     createdById: string | null
     createdAt: Date | null
   }
@@ -2875,9 +2883,12 @@ export namespace Prisma {
     description: number
     pointsPerQuestion: number
     timeLimitMinutes: number
+    testPassword: number
+    allowOnlyOneAttempt: number
     isAlwaysAvailable: number
     availableFrom: number
     availableUntil: number
+    passingScore: number
     createdById: number
     createdAt: number
     _all: number
@@ -2887,11 +2898,13 @@ export namespace Prisma {
   export type TestAvgAggregateInputType = {
     pointsPerQuestion?: true
     timeLimitMinutes?: true
+    passingScore?: true
   }
 
   export type TestSumAggregateInputType = {
     pointsPerQuestion?: true
     timeLimitMinutes?: true
+    passingScore?: true
   }
 
   export type TestMinAggregateInputType = {
@@ -2900,9 +2913,12 @@ export namespace Prisma {
     description?: true
     pointsPerQuestion?: true
     timeLimitMinutes?: true
+    testPassword?: true
+    allowOnlyOneAttempt?: true
     isAlwaysAvailable?: true
     availableFrom?: true
     availableUntil?: true
+    passingScore?: true
     createdById?: true
     createdAt?: true
   }
@@ -2913,9 +2929,12 @@ export namespace Prisma {
     description?: true
     pointsPerQuestion?: true
     timeLimitMinutes?: true
+    testPassword?: true
+    allowOnlyOneAttempt?: true
     isAlwaysAvailable?: true
     availableFrom?: true
     availableUntil?: true
+    passingScore?: true
     createdById?: true
     createdAt?: true
   }
@@ -2926,9 +2945,12 @@ export namespace Prisma {
     description?: true
     pointsPerQuestion?: true
     timeLimitMinutes?: true
+    testPassword?: true
+    allowOnlyOneAttempt?: true
     isAlwaysAvailable?: true
     availableFrom?: true
     availableUntil?: true
+    passingScore?: true
     createdById?: true
     createdAt?: true
     _all?: true
@@ -3026,9 +3048,12 @@ export namespace Prisma {
     description: string | null
     pointsPerQuestion: number | null
     timeLimitMinutes: number
+    testPassword: string | null
+    allowOnlyOneAttempt: boolean
     isAlwaysAvailable: boolean
     availableFrom: Date | null
     availableUntil: Date | null
+    passingScore: number | null
     createdById: string
     createdAt: Date
     _count: TestCountAggregateOutputType | null
@@ -3058,9 +3083,12 @@ export namespace Prisma {
     description?: boolean
     pointsPerQuestion?: boolean
     timeLimitMinutes?: boolean
+    testPassword?: boolean
+    allowOnlyOneAttempt?: boolean
     isAlwaysAvailable?: boolean
     availableFrom?: boolean
     availableUntil?: boolean
+    passingScore?: boolean
     createdById?: boolean
     createdAt?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
@@ -3075,9 +3103,12 @@ export namespace Prisma {
     description?: boolean
     pointsPerQuestion?: boolean
     timeLimitMinutes?: boolean
+    testPassword?: boolean
+    allowOnlyOneAttempt?: boolean
     isAlwaysAvailable?: boolean
     availableFrom?: boolean
     availableUntil?: boolean
+    passingScore?: boolean
     createdById?: boolean
     createdAt?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
@@ -3089,9 +3120,12 @@ export namespace Prisma {
     description?: boolean
     pointsPerQuestion?: boolean
     timeLimitMinutes?: boolean
+    testPassword?: boolean
+    allowOnlyOneAttempt?: boolean
     isAlwaysAvailable?: boolean
     availableFrom?: boolean
     availableUntil?: boolean
+    passingScore?: boolean
     createdById?: boolean
     createdAt?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
@@ -3103,14 +3137,17 @@ export namespace Prisma {
     description?: boolean
     pointsPerQuestion?: boolean
     timeLimitMinutes?: boolean
+    testPassword?: boolean
+    allowOnlyOneAttempt?: boolean
     isAlwaysAvailable?: boolean
     availableFrom?: boolean
     availableUntil?: boolean
+    passingScore?: boolean
     createdById?: boolean
     createdAt?: boolean
   }
 
-  export type TestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "pointsPerQuestion" | "timeLimitMinutes" | "isAlwaysAvailable" | "availableFrom" | "availableUntil" | "createdById" | "createdAt", ExtArgs["result"]["test"]>
+  export type TestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "pointsPerQuestion" | "timeLimitMinutes" | "testPassword" | "allowOnlyOneAttempt" | "isAlwaysAvailable" | "availableFrom" | "availableUntil" | "passingScore" | "createdById" | "createdAt", ExtArgs["result"]["test"]>
   export type TestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     questions?: boolean | Test$questionsArgs<ExtArgs>
@@ -3137,9 +3174,12 @@ export namespace Prisma {
       description: string | null
       pointsPerQuestion: number | null
       timeLimitMinutes: number
+      testPassword: string | null
+      allowOnlyOneAttempt: boolean
       isAlwaysAvailable: boolean
       availableFrom: Date | null
       availableUntil: Date | null
+      passingScore: number | null
       createdById: string
       createdAt: Date
     }, ExtArgs["result"]["test"]>
@@ -3573,9 +3613,12 @@ export namespace Prisma {
     readonly description: FieldRef<"Test", 'String'>
     readonly pointsPerQuestion: FieldRef<"Test", 'Float'>
     readonly timeLimitMinutes: FieldRef<"Test", 'Int'>
+    readonly testPassword: FieldRef<"Test", 'String'>
+    readonly allowOnlyOneAttempt: FieldRef<"Test", 'Boolean'>
     readonly isAlwaysAvailable: FieldRef<"Test", 'Boolean'>
     readonly availableFrom: FieldRef<"Test", 'DateTime'>
     readonly availableUntil: FieldRef<"Test", 'DateTime'>
+    readonly passingScore: FieldRef<"Test", 'Float'>
     readonly createdById: FieldRef<"Test", 'String'>
     readonly createdAt: FieldRef<"Test", 'DateTime'>
   }
@@ -6302,6 +6345,7 @@ export namespace Prisma {
     studentId: string | null
     startedAt: Date | null
     submittedAt: Date | null
+    timedOutAt: Date | null
     score: number | null
   }
 
@@ -6311,6 +6355,7 @@ export namespace Prisma {
     studentId: string | null
     startedAt: Date | null
     submittedAt: Date | null
+    timedOutAt: Date | null
     score: number | null
   }
 
@@ -6320,6 +6365,7 @@ export namespace Prisma {
     studentId: number
     startedAt: number
     submittedAt: number
+    timedOutAt: number
     score: number
     _all: number
   }
@@ -6339,6 +6385,7 @@ export namespace Prisma {
     studentId?: true
     startedAt?: true
     submittedAt?: true
+    timedOutAt?: true
     score?: true
   }
 
@@ -6348,6 +6395,7 @@ export namespace Prisma {
     studentId?: true
     startedAt?: true
     submittedAt?: true
+    timedOutAt?: true
     score?: true
   }
 
@@ -6357,6 +6405,7 @@ export namespace Prisma {
     studentId?: true
     startedAt?: true
     submittedAt?: true
+    timedOutAt?: true
     score?: true
     _all?: true
   }
@@ -6453,6 +6502,7 @@ export namespace Prisma {
     studentId: string
     startedAt: Date
     submittedAt: Date | null
+    timedOutAt: Date | null
     score: number | null
     _count: TestAttemptCountAggregateOutputType | null
     _avg: TestAttemptAvgAggregateOutputType | null
@@ -6481,6 +6531,7 @@ export namespace Prisma {
     studentId?: boolean
     startedAt?: boolean
     submittedAt?: boolean
+    timedOutAt?: boolean
     score?: boolean
     questionOrders?: boolean | TestAttempt$questionOrdersArgs<ExtArgs>
     answers?: boolean | TestAttempt$answersArgs<ExtArgs>
@@ -6495,6 +6546,7 @@ export namespace Prisma {
     studentId?: boolean
     startedAt?: boolean
     submittedAt?: boolean
+    timedOutAt?: boolean
     score?: boolean
     test?: boolean | TestDefaultArgs<ExtArgs>
     student?: boolean | UserDefaultArgs<ExtArgs>
@@ -6506,6 +6558,7 @@ export namespace Prisma {
     studentId?: boolean
     startedAt?: boolean
     submittedAt?: boolean
+    timedOutAt?: boolean
     score?: boolean
     test?: boolean | TestDefaultArgs<ExtArgs>
     student?: boolean | UserDefaultArgs<ExtArgs>
@@ -6517,10 +6570,11 @@ export namespace Prisma {
     studentId?: boolean
     startedAt?: boolean
     submittedAt?: boolean
+    timedOutAt?: boolean
     score?: boolean
   }
 
-  export type TestAttemptOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "testId" | "studentId" | "startedAt" | "submittedAt" | "score", ExtArgs["result"]["testAttempt"]>
+  export type TestAttemptOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "testId" | "studentId" | "startedAt" | "submittedAt" | "timedOutAt" | "score", ExtArgs["result"]["testAttempt"]>
   export type TestAttemptInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     questionOrders?: boolean | TestAttempt$questionOrdersArgs<ExtArgs>
     answers?: boolean | TestAttempt$answersArgs<ExtArgs>
@@ -6551,6 +6605,7 @@ export namespace Prisma {
       studentId: string
       startedAt: Date
       submittedAt: Date | null
+      timedOutAt: Date | null
       score: number | null
     }, ExtArgs["result"]["testAttempt"]>
     composites: {}
@@ -6984,6 +7039,7 @@ export namespace Prisma {
     readonly studentId: FieldRef<"TestAttempt", 'String'>
     readonly startedAt: FieldRef<"TestAttempt", 'DateTime'>
     readonly submittedAt: FieldRef<"TestAttempt", 'DateTime'>
+    readonly timedOutAt: FieldRef<"TestAttempt", 'DateTime'>
     readonly score: FieldRef<"TestAttempt", 'Float'>
   }
     
@@ -10663,9 +10719,12 @@ export namespace Prisma {
     description: 'description',
     pointsPerQuestion: 'pointsPerQuestion',
     timeLimitMinutes: 'timeLimitMinutes',
+    testPassword: 'testPassword',
+    allowOnlyOneAttempt: 'allowOnlyOneAttempt',
     isAlwaysAvailable: 'isAlwaysAvailable',
     availableFrom: 'availableFrom',
     availableUntil: 'availableUntil',
+    passingScore: 'passingScore',
     createdById: 'createdById',
     createdAt: 'createdAt'
   };
@@ -10701,6 +10760,7 @@ export namespace Prisma {
     studentId: 'studentId',
     startedAt: 'startedAt',
     submittedAt: 'submittedAt',
+    timedOutAt: 'timedOutAt',
     score: 'score'
   };
 
@@ -10930,9 +10990,12 @@ export namespace Prisma {
     description?: StringNullableFilter<"Test"> | string | null
     pointsPerQuestion?: FloatNullableFilter<"Test"> | number | null
     timeLimitMinutes?: IntFilter<"Test"> | number
+    testPassword?: StringNullableFilter<"Test"> | string | null
+    allowOnlyOneAttempt?: BoolFilter<"Test"> | boolean
     isAlwaysAvailable?: BoolFilter<"Test"> | boolean
     availableFrom?: DateTimeNullableFilter<"Test"> | Date | string | null
     availableUntil?: DateTimeNullableFilter<"Test"> | Date | string | null
+    passingScore?: FloatNullableFilter<"Test"> | number | null
     createdById?: StringFilter<"Test"> | string
     createdAt?: DateTimeFilter<"Test"> | Date | string
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -10946,9 +11009,12 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     pointsPerQuestion?: SortOrderInput | SortOrder
     timeLimitMinutes?: SortOrder
+    testPassword?: SortOrderInput | SortOrder
+    allowOnlyOneAttempt?: SortOrder
     isAlwaysAvailable?: SortOrder
     availableFrom?: SortOrderInput | SortOrder
     availableUntil?: SortOrderInput | SortOrder
+    passingScore?: SortOrderInput | SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
     createdBy?: UserOrderByWithRelationInput
@@ -10965,9 +11031,12 @@ export namespace Prisma {
     description?: StringNullableFilter<"Test"> | string | null
     pointsPerQuestion?: FloatNullableFilter<"Test"> | number | null
     timeLimitMinutes?: IntFilter<"Test"> | number
+    testPassword?: StringNullableFilter<"Test"> | string | null
+    allowOnlyOneAttempt?: BoolFilter<"Test"> | boolean
     isAlwaysAvailable?: BoolFilter<"Test"> | boolean
     availableFrom?: DateTimeNullableFilter<"Test"> | Date | string | null
     availableUntil?: DateTimeNullableFilter<"Test"> | Date | string | null
+    passingScore?: FloatNullableFilter<"Test"> | number | null
     createdById?: StringFilter<"Test"> | string
     createdAt?: DateTimeFilter<"Test"> | Date | string
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -10981,9 +11050,12 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     pointsPerQuestion?: SortOrderInput | SortOrder
     timeLimitMinutes?: SortOrder
+    testPassword?: SortOrderInput | SortOrder
+    allowOnlyOneAttempt?: SortOrder
     isAlwaysAvailable?: SortOrder
     availableFrom?: SortOrderInput | SortOrder
     availableUntil?: SortOrderInput | SortOrder
+    passingScore?: SortOrderInput | SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
     _count?: TestCountOrderByAggregateInput
@@ -11002,9 +11074,12 @@ export namespace Prisma {
     description?: StringNullableWithAggregatesFilter<"Test"> | string | null
     pointsPerQuestion?: FloatNullableWithAggregatesFilter<"Test"> | number | null
     timeLimitMinutes?: IntWithAggregatesFilter<"Test"> | number
+    testPassword?: StringNullableWithAggregatesFilter<"Test"> | string | null
+    allowOnlyOneAttempt?: BoolWithAggregatesFilter<"Test"> | boolean
     isAlwaysAvailable?: BoolWithAggregatesFilter<"Test"> | boolean
     availableFrom?: DateTimeNullableWithAggregatesFilter<"Test"> | Date | string | null
     availableUntil?: DateTimeNullableWithAggregatesFilter<"Test"> | Date | string | null
+    passingScore?: FloatNullableWithAggregatesFilter<"Test"> | number | null
     createdById?: StringWithAggregatesFilter<"Test"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Test"> | Date | string
   }
@@ -11140,6 +11215,7 @@ export namespace Prisma {
     studentId?: StringFilter<"TestAttempt"> | string
     startedAt?: DateTimeFilter<"TestAttempt"> | Date | string
     submittedAt?: DateTimeNullableFilter<"TestAttempt"> | Date | string | null
+    timedOutAt?: DateTimeNullableFilter<"TestAttempt"> | Date | string | null
     score?: FloatNullableFilter<"TestAttempt"> | number | null
     questionOrders?: QuestionOrderListRelationFilter
     answers?: AnswerListRelationFilter
@@ -11153,6 +11229,7 @@ export namespace Prisma {
     studentId?: SortOrder
     startedAt?: SortOrder
     submittedAt?: SortOrderInput | SortOrder
+    timedOutAt?: SortOrderInput | SortOrder
     score?: SortOrderInput | SortOrder
     questionOrders?: QuestionOrderOrderByRelationAggregateInput
     answers?: AnswerOrderByRelationAggregateInput
@@ -11169,6 +11246,7 @@ export namespace Prisma {
     studentId?: StringFilter<"TestAttempt"> | string
     startedAt?: DateTimeFilter<"TestAttempt"> | Date | string
     submittedAt?: DateTimeNullableFilter<"TestAttempt"> | Date | string | null
+    timedOutAt?: DateTimeNullableFilter<"TestAttempt"> | Date | string | null
     score?: FloatNullableFilter<"TestAttempt"> | number | null
     questionOrders?: QuestionOrderListRelationFilter
     answers?: AnswerListRelationFilter
@@ -11182,6 +11260,7 @@ export namespace Prisma {
     studentId?: SortOrder
     startedAt?: SortOrder
     submittedAt?: SortOrderInput | SortOrder
+    timedOutAt?: SortOrderInput | SortOrder
     score?: SortOrderInput | SortOrder
     _count?: TestAttemptCountOrderByAggregateInput
     _avg?: TestAttemptAvgOrderByAggregateInput
@@ -11199,6 +11278,7 @@ export namespace Prisma {
     studentId?: StringWithAggregatesFilter<"TestAttempt"> | string
     startedAt?: DateTimeWithAggregatesFilter<"TestAttempt"> | Date | string
     submittedAt?: DateTimeNullableWithAggregatesFilter<"TestAttempt"> | Date | string | null
+    timedOutAt?: DateTimeNullableWithAggregatesFilter<"TestAttempt"> | Date | string | null
     score?: FloatNullableWithAggregatesFilter<"TestAttempt"> | number | null
   }
 
@@ -11463,9 +11543,12 @@ export namespace Prisma {
     description?: string | null
     pointsPerQuestion?: number | null
     timeLimitMinutes?: number
+    testPassword?: string | null
+    allowOnlyOneAttempt?: boolean
     isAlwaysAvailable?: boolean
     availableFrom?: Date | string | null
     availableUntil?: Date | string | null
+    passingScore?: number | null
     createdAt?: Date | string
     createdBy: UserCreateNestedOneWithoutTestsInput
     questions?: QuestionCreateNestedManyWithoutTestInput
@@ -11478,9 +11561,12 @@ export namespace Prisma {
     description?: string | null
     pointsPerQuestion?: number | null
     timeLimitMinutes?: number
+    testPassword?: string | null
+    allowOnlyOneAttempt?: boolean
     isAlwaysAvailable?: boolean
     availableFrom?: Date | string | null
     availableUntil?: Date | string | null
+    passingScore?: number | null
     createdById: string
     createdAt?: Date | string
     questions?: QuestionUncheckedCreateNestedManyWithoutTestInput
@@ -11493,9 +11579,12 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     pointsPerQuestion?: NullableFloatFieldUpdateOperationsInput | number | null
     timeLimitMinutes?: IntFieldUpdateOperationsInput | number
+    testPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    allowOnlyOneAttempt?: BoolFieldUpdateOperationsInput | boolean
     isAlwaysAvailable?: BoolFieldUpdateOperationsInput | boolean
     availableFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     availableUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passingScore?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneRequiredWithoutTestsNestedInput
     questions?: QuestionUpdateManyWithoutTestNestedInput
@@ -11508,9 +11597,12 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     pointsPerQuestion?: NullableFloatFieldUpdateOperationsInput | number | null
     timeLimitMinutes?: IntFieldUpdateOperationsInput | number
+    testPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    allowOnlyOneAttempt?: BoolFieldUpdateOperationsInput | boolean
     isAlwaysAvailable?: BoolFieldUpdateOperationsInput | boolean
     availableFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     availableUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passingScore?: NullableFloatFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     questions?: QuestionUncheckedUpdateManyWithoutTestNestedInput
@@ -11523,9 +11615,12 @@ export namespace Prisma {
     description?: string | null
     pointsPerQuestion?: number | null
     timeLimitMinutes?: number
+    testPassword?: string | null
+    allowOnlyOneAttempt?: boolean
     isAlwaysAvailable?: boolean
     availableFrom?: Date | string | null
     availableUntil?: Date | string | null
+    passingScore?: number | null
     createdById: string
     createdAt?: Date | string
   }
@@ -11536,9 +11631,12 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     pointsPerQuestion?: NullableFloatFieldUpdateOperationsInput | number | null
     timeLimitMinutes?: IntFieldUpdateOperationsInput | number
+    testPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    allowOnlyOneAttempt?: BoolFieldUpdateOperationsInput | boolean
     isAlwaysAvailable?: BoolFieldUpdateOperationsInput | boolean
     availableFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     availableUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passingScore?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -11548,9 +11646,12 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     pointsPerQuestion?: NullableFloatFieldUpdateOperationsInput | number | null
     timeLimitMinutes?: IntFieldUpdateOperationsInput | number
+    testPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    allowOnlyOneAttempt?: BoolFieldUpdateOperationsInput | boolean
     isAlwaysAvailable?: BoolFieldUpdateOperationsInput | boolean
     availableFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     availableUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passingScore?: NullableFloatFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11681,6 +11782,7 @@ export namespace Prisma {
     id?: string
     startedAt?: Date | string
     submittedAt?: Date | string | null
+    timedOutAt?: Date | string | null
     score?: number | null
     questionOrders?: QuestionOrderCreateNestedManyWithoutAttemptInput
     answers?: AnswerCreateNestedManyWithoutAttemptInput
@@ -11694,6 +11796,7 @@ export namespace Prisma {
     studentId: string
     startedAt?: Date | string
     submittedAt?: Date | string | null
+    timedOutAt?: Date | string | null
     score?: number | null
     questionOrders?: QuestionOrderUncheckedCreateNestedManyWithoutAttemptInput
     answers?: AnswerUncheckedCreateNestedManyWithoutAttemptInput
@@ -11703,6 +11806,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timedOutAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     questionOrders?: QuestionOrderUpdateManyWithoutAttemptNestedInput
     answers?: AnswerUpdateManyWithoutAttemptNestedInput
@@ -11716,6 +11820,7 @@ export namespace Prisma {
     studentId?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timedOutAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     questionOrders?: QuestionOrderUncheckedUpdateManyWithoutAttemptNestedInput
     answers?: AnswerUncheckedUpdateManyWithoutAttemptNestedInput
@@ -11727,6 +11832,7 @@ export namespace Prisma {
     studentId: string
     startedAt?: Date | string
     submittedAt?: Date | string | null
+    timedOutAt?: Date | string | null
     score?: number | null
   }
 
@@ -11734,6 +11840,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timedOutAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     score?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
@@ -11743,6 +11850,7 @@ export namespace Prisma {
     studentId?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timedOutAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     score?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
@@ -12128,9 +12236,12 @@ export namespace Prisma {
     description?: SortOrder
     pointsPerQuestion?: SortOrder
     timeLimitMinutes?: SortOrder
+    testPassword?: SortOrder
+    allowOnlyOneAttempt?: SortOrder
     isAlwaysAvailable?: SortOrder
     availableFrom?: SortOrder
     availableUntil?: SortOrder
+    passingScore?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
   }
@@ -12138,6 +12249,7 @@ export namespace Prisma {
   export type TestAvgOrderByAggregateInput = {
     pointsPerQuestion?: SortOrder
     timeLimitMinutes?: SortOrder
+    passingScore?: SortOrder
   }
 
   export type TestMaxOrderByAggregateInput = {
@@ -12146,9 +12258,12 @@ export namespace Prisma {
     description?: SortOrder
     pointsPerQuestion?: SortOrder
     timeLimitMinutes?: SortOrder
+    testPassword?: SortOrder
+    allowOnlyOneAttempt?: SortOrder
     isAlwaysAvailable?: SortOrder
     availableFrom?: SortOrder
     availableUntil?: SortOrder
+    passingScore?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
   }
@@ -12159,9 +12274,12 @@ export namespace Prisma {
     description?: SortOrder
     pointsPerQuestion?: SortOrder
     timeLimitMinutes?: SortOrder
+    testPassword?: SortOrder
+    allowOnlyOneAttempt?: SortOrder
     isAlwaysAvailable?: SortOrder
     availableFrom?: SortOrder
     availableUntil?: SortOrder
+    passingScore?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
   }
@@ -12169,6 +12287,7 @@ export namespace Prisma {
   export type TestSumOrderByAggregateInput = {
     pointsPerQuestion?: SortOrder
     timeLimitMinutes?: SortOrder
+    passingScore?: SortOrder
   }
 
   export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -12332,6 +12451,7 @@ export namespace Prisma {
     studentId?: SortOrder
     startedAt?: SortOrder
     submittedAt?: SortOrder
+    timedOutAt?: SortOrder
     score?: SortOrder
   }
 
@@ -12345,6 +12465,7 @@ export namespace Prisma {
     studentId?: SortOrder
     startedAt?: SortOrder
     submittedAt?: SortOrder
+    timedOutAt?: SortOrder
     score?: SortOrder
   }
 
@@ -12354,6 +12475,7 @@ export namespace Prisma {
     studentId?: SortOrder
     startedAt?: SortOrder
     submittedAt?: SortOrder
+    timedOutAt?: SortOrder
     score?: SortOrder
   }
 
@@ -13285,9 +13407,12 @@ export namespace Prisma {
     description?: string | null
     pointsPerQuestion?: number | null
     timeLimitMinutes?: number
+    testPassword?: string | null
+    allowOnlyOneAttempt?: boolean
     isAlwaysAvailable?: boolean
     availableFrom?: Date | string | null
     availableUntil?: Date | string | null
+    passingScore?: number | null
     createdAt?: Date | string
     questions?: QuestionCreateNestedManyWithoutTestInput
     attempts?: TestAttemptCreateNestedManyWithoutTestInput
@@ -13299,9 +13424,12 @@ export namespace Prisma {
     description?: string | null
     pointsPerQuestion?: number | null
     timeLimitMinutes?: number
+    testPassword?: string | null
+    allowOnlyOneAttempt?: boolean
     isAlwaysAvailable?: boolean
     availableFrom?: Date | string | null
     availableUntil?: Date | string | null
+    passingScore?: number | null
     createdAt?: Date | string
     questions?: QuestionUncheckedCreateNestedManyWithoutTestInput
     attempts?: TestAttemptUncheckedCreateNestedManyWithoutTestInput
@@ -13321,6 +13449,7 @@ export namespace Prisma {
     id?: string
     startedAt?: Date | string
     submittedAt?: Date | string | null
+    timedOutAt?: Date | string | null
     score?: number | null
     questionOrders?: QuestionOrderCreateNestedManyWithoutAttemptInput
     answers?: AnswerCreateNestedManyWithoutAttemptInput
@@ -13332,6 +13461,7 @@ export namespace Prisma {
     testId: string
     startedAt?: Date | string
     submittedAt?: Date | string | null
+    timedOutAt?: Date | string | null
     score?: number | null
     questionOrders?: QuestionOrderUncheckedCreateNestedManyWithoutAttemptInput
     answers?: AnswerUncheckedCreateNestedManyWithoutAttemptInput
@@ -13372,9 +13502,12 @@ export namespace Prisma {
     description?: StringNullableFilter<"Test"> | string | null
     pointsPerQuestion?: FloatNullableFilter<"Test"> | number | null
     timeLimitMinutes?: IntFilter<"Test"> | number
+    testPassword?: StringNullableFilter<"Test"> | string | null
+    allowOnlyOneAttempt?: BoolFilter<"Test"> | boolean
     isAlwaysAvailable?: BoolFilter<"Test"> | boolean
     availableFrom?: DateTimeNullableFilter<"Test"> | Date | string | null
     availableUntil?: DateTimeNullableFilter<"Test"> | Date | string | null
+    passingScore?: FloatNullableFilter<"Test"> | number | null
     createdById?: StringFilter<"Test"> | string
     createdAt?: DateTimeFilter<"Test"> | Date | string
   }
@@ -13404,6 +13537,7 @@ export namespace Prisma {
     studentId?: StringFilter<"TestAttempt"> | string
     startedAt?: DateTimeFilter<"TestAttempt"> | Date | string
     submittedAt?: DateTimeNullableFilter<"TestAttempt"> | Date | string | null
+    timedOutAt?: DateTimeNullableFilter<"TestAttempt"> | Date | string | null
     score?: FloatNullableFilter<"TestAttempt"> | number | null
   }
 
@@ -13468,6 +13602,7 @@ export namespace Prisma {
     id?: string
     startedAt?: Date | string
     submittedAt?: Date | string | null
+    timedOutAt?: Date | string | null
     score?: number | null
     questionOrders?: QuestionOrderCreateNestedManyWithoutAttemptInput
     answers?: AnswerCreateNestedManyWithoutAttemptInput
@@ -13479,6 +13614,7 @@ export namespace Prisma {
     studentId: string
     startedAt?: Date | string
     submittedAt?: Date | string | null
+    timedOutAt?: Date | string | null
     score?: number | null
     questionOrders?: QuestionOrderUncheckedCreateNestedManyWithoutAttemptInput
     answers?: AnswerUncheckedCreateNestedManyWithoutAttemptInput
@@ -13651,9 +13787,12 @@ export namespace Prisma {
     description?: string | null
     pointsPerQuestion?: number | null
     timeLimitMinutes?: number
+    testPassword?: string | null
+    allowOnlyOneAttempt?: boolean
     isAlwaysAvailable?: boolean
     availableFrom?: Date | string | null
     availableUntil?: Date | string | null
+    passingScore?: number | null
     createdAt?: Date | string
     createdBy: UserCreateNestedOneWithoutTestsInput
     attempts?: TestAttemptCreateNestedManyWithoutTestInput
@@ -13665,9 +13804,12 @@ export namespace Prisma {
     description?: string | null
     pointsPerQuestion?: number | null
     timeLimitMinutes?: number
+    testPassword?: string | null
+    allowOnlyOneAttempt?: boolean
     isAlwaysAvailable?: boolean
     availableFrom?: Date | string | null
     availableUntil?: Date | string | null
+    passingScore?: number | null
     createdById: string
     createdAt?: Date | string
     attempts?: TestAttemptUncheckedCreateNestedManyWithoutTestInput
@@ -13777,9 +13919,12 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     pointsPerQuestion?: NullableFloatFieldUpdateOperationsInput | number | null
     timeLimitMinutes?: IntFieldUpdateOperationsInput | number
+    testPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    allowOnlyOneAttempt?: BoolFieldUpdateOperationsInput | boolean
     isAlwaysAvailable?: BoolFieldUpdateOperationsInput | boolean
     availableFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     availableUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passingScore?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneRequiredWithoutTestsNestedInput
     attempts?: TestAttemptUpdateManyWithoutTestNestedInput
@@ -13791,9 +13936,12 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     pointsPerQuestion?: NullableFloatFieldUpdateOperationsInput | number | null
     timeLimitMinutes?: IntFieldUpdateOperationsInput | number
+    testPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    allowOnlyOneAttempt?: BoolFieldUpdateOperationsInput | boolean
     isAlwaysAvailable?: BoolFieldUpdateOperationsInput | boolean
     availableFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     availableUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passingScore?: NullableFloatFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     attempts?: TestAttemptUncheckedUpdateManyWithoutTestNestedInput
@@ -13905,9 +14053,12 @@ export namespace Prisma {
     description?: string | null
     pointsPerQuestion?: number | null
     timeLimitMinutes?: number
+    testPassword?: string | null
+    allowOnlyOneAttempt?: boolean
     isAlwaysAvailable?: boolean
     availableFrom?: Date | string | null
     availableUntil?: Date | string | null
+    passingScore?: number | null
     createdAt?: Date | string
     createdBy: UserCreateNestedOneWithoutTestsInput
     questions?: QuestionCreateNestedManyWithoutTestInput
@@ -13919,9 +14070,12 @@ export namespace Prisma {
     description?: string | null
     pointsPerQuestion?: number | null
     timeLimitMinutes?: number
+    testPassword?: string | null
+    allowOnlyOneAttempt?: boolean
     isAlwaysAvailable?: boolean
     availableFrom?: Date | string | null
     availableUntil?: Date | string | null
+    passingScore?: number | null
     createdById: string
     createdAt?: Date | string
     questions?: QuestionUncheckedCreateNestedManyWithoutTestInput
@@ -14010,9 +14164,12 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     pointsPerQuestion?: NullableFloatFieldUpdateOperationsInput | number | null
     timeLimitMinutes?: IntFieldUpdateOperationsInput | number
+    testPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    allowOnlyOneAttempt?: BoolFieldUpdateOperationsInput | boolean
     isAlwaysAvailable?: BoolFieldUpdateOperationsInput | boolean
     availableFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     availableUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passingScore?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneRequiredWithoutTestsNestedInput
     questions?: QuestionUpdateManyWithoutTestNestedInput
@@ -14024,9 +14181,12 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     pointsPerQuestion?: NullableFloatFieldUpdateOperationsInput | number | null
     timeLimitMinutes?: IntFieldUpdateOperationsInput | number
+    testPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    allowOnlyOneAttempt?: BoolFieldUpdateOperationsInput | boolean
     isAlwaysAvailable?: BoolFieldUpdateOperationsInput | boolean
     availableFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     availableUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passingScore?: NullableFloatFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     questions?: QuestionUncheckedUpdateManyWithoutTestNestedInput
@@ -14071,6 +14231,7 @@ export namespace Prisma {
     id?: string
     startedAt?: Date | string
     submittedAt?: Date | string | null
+    timedOutAt?: Date | string | null
     score?: number | null
     answers?: AnswerCreateNestedManyWithoutAttemptInput
     test: TestCreateNestedOneWithoutAttemptsInput
@@ -14083,6 +14244,7 @@ export namespace Prisma {
     studentId: string
     startedAt?: Date | string
     submittedAt?: Date | string | null
+    timedOutAt?: Date | string | null
     score?: number | null
     answers?: AnswerUncheckedCreateNestedManyWithoutAttemptInput
   }
@@ -14130,6 +14292,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timedOutAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     answers?: AnswerUpdateManyWithoutAttemptNestedInput
     test?: TestUpdateOneRequiredWithoutAttemptsNestedInput
@@ -14142,6 +14305,7 @@ export namespace Prisma {
     studentId?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timedOutAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     answers?: AnswerUncheckedUpdateManyWithoutAttemptNestedInput
   }
@@ -14179,6 +14343,7 @@ export namespace Prisma {
     id?: string
     startedAt?: Date | string
     submittedAt?: Date | string | null
+    timedOutAt?: Date | string | null
     score?: number | null
     questionOrders?: QuestionOrderCreateNestedManyWithoutAttemptInput
     test: TestCreateNestedOneWithoutAttemptsInput
@@ -14191,6 +14356,7 @@ export namespace Prisma {
     studentId: string
     startedAt?: Date | string
     submittedAt?: Date | string | null
+    timedOutAt?: Date | string | null
     score?: number | null
     questionOrders?: QuestionOrderUncheckedCreateNestedManyWithoutAttemptInput
   }
@@ -14238,6 +14404,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timedOutAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     questionOrders?: QuestionOrderUpdateManyWithoutAttemptNestedInput
     test?: TestUpdateOneRequiredWithoutAttemptsNestedInput
@@ -14250,6 +14417,7 @@ export namespace Prisma {
     studentId?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timedOutAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     questionOrders?: QuestionOrderUncheckedUpdateManyWithoutAttemptNestedInput
   }
@@ -14289,9 +14457,12 @@ export namespace Prisma {
     description?: string | null
     pointsPerQuestion?: number | null
     timeLimitMinutes?: number
+    testPassword?: string | null
+    allowOnlyOneAttempt?: boolean
     isAlwaysAvailable?: boolean
     availableFrom?: Date | string | null
     availableUntil?: Date | string | null
+    passingScore?: number | null
     createdAt?: Date | string
   }
 
@@ -14300,6 +14471,7 @@ export namespace Prisma {
     testId: string
     startedAt?: Date | string
     submittedAt?: Date | string | null
+    timedOutAt?: Date | string | null
     score?: number | null
   }
 
@@ -14309,9 +14481,12 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     pointsPerQuestion?: NullableFloatFieldUpdateOperationsInput | number | null
     timeLimitMinutes?: IntFieldUpdateOperationsInput | number
+    testPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    allowOnlyOneAttempt?: BoolFieldUpdateOperationsInput | boolean
     isAlwaysAvailable?: BoolFieldUpdateOperationsInput | boolean
     availableFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     availableUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passingScore?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     questions?: QuestionUpdateManyWithoutTestNestedInput
     attempts?: TestAttemptUpdateManyWithoutTestNestedInput
@@ -14323,9 +14498,12 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     pointsPerQuestion?: NullableFloatFieldUpdateOperationsInput | number | null
     timeLimitMinutes?: IntFieldUpdateOperationsInput | number
+    testPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    allowOnlyOneAttempt?: BoolFieldUpdateOperationsInput | boolean
     isAlwaysAvailable?: BoolFieldUpdateOperationsInput | boolean
     availableFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     availableUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passingScore?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     questions?: QuestionUncheckedUpdateManyWithoutTestNestedInput
     attempts?: TestAttemptUncheckedUpdateManyWithoutTestNestedInput
@@ -14337,9 +14515,12 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     pointsPerQuestion?: NullableFloatFieldUpdateOperationsInput | number | null
     timeLimitMinutes?: IntFieldUpdateOperationsInput | number
+    testPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    allowOnlyOneAttempt?: BoolFieldUpdateOperationsInput | boolean
     isAlwaysAvailable?: BoolFieldUpdateOperationsInput | boolean
     availableFrom?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     availableUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passingScore?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -14347,6 +14528,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timedOutAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     questionOrders?: QuestionOrderUpdateManyWithoutAttemptNestedInput
     answers?: AnswerUpdateManyWithoutAttemptNestedInput
@@ -14358,6 +14540,7 @@ export namespace Prisma {
     testId?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timedOutAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     questionOrders?: QuestionOrderUncheckedUpdateManyWithoutAttemptNestedInput
     answers?: AnswerUncheckedUpdateManyWithoutAttemptNestedInput
@@ -14368,6 +14551,7 @@ export namespace Prisma {
     testId?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timedOutAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     score?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 
@@ -14382,6 +14566,7 @@ export namespace Prisma {
     studentId: string
     startedAt?: Date | string
     submittedAt?: Date | string | null
+    timedOutAt?: Date | string | null
     score?: number | null
   }
 
@@ -14413,6 +14598,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timedOutAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     questionOrders?: QuestionOrderUpdateManyWithoutAttemptNestedInput
     answers?: AnswerUpdateManyWithoutAttemptNestedInput
@@ -14424,6 +14610,7 @@ export namespace Prisma {
     studentId?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timedOutAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     score?: NullableFloatFieldUpdateOperationsInput | number | null
     questionOrders?: QuestionOrderUncheckedUpdateManyWithoutAttemptNestedInput
     answers?: AnswerUncheckedUpdateManyWithoutAttemptNestedInput
@@ -14434,6 +14621,7 @@ export namespace Prisma {
     studentId?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    timedOutAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     score?: NullableFloatFieldUpdateOperationsInput | number | null
   }
 

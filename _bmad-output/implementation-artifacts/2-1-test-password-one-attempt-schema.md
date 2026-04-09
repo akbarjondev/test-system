@@ -1,6 +1,6 @@
 # Story 2.1: Test Password & One-Attempt Schema
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -22,26 +22,26 @@ So that I control who can access the test and how many times.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Update Prisma schema in `packages/database/prisma/schema.prisma`
-  - [ ] Add `testPassword  String?` to the Test model (after `timeLimitMinutes`)
-  - [ ] Add `allowOnlyOneAttempt  Boolean  @default(false)` to the Test model
+- [x] Task 1: Update Prisma schema in `packages/database/prisma/schema.prisma`
+  - [x] Add `testPassword  String?` to the Test model (after `timeLimitMinutes`)
+  - [x] Add `allowOnlyOneAttempt  Boolean  @default(false)` to the Test model
 
-- [ ] Task 2: Run migration
-  - [ ] Run `cd packages/database && npm run db:migrate` — name migration `add_test_password_and_one_attempt`
-  - [ ] Run `cd packages/database && npm run db:generate` to regenerate Prisma client
+- [x] Task 2: Run migration
+  - [x] Run `cd packages/database && npm run db:migrate` — name migration `add_test_password_and_one_attempt`
+  - [x] Run `cd packages/database && npm run db:generate` to regenerate Prisma client
 
-- [ ] Task 3: Update Zod schemas in `apps/api/src/config/schemas.ts`
-  - [ ] Add `testPassword: z.string().length(3).optional()` to `createTestSchema`
-  - [ ] Add `allowOnlyOneAttempt: z.boolean().optional()` to `createTestSchema`
-  - [ ] Apply same additions to `updateTestSchema`
+- [x] Task 3: Update Zod schemas in `apps/api/src/config/schemas.ts`
+  - [x] Add `testPassword: z.string().length(3).optional()` to `createTestSchema`
+  - [x] Add `allowOnlyOneAttempt: z.boolean().optional()` to `createTestSchema`
+  - [x] Apply same additions to `updateTestSchema`
 
-- [ ] Task 4: Update repository in `apps/api/src/repositories/tests.repository.ts`
-  - [ ] Verify `createTest` and `updateTest` methods pass all fields from body to Prisma — Prisma will auto-include new fields if present in data object
-  - [ ] No changes needed if repository uses spread (`...data`) pattern
+- [x] Task 4: Update repository in `apps/api/src/repositories/tests.repository.ts`
+  - [x] Verify `createTest` and `updateTest` methods pass all fields from body to Prisma — Prisma will auto-include new fields if present in data object
+  - [x] No changes needed if repository uses spread (`...data`) pattern
 
-- [ ] Task 5: Verify controller in `apps/api/src/controllers/tests.controller.ts`
-  - [ ] Confirm `testPassword` and `allowOnlyOneAttempt` are passed through from `req.body` to service/repository
-  - [ ] Update destructuring if controller explicitly picks fields
+- [x] Task 5: Verify controller in `apps/api/src/controllers/tests.controller.ts`
+  - [x] Confirm `testPassword` and `allowOnlyOneAttempt` are passed through from `req.body` to service/repository
+  - [x] Update destructuring if controller explicitly picks fields
 
 ## Dev Notes
 
@@ -99,6 +99,25 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
+None — implementation proceeded without issues.
+
 ### Completion Notes List
 
+- Task 1: Added `testPassword String?` and `allowOnlyOneAttempt Boolean @default(false)` to Test model in schema.prisma, positioned after `timeLimitMinutes`.
+- Task 2: Migration `20260409100931_add_test_password_and_one_attempt` created and applied. Prisma client regenerated successfully. Migration adds nullable `testPassword TEXT` and `allowOnlyOneAttempt BOOLEAN NOT NULL DEFAULT false` — existing records unaffected.
+- Task 3: `testPassword` validation corrected to `z.string().length(3)` (was `z.string().max(3)` from prior merge). Both `createTestSchema` and `updateTestSchema` (via `.partial()`) include both new fields.
+- Task 4: Repository `UpdateTestData` interface already included both fields from prior merge; `createTest` uses `Omit<Test, "id" | "createdAt">` so new Prisma fields flow automatically. No changes needed.
+- Task 5: Controller already destructures and passes `testPassword` and `allowOnlyOneAttempt` in both `createTest` and `updateTest`. No changes needed.
+- Full TypeScript build passes (`turbo run build`) with zero errors across all packages.
+
 ### File List
+
+- `packages/database/prisma/schema.prisma` — Added `testPassword String?` and `allowOnlyOneAttempt Boolean @default(false)` to Test model
+- `packages/database/prisma/migrations/20260409100931_add_test_password_and_one_attempt/migration.sql` — Auto-generated migration SQL
+- `apps/api/src/config/schemas.ts` — Fixed `testPassword` validation to `z.string().length(3)` (corrected from `max(3)`)
+
+## Change Log
+
+| Date | Change | Author |
+|------|--------|--------|
+| 2026-04-09 | Implemented Story 2.1: added testPassword and allowOnlyOneAttempt to Prisma schema, ran migration, corrected Zod validation to z.string().length(3); verified repository and controller already handle both fields | claude-sonnet-4-6 |

@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const testSchema = z.object({
   title: z.string().min(3),
   description: z.string().optional(),
@@ -15,14 +16,14 @@ const testSchema = z.object({
   isAlwaysAvailable: z.boolean(),
   availableFrom: z.date().optional(),
   availableUntil: z.date().optional(),
+  testPassword: z.string().max(3).optional().nullable(),
+  allowOnlyOneAttempt: z.boolean().optional(),
+  passingScore: z.number().min(0).optional().nullable(),
 });
 
-// keep old name for backward compat
-const createTestSchema = testSchema;
-
 export const createTest = async (
-  data: z.infer<typeof createTestSchema>,
-): Promise<{ error?: string }> => {
+  data: z.infer<typeof testSchema>,
+): Promise<{ error?: string; redirectTo?: string }> => {
   try {
     const token = await getToken();
     const response = await fetch(`${API_URL}${API_ROUTES.TESTS}`, {
@@ -31,6 +32,9 @@ export const createTest = async (
         ...data,
         availableFrom: data.availableFrom?.toISOString() ?? null,
         availableUntil: data.availableUntil?.toISOString() ?? null,
+        testPassword: data.testPassword ?? null,
+        allowOnlyOneAttempt: data.allowOnlyOneAttempt ?? false,
+        passingScore: data.passingScore ?? null,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -40,22 +44,22 @@ export const createTest = async (
 
     if (!response.ok) {
       const err = await response.json().catch(() => ({})) as { error?: string };
-      return { error: err.error ?? "Failed to create test" };
+      return { error: err.error ?? "Test yaratishda xatolik yuz berdi" };
     }
     const responseData = await response.json();
-    redirect(`${ROUTES.TESTS}/${responseData.id}`);
+    return { redirectTo: `${ROUTES.TESTS}/${responseData.id}` };
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };
     }
-    return { error: "Failed to create test" };
+    return { error: "Test yaratishda xatolik yuz berdi" };
   }
 };
 
 export const updateTest = async (
   testId: string,
   data: z.infer<typeof testSchema>,
-): Promise<{ error?: string }> => {
+): Promise<{ error?: string; redirectTo?: string }> => {
   try {
     const token = await getToken();
     const response = await fetch(`${API_URL}${API_ROUTES.TESTS}/${testId}`, {
@@ -64,6 +68,9 @@ export const updateTest = async (
         ...data,
         availableFrom: data.availableFrom?.toISOString() ?? null,
         availableUntil: data.availableUntil?.toISOString() ?? null,
+        testPassword: data.testPassword ?? null,
+        allowOnlyOneAttempt: data.allowOnlyOneAttempt ?? false,
+        passingScore: data.passingScore ?? null,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -73,15 +80,16 @@ export const updateTest = async (
 
     if (!response.ok) {
       const err = await response.json().catch(() => ({})) as { error?: string };
-      return { error: err.error ?? "Failed to update test" };
+      return { error: err.error ?? "Testni saqlashda xatolik yuz berdi" };
     }
 
-    redirect(`${ROUTES.TESTS}/${testId}`);
+    revalidatePath(`${ROUTES.TESTS}/${testId}`);
+    return { redirectTo: `${ROUTES.TESTS}/${testId}` };
   } catch (error) {
     if (error instanceof Error) {
       return { error: error.message };
     }
-    return { error: "Failed to update test" };
+    return { error: "Testni saqlashda xatolik yuz berdi" };
   }
 };
 

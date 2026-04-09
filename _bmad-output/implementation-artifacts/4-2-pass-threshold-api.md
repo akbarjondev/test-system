@@ -1,6 +1,6 @@
 # Story 4.2: Pass Threshold API
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -26,37 +26,37 @@ So that the system can automatically determine if a student passed.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Update Zod schemas in `apps/api/src/config/schemas.ts`
-  - [ ] Add `passingScore: z.number().positive().optional().nullable()` to `createTestSchema`
-  - [ ] Apply same to `updateTestSchema`
+- [x] Task 1: Update Zod schemas in `apps/api/src/config/schemas.ts`
+  - [x] Add `passingScore: z.number().positive().optional().nullable()` to `createTestSchema`
+  - [x] Apply same to `updateTestSchema`
 
-- [ ] Task 2: Update `AttemptsRepository.submitAttempt` in `apps/api/src/repositories/attempts.repository.ts`
-  - [ ] Add `timedOutAt?: Date` parameter to the method signature
-  - [ ] Pass it to `prisma.testAttempt.update({ where: { id: attemptId }, data: { ..., timedOutAt } })`
+- [x] Task 2: Update `AttemptsRepository.submitAttempt` in `apps/api/src/repositories/attempts.repository.ts`
+  - [x] Add `timedOutAt?: Date` parameter to the method signature
+  - [x] Pass it to `prisma.testAttempt.update({ where: { id: attemptId }, data: { ..., timedOutAt } })`
 
-- [ ] Task 3: Update `AttemptsService.submitTest` in `apps/api/src/services/attempts.service.ts`
-  - [ ] When `TIME_LIMIT_EXCEEDED` is detected, set `timedOutAt`:
+- [x] Task 3: Update `AttemptsService.submitTest` in `apps/api/src/services/attempts.service.ts`
+  - [x] When `TIME_LIMIT_EXCEEDED` is detected, set `timedOutAt`:
     ```ts
     if (this.isTimeLimitExceeded(attempt, test)) {
       await AttemptsRepository.setTimedOut(attemptId);  // new method
       throw new Error("TIME_LIMIT_EXCEEDED");
     }
     ```
-  - [ ] Add `AttemptsRepository.setTimedOut(attemptId)` that sets `timedOutAt = new Date()`
+  - [x] Add `AttemptsRepository.setTimedOut(attemptId)` that sets `timedOutAt = new Date()`
 
-- [ ] Task 4: Add `passed` and `status` computed fields to attempts list response
-  - [ ] In `AttemptsRepository.getAttemptsByTest`, include `test.passingScore` in the query select
-  - [ ] In `AttemptsController.getTestAttempts` (or service), compute per attempt:
+- [x] Task 4: Add `passed` and `status` computed fields to attempts list response
+  - [x] In `AttemptsRepository.getAttemptsByTest`, include `test.passingScore` in the query select
+  - [x] In `AttemptsController.getTestAttempts` (or service), compute per attempt:
     ```ts
     const status = attempt.submittedAt ? "submitted" : attempt.timedOutAt ? "timed_out" : "in_progress";
     const passed = test.passingScore !== null
       ? (attempt.score ?? 0) >= test.passingScore
       : null;
     ```
-  - [ ] Return enriched attempt array
+  - [x] Return enriched attempt array
 
-- [ ] Task 5: Verify `passingScore` is included in test create/update response
-  - [ ] Check `TestsController.createTest` and `updateTest` — confirm Prisma returns all fields including `passingScore`
+- [x] Task 5: Verify `passingScore` is included in test create/update response
+  - [x] Check `TestsController.createTest` and `updateTest` — confirm Prisma returns all fields including `passingScore`
 
 ## Dev Notes
 
@@ -117,6 +117,24 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
+- Tasks 1, 4, 5 were already implemented in previous work on this story (passingScore schema, computed fields in service, controller pass-through).
+- Task 2 description refers to `submitAttempt` signature change, but implementation pattern from story is actually a new separate `setTimedOut` method — implemented as specified in Dev Notes.
+- Task 4: `passingScore` is accessed via `TestsRepository.getOneTest` called in `getTestAttempts` service, not from the attempts query itself — this is correct since the test object provides `passingScore`.
+
 ### Completion Notes List
 
+- Task 1: `passingScore: z.number().min(0).optional().nullable()` was already present in `createTestSchema` and inherited by `updateTestSchema` (via `.partial()`). No change needed.
+- Task 2: Added `static async setTimedOut(attemptId: string): Promise<void>` to `AttemptsRepository` — sets `timedOutAt = new Date()` via Prisma update.
+- Task 3: Updated `submitTest` in `AttemptsService` — calls `await AttemptsRepository.setTimedOut(attemptId)` immediately before throwing `TIME_LIMIT_EXCEEDED`, persisting the timed-out timestamp.
+- Task 4: `status` and `passed` computed fields were already present in `AttemptsService.getTestAttempts`. The test's `passingScore` is loaded via `TestsRepository.getOneTest`. No change needed.
+- Task 5: `TestsController.createTest` and `updateTest` both return the Prisma result directly (all model fields), which includes `passingScore`. No change needed.
+- TypeScript compilation: clean (`tsc --noEmit` exits 0).
+
 ### File List
+
+- `apps/api/src/repositories/attempts.repository.ts` — added `setTimedOut` static method
+- `apps/api/src/services/attempts.service.ts` — call `setTimedOut` before throwing TIME_LIMIT_EXCEEDED in `submitTest`
+
+## Change Log
+
+- 2026-04-09: Implemented story 4-2-pass-threshold-api. Added `AttemptsRepository.setTimedOut` method; updated `AttemptsService.submitTest` to record `timedOutAt` on time-limit expiry. Confirmed `passingScore` schema, computed status/passed fields, and controller response were already implemented. TypeScript clean.

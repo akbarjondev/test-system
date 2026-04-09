@@ -1,6 +1,6 @@
 # Story 5.2: Test Create & Edit Forms
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -25,32 +25,32 @@ So that I can configure all test settings without confusion.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Find existing create and edit form components
-  - [ ] Glob: `apps/admin-dashboard/app/dashboard/tests/new/**/*.tsx`
-  - [ ] Glob: `apps/admin-dashboard/app/dashboard/tests/[id]/edit/**/*.tsx`
-  - [ ] Read both to understand current field coverage
+- [x] Task 1: Find existing create and edit form components
+  - [x] Glob: `apps/admin-dashboard/app/dashboard/tests/new/**/*.tsx`
+  - [x] Glob: `apps/admin-dashboard/app/dashboard/tests/[id]/edit/**/*.tsx`
+  - [x] Read both to understand current field coverage
 
-- [ ] Task 2: Add missing fields to both forms
-  - [ ] **Test kodi** (`testPassword`): text input, max 3 chars, label "Test kodi (3 ta raqam)", helper "Talabalar ushbu kod orqali testga kiradi (ixtiyoriy)"
-  - [ ] **Faqat bir marta topshirish** (`allowOnlyOneAttempt`): checkbox, label "Faqat bir marta topshirishga ruxsat"
-  - [ ] **O'tish bali** (`passingScore`): number input, label "O'tish bali (ixtiyoriy)", helper "Agar ko'rsatilsa, talabalar shu baldan yuqori to'plasa, 'O'tdi' deb belgilanadi"
-  - [ ] Ensure all EXISTING fields also have Uzbek labels (update if still in English)
+- [x] Task 2: Add missing fields to both forms
+  - [x] **Test kodi** (`testPassword`): text input, max 3 chars, label "Test kodi (3 ta raqam)", helper "Talabalar ushbu kod orqali testga kiradi (ixtiyoriy)"
+  - [x] **Faqat bir marta topshirish** (`allowOnlyOneAttempt`): checkbox, label "Faqat bir marta topshirishga ruxsat"
+  - [x] **O'tish bali** (`passingScore`): number input, label "O'tish bali (ixtiyoriy)", helper "Agar ko'rsatilsa, talabalar shu baldan yuqori to'plasa, 'O'tdi' deb belgilanadi"
+  - [x] Ensure all EXISTING fields also have Uzbek labels (update if still in English)
 
-- [ ] Task 3: Translate all existing field labels to Uzbek
-  - [ ] Nomi (title), Tavsif (description), Har bir savol uchun ball (pointsPerQuestion), Vaqt chegarasi (timeLimitMinutes), Har doim mavjud (isAlwaysAvailable), Boshlanish vaqti (availableFrom), Tugash vaqti (availableUntil)
+- [x] Task 3: Translate all existing field labels to Uzbek
+  - [x] Nomi (title), Tavsif (description), Har bir savol uchun ball (pointsPerQuestion), Vaqt chegarasi (timeLimitMinutes), Har doim mavjud (isAlwaysAvailable), Boshlanish vaqti (availableFrom), Tugash vaqti (availableUntil)
 
-- [ ] Task 4: Add inline validation error messages in Uzbek
-  - [ ] For required fields: "Bu maydon to'ldirilishi shart"
-  - [ ] For testPassword: "Test kodi 3 ta raqamdan iborat bo'lishi kerak"
-  - [ ] For passingScore: "O'tish bali musbat son bo'lishi kerak"
+- [x] Task 4: Add inline validation error messages in Uzbek
+  - [x] For required fields: "Bu maydon to'ldirilishi shart"
+  - [x] For testPassword: "Test kodi 3 ta raqamdan iborat bo'lishi kerak"
+  - [x] For passingScore: "O'tish bali musbat son bo'lishi kerak"
 
-- [ ] Task 5: Update server actions to pass new fields
-  - [ ] Ensure `apps/admin-dashboard/actions/tests.ts` sends `testPassword`, `allowOnlyOneAttempt`, `passingScore` (already done in Story 4.3 and 2.1 if those are merged)
-  - [ ] If not yet done, add them now
+- [x] Task 5: Update server actions to pass new fields
+  - [x] Ensure `apps/admin-dashboard/actions/tests.ts` sends `testPassword`, `allowOnlyOneAttempt`, `passingScore` (already done in Story 4.3 and 2.1 if those are merged)
+  - [x] If not yet done, add them now
 
-- [ ] Task 6: Show success toast on redirect
-  - [ ] After successful save, use `sonner` or `react-hot-toast` (whichever is installed) to show toast: "Test muvaffaqiyatli saqlandi"
-  - [ ] Check what toast library is installed: grep `package.json` for "sonner" or "react-hot-toast"
+- [x] Task 6: Show success toast on redirect
+  - [x] After successful save, use `sonner` or `react-hot-toast` (whichever is installed) to show toast: "Test muvaffaqiyatli saqlandi"
+  - [x] Check what toast library is installed: grep `package.json` for "sonner" or "react-hot-toast"
 
 ## Dev Notes
 
@@ -110,6 +110,27 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
+None.
+
 ### Completion Notes List
 
+- Prisma schema already had `testPassword`, `allowOnlyOneAttempt`, `passingScore` fields from previous story work; Prisma client was already regenerated.
+- Added all three new fields to both `FormTest.tsx` (create) and `FormEditTest.tsx` (edit) forms.
+- All field labels translated to Uzbek: Nomi, Tavsif, Har bir savol uchun ball, Vaqt chegarasi (daqiqa), Har doim mavjud, Boshlanish vaqti, Tugash vaqti, Test kodi (3 ta raqam), Faqat bir marta topshirishga ruxsat, O'tish bali.
+- Added Uzbek validation error messages inline via Zod schema in both form components.
+- Refactored `createTest` and `updateTest` server actions to return `{ redirectTo }` instead of calling `redirect()` directly, enabling the form to show a `sonner` toast ("Test muvaffaqiyatli saqlandi") before client-side redirecting with `router.push()`.
+- Updated API schema in `apps/api/src/config/schemas.ts` with the three new fields.
+- Updated `tests.controller.ts` and `tests.repository.ts` in the API to handle the new fields in create and update operations.
+
 ### File List
+
+- `apps/admin-dashboard/app/dashboard/tests/new/ui/FormTest.tsx`
+- `apps/admin-dashboard/app/dashboard/tests/[id]/edit/ui/FormEditTest.tsx`
+- `apps/admin-dashboard/actions/tests.ts`
+- `apps/api/src/config/schemas.ts`
+- `apps/api/src/controllers/tests.controller.ts`
+- `apps/api/src/repositories/tests.repository.ts`
+
+### Change Log
+
+- 2026-04-09: Implemented Story 5.2 — Test Create & Edit Forms. Added testPassword, allowOnlyOneAttempt, passingScore fields to both forms. Translated all labels to Uzbek. Added Uzbek inline validation errors. Refactored server actions to return redirectTo and show success toast. Updated API schema and controller to support new fields.

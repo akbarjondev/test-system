@@ -1,6 +1,6 @@
 # Story 4.3: Pass Threshold Dashboard Form
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -25,26 +25,26 @@ So that the system can automatically evaluate student results.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Update `apps/admin-dashboard/actions/tests.ts`
-  - [ ] Add `passingScore: z.number().positive().nullable().optional()` to the local `testSchema` Zod object
-  - [ ] Ensure `createTest` and `updateTest` actions pass `passingScore` in the request body to the API
-  - [ ] Transform: if `passingScore` is empty string or undefined, send `null`
+- [x] Task 1: Update `apps/admin-dashboard/actions/tests.ts`
+  - [x] Add `passingScore: z.number().positive().nullable().optional()` to the local `testSchema` Zod object
+  - [x] Ensure `createTest` and `updateTest` actions pass `passingScore` in the request body to the API
+  - [x] Transform: if `passingScore` is empty string or undefined, send `null`
 
-- [ ] Task 2: Find and update the test create form component
-  - [ ] Search for the test creation form in `apps/admin-dashboard/` (likely in `app/dashboard/tests/new/` or `components/`)
-  - [ ] Add a number input field for `passingScore`:
+- [x] Task 2: Find and update the test create form component
+  - [x] Search for the test creation form in `apps/admin-dashboard/` (likely in `app/dashboard/tests/new/` or `components/`)
+  - [x] Add a number input field for `passingScore`:
     - Label: "O'tish bali (ixtiyoriy)"
     - Input type: `number`, min: 0
     - Helper text: "Agar ko'rsatilsa, talabalar shu baldan yuqori to'plasa, 'O'tdi' deb belgilanadi"
-  - [ ] Follow existing field pattern in the form
+  - [x] Follow existing field pattern in the form
 
-- [ ] Task 3: Find and update the test edit form component
-  - [ ] Search for the test edit form in `apps/admin-dashboard/` (likely in `app/dashboard/tests/[id]/edit/` or similar)
-  - [ ] Add same `passingScore` field with pre-filled value from existing test data
+- [x] Task 3: Find and update the test edit form component
+  - [x] Search for the test edit form in `apps/admin-dashboard/` (likely in `app/dashboard/tests/[id]/edit/` or similar)
+  - [x] Add same `passingScore` field with pre-filled value from existing test data
 
-- [ ] Task 4: Update test detail page to show passingScore
-  - [ ] Find the test detail page component
-  - [ ] Display `passingScore` value if set, or "Ko'rsatilmagan" if null
+- [x] Task 4: Update test detail page to show passingScore
+  - [x] Find the test detail page component
+  - [x] Display `passingScore` value if set, or "Ko'rsatilmagan" if null
 
 ## Dev Notes
 
@@ -115,6 +115,22 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
+Tasks 1–3 were already implemented in the codebase before this session. Task 4 (test detail page passingScore display) was the only missing piece — added a new grid cell showing passingScore or "Ko'rsatilmagan" when null. TypeScript type check and ESLint both pass (0 errors; 3 pre-existing react-hooks/incompatible-library warnings unrelated to this story).
+
 ### Completion Notes List
 
+- Task 1: `actions/tests.ts` already had `passingScore: z.number().min(0).optional().nullable()` in the schema and `passingScore: data.passingScore ?? null` in both `createTest` and `updateTest` request bodies. AC2 satisfied.
+- Task 2: `FormTest.tsx` (new test form) already had the `passingScore` field with correct label "O'tish bali (ixtiyoriy)", helper text, number input, `setValueAs` transformer returning null for empty values, and `defaultValues: { passingScore: null }`. AC1 satisfied.
+- Task 3: `FormEditTest.tsx` (edit test form) already had the same `passingScore` field pre-filled from `test.passingScore ?? null`. AC1 and AC3 satisfied.
+- Task 4: Added `passingScore` display to `apps/admin-dashboard/app/dashboard/tests/[id]/page.tsx` — shows numeric value when set, or "Ko'rsatilmagan" when null. AC3 satisfied.
+
 ### File List
+
+- `apps/admin-dashboard/actions/tests.ts` (verified — passingScore already present)
+- `apps/admin-dashboard/app/dashboard/tests/new/ui/FormTest.tsx` (verified — passingScore field already present)
+- `apps/admin-dashboard/app/dashboard/tests/[id]/edit/ui/FormEditTest.tsx` (verified — passingScore field already present)
+- `apps/admin-dashboard/app/dashboard/tests/[id]/page.tsx` (modified — added passingScore display)
+
+## Change Log
+
+- 2026-04-09: Added passingScore display to test detail page; verified Tasks 1–3 already implemented. Story complete. (Amelia, claude-sonnet-4-6)

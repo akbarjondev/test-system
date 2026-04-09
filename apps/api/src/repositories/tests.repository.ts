@@ -10,6 +10,9 @@ export interface UpdateTestData {
   isAlwaysAvailable?: boolean;
   availableFrom?: Date | null;
   availableUntil?: Date | null;
+  testPassword?: string | null;
+  allowOnlyOneAttempt?: boolean;
+  passingScore?: number | null;
 }
 
 export class TestsRepository {
@@ -221,6 +224,12 @@ export class TestsRepository {
       where: {
         id,
       },
+    });
+  }
+
+  static async findByPassword(testPassword: string): Promise<Test | null> {
+    return prisma.test.findFirst({
+      where: { testPassword },
     });
   }
 }

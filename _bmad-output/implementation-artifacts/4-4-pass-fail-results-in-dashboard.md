@@ -1,6 +1,6 @@
 # Story 4.4: Pass/Fail Results in Dashboard
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -25,27 +25,27 @@ So that I can quickly assess class performance.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Find the test results page in the admin dashboard
-  - [ ] Glob: `apps/admin-dashboard/app/dashboard/tests/[id]/**/*.tsx`
-  - [ ] Identify the component that renders attempt results
+- [x] Task 1: Find the test results page in the admin dashboard
+  - [x] Glob: `apps/admin-dashboard/app/dashboard/tests/[id]/**/*.tsx`
+  - [x] Identify the component that renders attempt results
 
-- [ ] Task 2: Update the results server action or fetch logic
-  - [ ] Ensure the results fetch includes `passed`, `status`, `timedOutAt` from the API response (Story 4.2 adds these)
-  - [ ] Update the TypeScript type for attempt data to include `passed: boolean | null`, `status: string`, `timedOutAt: string | null`
+- [x] Task 2: Update the results server action or fetch logic
+  - [x] Ensure the results fetch includes `passed`, `status`, `timedOutAt` from the API response (Story 4.2 adds these)
+  - [x] Update the TypeScript type for attempt data to include `passed: boolean | null`, `status: string`, `timedOutAt: string | null`
 
-- [ ] Task 3: Add shadcn Badge to results table
-  - [ ] Import `Badge` from `@/components/ui/badge` (already in packages/ui or dashboard)
-  - [ ] Add a "Natija" column to the DataTable
-  - [ ] Render badge based on data:
+- [x] Task 3: Add shadcn Badge to results table
+  - [x] Import `Badge` from `@/components/ui/badge` (already in packages/ui or dashboard)
+  - [x] Add a "Natija" column to the DataTable
+  - [x] Render badge based on data:
     - `timedOutAt` not null → `<Badge variant="outline" className="bg-orange-100 text-orange-700">Vaqt tugadi</Badge>`
     - `passed === true` → `<Badge className="bg-green-100 text-green-700">O'tdi</Badge>`
     - `passed === false` → `<Badge className="bg-red-100 text-red-700">O'tmadi</Badge>`
     - `passed === null` → no badge (no passingScore set)
     - `status === "in_progress"` → `<Badge variant="outline">Jarayonda</Badge>`
 
-- [ ] Task 4: Add "Holat" column for attempt status
-  - [ ] Separate from pass/fail badge — shows attempt lifecycle state
-  - [ ] "Topshirilgan" for submitted, "Vaqt tugadi" for timed out, "Jarayonda" for in_progress
+- [x] Task 4: Add "Holat" column for attempt status
+  - [x] Separate from pass/fail badge — shows attempt lifecycle state
+  - [x] "Topshirilgan" for submitted, "Vaqt tugadi" for timed out, "Jarayonda" for in_progress
 
 ## Dev Notes
 
@@ -110,4 +110,16 @@ claude-sonnet-4-6
 
 ### Completion Notes List
 
+- Task 1: Results page located at `apps/admin-dashboard/app/dashboard/tests/[id]/results/results-table.tsx`. The component `ResultsTable` renders attempts with a `DataTable`.
+- Task 2: `EnrichedAttempt` type already had `passed: boolean | null`, `status: string`, and `timedOutAt: string | null` — no type changes needed.
+- Task 3: Updated `NatijaCell` to check `timedOutAt` first (highest priority → `variant="warning"` orange), then `status === "in_progress"` (→ `variant="outline"` gray), then `passed === true` (→ `variant="success"` green), then `passed === false` (→ `variant="error"` red), then `null` for no passingScore. Used existing Badge variants from `@/components/ui/badge` which already had `success`, `error`, `warning`, and `outline` variants.
+- Task 4: Updated "Holat" column from plain text to Badge components: `submitted` → `variant="success"` "Topshirilgan", `timed_out` → `variant="warning"` "Vaqt tugadi", default → `variant="outline"` "Jarayonda".
+- No test framework configured in admin-dashboard; this is a frontend UI component story with no automated test suite.
+
 ### File List
+
+- `apps/admin-dashboard/app/dashboard/tests/[id]/results/results-table.tsx`
+
+## Change Log
+
+- 2026-04-09: Implemented pass/fail badges in results table — updated NatijaCell with timedOutAt/in_progress/passed priority logic and added Badge variants to Holat column. (Amelia, claude-sonnet-4-6)

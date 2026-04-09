@@ -1,51 +1,30 @@
 import { API_ROUTES, ROUTES } from "@/config/enums";
 import { PaginatedResponse } from "@test-system/types";
 import { Test } from "@test-system/database/prisma/generated/client";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import dayjs from "dayjs";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { EyeIcon, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { getAuthOrRedirect } from "@/lib/server-utils";
 import { redirect } from "next/navigation";
-import { formatDuration } from "@/lib/utils";
 import { API_URL } from "@/config/constants";
 import { Button } from "@/components/ui/button";
+import { TestsTable } from "./ui/TestsTable";
 
-export default async function TestsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ page: string; limit: string }>;
-}) {
-  const { page, limit } = await searchParams;
-  const pageNumber = page ? parseInt(page) : 1;
-  const limitNumber = limit ? parseInt(limit) : 20;
+export default async function TestsPage() {
   const token = await getAuthOrRedirect();
 
-  const tests = await fetch(
-    `${API_URL}${API_ROUTES.TESTS}?page=${pageNumber}&limit=${limitNumber}`,
+  const response = await fetch(
+    `${API_URL}${API_ROUTES.TESTS}?page=1&limit=1000`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     },
   );
-  if (tests.status === 401 || tests.status === 403) redirect(ROUTES.LOGIN);
-  if (!tests.ok) throw new Error("Testlarni yuklashda xatolik yuz berdi");
-  const testsData = (await tests.json()) as unknown as PaginatedResponse<Test>;
+  if (response.status === 401 || response.status === 403) redirect(ROUTES.LOGIN);
+  if (!response.ok) throw new Error("Testlarni yuklashda xatolik yuz berdi");
+  const testsData = (await response.json()) as unknown as PaginatedResponse<Test>;
+
+  const tests = testsData.data;
 
   return (
     <div>
@@ -54,68 +33,23 @@ export default async function TestsPage({
         <Button asChild>
           <Link href={ROUTES.TESTS_NEW}>
             <PlusIcon className="size-4 inline-flex" />
-            Test qo'shish
+            Yangi test
           </Link>
         </Button>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Nomi</TableHead>
-            <TableHead>Vaqt limiti</TableHead>
-            <TableHead>Izoh</TableHead>
-            <TableHead>Yaratilgan vaqt</TableHead>
-            <TableHead>Amallar</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {testsData.data.map((test) => (
-            <TableRow key={test.id}>
-              <TableCell>{test.title}</TableCell>
-              <TableCell>{formatDuration(test.timeLimitMinutes)}</TableCell>
-              <TableCell>{test.description}</TableCell>
-              <TableCell>
-                {dayjs(test.createdAt).format("DD.MM.YYYY HH:mm")}
-              </TableCell>
-              <TableCell>
-                <Link
-                  className="text-blue-500 hover:text-blue-700 inline-flex"
-                  href={`${ROUTES.TESTS}/${test.id}`}
-                >
-                  <EyeIcon className="w-4 h-4" />
-                </Link>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Pagination className="mt-4">
-        <PaginationContent>
-          {testsData.pagination.totalPages > 1 && (
-            <>
-              {testsData.pagination.hasPrev && (
-                <PaginationItem>
-                  <PaginationPrevious
-                    href={`${ROUTES.TESTS}?page=${testsData.pagination.page - 1}&limit=${limitNumber}`}
-                  />
-                </PaginationItem>
-              )}
-            </>
-          )}
-          {testsData.pagination.totalPages > 1 && (
-            <>
-              {testsData.pagination.hasNext && (
-                <PaginationItem>
-                  <PaginationNext
-                    href={`${ROUTES.TESTS}?page=${testsData.pagination.page + 1}&limit=${limitNumber}`}
-                  />
-                </PaginationItem>
-              )}
-            </>
-          )}
-        </PaginationContent>
-      </Pagination>
+      {tests.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground mb-4">
+            Hali testlar yo&apos;q. Yangi test yarating.
+          </p>
+          <Button asChild>
+            <Link href={ROUTES.TESTS_NEW}>Yangi test</Link>
+          </Button>
+        </div>
+      ) : (
+        <TestsTable tests={tests} />
+      )}
     </div>
   );
 }

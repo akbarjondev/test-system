@@ -1,6 +1,6 @@
 # Story 5.4: Users List Page
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -22,31 +22,31 @@ So that I can monitor who is using the platform.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Find the existing users page
-  - [ ] Glob: `apps/admin-dashboard/app/dashboard/users/**/*.tsx`
-  - [ ] Read current users page implementation
+- [x] Task 1: Find the existing users page
+  - [x] Glob: `apps/admin-dashboard/app/dashboard/users/**/*.tsx`
+  - [x] Read current users page implementation
 
-- [ ] Task 2: Check if `/api/users` endpoint exists and returns user list
-  - [ ] Grep: `apps/api/src/routes` for `/users` route
-  - [ ] If exists: confirm it returns `fullName`, `phone`, `role`, `createdAt` fields
-  - [ ] If `fullName` is null (email-only admin): display `email` as fallback
+- [x] Task 2: Check if `/api/users` endpoint exists and returns user list
+  - [x] Grep: `apps/api/src/routes` for `/users` route
+  - [x] If exists: confirm it returns `fullName`, `phone`, `role`, `createdAt` fields
+  - [x] If `fullName` is null (email-only admin): display `email` as fallback
 
-- [ ] Task 3: Replace existing table with shadcn DataTable
-  - [ ] Define columns:
+- [x] Task 3: Replace existing table with shadcn DataTable
+  - [x] Define columns:
     - **Ismi**: `user.fullName ?? user.email ?? "Noma'lum"`
     - **Telefon raqami**: `user.phone ?? "-"`
     - **Rol**: Badge — ADMIN → blue "O'qituvchi", STUDENT → gray "Talaba"
     - **Ro'yxatdan o'tgan sana**: formatted `user.createdAt`
-  - [ ] Enable sorting on Ismi and Ro'yxatdan o'tgan sana
-  - [ ] Enable pagination (10 per page)
+  - [x] Enable sorting on Ismi and Ro'yxatdan o'tgan sana
+  - [x] Enable pagination (10 per page)
 
-- [ ] Task 4: Add real-time search input
-  - [ ] Add a text input above the DataTable: placeholder "Ism bo'yicha qidirish..."
-  - [ ] Filter DataTable data in real-time as teacher types (client-side filter on `fullName`/`email`)
-  - [ ] Use `@tanstack/react-table` `globalFilter` or column `filterFn`
+- [x] Task 4: Add real-time search input
+  - [x] Add a text input above the DataTable: placeholder "Ism bo'yicha qidirish..."
+  - [x] Filter DataTable data in real-time as teacher types (client-side filter on `fullName`/`email`)
+  - [x] Use `@tanstack/react-table` `globalFilter` or column `filterFn`
 
-- [ ] Task 5: Add empty state
-  - [ ] If no users: "Hali foydalanuvchilar yo'q."
+- [x] Task 5: Add empty state
+  - [x] If no users: "Hali foydalanuvchilar yo'q."
 
 ## Dev Notes
 
@@ -118,6 +118,24 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
+- No issues encountered during implementation.
+
 ### Completion Notes List
 
+- Created new `/dashboard/users` page as a server component that fetches users from `/api/users`.
+- Created `UsersTable` client component with shadcn DataTable, real-time search, role Badge, sorting, and pagination.
+- Updated `getAllUsers` in the API controller to include `fullName` and `phone` fields in the response.
+- No existing `/dashboard/users` page existed — page was created fresh alongside a `/ui/UsersTable.tsx` client component.
+- Empty state shows "Hali foydalanuvchilar yo'q." when no users are returned.
+- TypeScript strict mode passes with zero errors; lint shows only pre-existing warnings unrelated to this story.
+- No test framework is configured in this project — validation performed via TypeScript type checking and lint.
+
 ### File List
+
+- apps/admin-dashboard/app/dashboard/users/page.tsx (created)
+- apps/admin-dashboard/app/dashboard/users/ui/UsersTable.tsx (created)
+- apps/api/src/controllers/users.controller.ts (modified — added fullName and phone to getAllUsers response)
+
+## Change Log
+
+- 2026-04-09: Story 5-4 implemented — created /dashboard/users page with DataTable, real-time search, role badges, sorting, pagination, and empty state. Updated API getAllUsers to return fullName and phone.

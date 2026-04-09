@@ -76,7 +76,12 @@ export class AttemptsController {
 
       return res.status(201).json(formattedAttempt);
     } catch (error: any) {
-      console.log(error);
+      if (error.message === "ATTEMPT_ALREADY_EXISTS") {
+        return res.status(409).json({
+          error: "Siz bu testni allaqachon topshirgansiz",
+          code: "ATTEMPT_ALREADY_EXISTS",
+        });
+      }
 
       if (error.message === "Test not found") {
         return res.status(404).json({ error: error.message });
@@ -251,6 +256,10 @@ export class AttemptsController {
 
       if (error.message.includes("Unauthorized")) {
         return res.status(403).json({ error: error.message });
+      }
+
+      if (error instanceof Error && error.message === "TIME_LIMIT_EXCEEDED") {
+        return res.status(403).json({ error: "Vaqt tugadi", code: "TIME_LIMIT_EXCEEDED" });
       }
 
       if (

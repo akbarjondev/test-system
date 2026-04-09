@@ -1,6 +1,6 @@
 # Story 3.2: Time Limit Enforcement
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -25,33 +25,33 @@ So that I understand why my submission was not accepted.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Add time limit check to `AttemptsService.submitTest` in `apps/api/src/services/attempts.service.ts`
-  - [ ] After fetching `test` in `submitTest`, call `this.isTimeLimitExceeded(attempt, test)`:
+- [x] Task 1: Add time limit check to `AttemptsService.submitTest` in `apps/api/src/services/attempts.service.ts`
+  - [x] After fetching `test` in `submitTest`, call `this.isTimeLimitExceeded(attempt, test)`:
     ```ts
     if (this.isTimeLimitExceeded(attempt, test)) {
       throw new Error("TIME_LIMIT_EXCEEDED");
     }
     ```
-  - [ ] Note: `isTimeLimitExceeded` is already a private static method in AttemptsService — reuse it
-  - [ ] This check is MISSING from `submitTest` currently (it exists in `submitAnswer` and `getCurrentAttempt` only)
+  - [x] Note: `isTimeLimitExceeded` is already a private static method in AttemptsService — reuse it
+  - [x] This check is MISSING from `submitTest` currently (it exists in `submitAnswer` and `getCurrentAttempt` only)
 
-- [ ] Task 2: Update `AttemptsController.submitTest` in `apps/api/src/controllers/attempts.controller.ts`
-  - [ ] In the catch block, handle `TIME_LIMIT_EXCEEDED` error:
+- [x] Task 2: Update `AttemptsController.submitTest` in `apps/api/src/controllers/attempts.controller.ts`
+  - [x] In the catch block, handle `TIME_LIMIT_EXCEEDED` error:
     ```ts
     if (error.message === "TIME_LIMIT_EXCEEDED") {
       return res.status(403).json({ error: "Vaqt tugadi", code: "TIME_LIMIT_EXCEEDED" });
     }
     ```
 
-- [ ] Task 3: Update bot to handle 403 TIME_LIMIT_EXCEEDED
-  - [ ] In the submit attempt handler in `apps/telegram-bot/src/bot.ts`:
-  - [ ] If response status is 403 and `data.code === "TIME_LIMIT_EXCEEDED"`:
-  - [ ] Send: "⏱ Vaqt tugadi! Afsuski, javoblaringiz qabul qilinmadi."
-  - [ ] Then show main menu
+- [x] Task 3: Update bot to handle 403 TIME_LIMIT_EXCEEDED
+  - [x] In the submit attempt handler in `apps/telegram-bot/src/bot.ts`:
+  - [x] If response status is 403 and `data.code === "TIME_LIMIT_EXCEEDED"`:
+  - [x] Send: "⏱ Vaqt tugadi! Afsuski, javoblaringiz qabul qilinmadi."
+  - [x] Then show main menu
 
-- [ ] Task 4: Verify `isTimeLimitExceeded` handles edge cases
-  - [ ] Confirm the method handles `timeLimitMinutes = null` gracefully (should return false — no limit set)
-  - [ ] Current implementation: `return elapsedMinutes > test.timeLimitMinutes` — if timeLimitMinutes is null, this returns false (correct)
+- [x] Task 4: Verify `isTimeLimitExceeded` handles edge cases
+  - [x] Confirm the method handles `timeLimitMinutes = null` gracefully (should return false — no limit set)
+  - [x] Current implementation: `return elapsedMinutes > test.timeLimitMinutes` — if timeLimitMinutes is null, this returns false (correct)
 
 ## Dev Notes
 
@@ -121,4 +121,18 @@ claude-sonnet-4-6
 
 ### Completion Notes List
 
+- Task 1: Added `if (this.isTimeLimitExceeded(attempt, test)) { throw new Error("TIME_LIMIT_EXCEEDED"); }` in `AttemptsService.submitTest`, immediately after the test-not-found guard and before score calculation. Reuses existing private static method already called in `submitAnswer` and `getCurrentAttempt`.
+- Task 2: Added `TIME_LIMIT_EXCEEDED` catch branch in `AttemptsController.submitTest` returning HTTP 403 with `{ error: "Vaqt tugadi", code: "TIME_LIMIT_EXCEEDED" }`. Placed before the generic 400 handler to avoid masking.
+- Task 3: Refactored `submitTest` bot function to use raw `fetch` instead of the `api` helper so the HTTP status code is available. Checks `response.status === 403 && result.code === "TIME_LIMIT_EXCEEDED"` and replies with the specified message then shows the main menu.
+- Task 4: Verified `timeLimitMinutes` is a non-nullable `Int @default(30)` in the Prisma schema — the null edge case is a non-issue. The existing `isTimeLimitExceeded` implementation is correct as-is.
+- No new test framework was added (none exists in the project; no test runner is configured). All ACs are satisfied by the implementation logic.
+
 ### File List
+
+- apps/api/src/services/attempts.service.ts
+- apps/api/src/controllers/attempts.controller.ts
+- apps/telegram-bot/src/bot.ts
+
+## Change Log
+
+- 2026-04-09: Implemented time limit enforcement on submit endpoint — added `isTimeLimitExceeded` check in `AttemptsService.submitTest`, added 403 handler in `AttemptsController.submitTest`, and updated bot `submitTest` to detect and display the time-limit error with main menu redirect.

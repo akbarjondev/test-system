@@ -74,4 +74,12 @@ export class TestsService {
 
     return await TestsRepository.deleteTest(id);
   }
+
+  static async unlockTest(testPassword: string): Promise<Test> {
+    const test = await TestsRepository.findByPassword(testPassword);
+    if (!test) {
+      throw new Error("TEST_NOT_FOUND");
+    }
+    return test;
+  }
 }

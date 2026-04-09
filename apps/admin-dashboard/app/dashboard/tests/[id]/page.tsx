@@ -68,6 +68,10 @@ export default async function TestDetailPage({
           <span className="text-sm text-gray-500">Savollar soni:</span>
           <p>{testData.questions?.length}</p>
         </div>
+        <div>
+          <span className="text-sm text-gray-500">O&apos;tish bali:</span>
+          <p>{testData.passingScore != null ? testData.passingScore : "Ko'rsatilmagan"}</p>
+        </div>
       </div>
 
       <div className="flex gap-2 mb-6">
