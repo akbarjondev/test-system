@@ -29,7 +29,7 @@ export class TestsRepository {
 
   static async getAllTests(
     pagination?: PaginationParams,
-  ): Promise<PaginatedResponse<Test>> {
+  ): Promise<PaginatedResponse<Test & { _count: { questions: number } }>> {
     const page = pagination?.page ?? 1;
     const limit = pagination?.limit ?? 20;
     const skip = (page - 1) * limit;
@@ -40,6 +40,11 @@ export class TestsRepository {
         take: limit,
         orderBy: {
           createdAt: "desc",
+        },
+        include: {
+          _count: {
+            select: { questions: true },
+          },
         },
       }),
       prisma.test.count(),

@@ -3,43 +3,12 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Test } from "@test-system/database/prisma/generated/client";
 import { DataTable } from "@/components/data-table";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { ROUTES } from "@/config/enums";
-import { useState } from "react";
-import { toast } from "sonner";
-import { deleteTest } from "@/actions/tests";
-import { PencilIcon, Trash2Icon } from "lucide-react";
 import { formatDuration } from "@/lib/utils";
 import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
 
 type TestWithCount = Test & { _count?: { questions: number }; questions?: { id: string }[] };
-
-function DeleteButton({ testId }: { testId: string }) {
-  const [pending, setPending] = useState(false);
-
-  const handleDelete = async () => {
-    if (!confirm("Testni o'chirishni tasdiqlaysizmi?")) return;
-    setPending(true);
-    const result = await deleteTest(testId);
-    if (result?.error) {
-      toast.error(result.error);
-      setPending(false);
-    }
-  };
-
-  return (
-    <Button
-      variant="destructive"
-      size="sm"
-      onClick={handleDelete}
-      disabled={pending}
-    >
-      <Trash2Icon className="size-4 mr-1" />
-      {pending ? "O'chirilmoqda..." : "O'chirish"}
-    </Button>
-  );
-}
 
 const columns: ColumnDef<TestWithCount>[] = [
   {
@@ -74,22 +43,24 @@ const columns: ColumnDef<TestWithCount>[] = [
     },
   },
   {
-    id: "actions",
-    header: "Amallar",
+    accessorKey: "passingScore",
+    header: "O'tish bali",
     cell: ({ row }) => {
-      const test = row.original;
-      return (
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" asChild>
-            <Link href={`${ROUTES.TESTS}/${test.id}/edit`}>
-              <PencilIcon className="size-4 mr-1" />
-              Tahrirlash
-            </Link>
-          </Button>
-          <DeleteButton testId={test.id} />
-        </div>
-      );
+      const score = row.getValue<number | null>("passingScore");
+      return score != null ? score : "—";
     },
+  },
+  {
+    accessorKey: "allowOnlyOneAttempt",
+    header: "Urinish",
+    cell: ({ row }) =>
+      row.getValue<boolean>("allowOnlyOneAttempt") ? "1 ta" : "Cheklanmagan",
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Yaratilgan",
+    cell: ({ row }) => dayjs(row.getValue<string>("createdAt")).format("DD.MM.YYYY"),
+    enableSorting: true,
   },
 ];
 
@@ -98,5 +69,14 @@ interface TestsTableProps {
 }
 
 export function TestsTable({ tests }: TestsTableProps) {
-  return <DataTable columns={columns} data={tests} pageSize={10} />;
+  const router = useRouter();
+
+  return (
+    <DataTable
+      columns={columns}
+      data={tests}
+      pageSize={10}
+      onRowClick={(test) => router.push(`${ROUTES.TESTS}/${test.id}`)}
+    />
+  );
 }

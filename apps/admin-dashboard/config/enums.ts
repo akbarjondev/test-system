@@ -14,6 +14,7 @@ export enum API_ROUTES {
   LOGIN = "/api/auth/login",
   REGISTER = "/api/auth/register",
   TESTS = "/api/tests",
+  STATS = "/api/stats",
 }
 
 export enum UserRole {

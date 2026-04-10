@@ -267,7 +267,7 @@ export class AttemptsRepository {
         take: limit,
         orderBy: { submittedAt: "desc" },
         include: {
-          student: { select: { email: true } },
+          student: { select: { email: true, fullName: true, phone: true } },
           test: { select: { title: true, pointsPerQuestion: true, questions: { select: { id: true } } } },
         },
       }),
