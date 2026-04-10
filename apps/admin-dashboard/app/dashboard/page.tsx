@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
-import dayjs from "dayjs";
+import { formatDateTime } from "@/lib/utils";
 
 type RecentAttempt = {
   id: string;
@@ -141,7 +141,7 @@ export default async function DashboardPage() {
                         )}
                       </TableCell>
                       <TableCell className="text-zinc-500 text-sm">
-                        {completedAt ? dayjs(completedAt).format("DD.MM.YYYY HH:mm") : "—"}
+                        {completedAt ? formatDateTime(completedAt) : "—"}
                       </TableCell>
                     </TableRow>
                   );

@@ -3,7 +3,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
-import dayjs from "dayjs";
+import { intervalToDuration } from "date-fns";
+import { formatDateTime } from "@/lib/utils";
 
 export type EnrichedAttempt = {
   id: string;
@@ -27,15 +28,17 @@ type AttemptRow = EnrichedAttempt & { maxScore: number };
 
 function formatTimeTaken(startedAt: string, endedAt: string | null): string {
   if (!endedAt) return "-";
-  const diffSeconds = Math.round(
-    (new Date(endedAt).getTime() - new Date(startedAt).getTime()) / 1000
-  );
-  if (diffSeconds < 0) return "-";
-  const minutes = Math.floor(diffSeconds / 60);
-  const seconds = diffSeconds % 60;
-  if (minutes === 0) return `${seconds} soniya`;
-  if (seconds === 0) return `${minutes} daqiqa`;
-  return `${minutes} daqiqa ${seconds} soniya`;
+  const start = new Date(startedAt);
+  const end = new Date(endedAt);
+  if (end <= start) return "-";
+
+  const { hours = 0, minutes = 0, seconds = 0 } = intervalToDuration({ start, end });
+
+  const parts: string[] = [];
+  if (hours > 0) parts.push(`${hours} soat`);
+  if (minutes > 0) parts.push(`${minutes} daqiqa`);
+  if (seconds > 0 || parts.length === 0) parts.push(`${seconds} soniya`);
+  return parts.join(" ");
 }
 
 function NatijaCell({ attempt }: { attempt: AttemptRow }) {
@@ -96,7 +99,7 @@ const columns: ColumnDef<AttemptRow>[] = [
     cell: ({ row }) => {
       const endedAt = row.original.submittedAt ?? row.original.timedOutAt;
       if (!endedAt) return "-";
-      return dayjs(endedAt).format("DD.MM.YYYY HH:mm");
+      return formatDateTime(endedAt);
     },
   },
   {

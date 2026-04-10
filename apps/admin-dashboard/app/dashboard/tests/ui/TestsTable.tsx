@@ -4,8 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Test } from "@test-system/database/prisma/generated/client";
 import { DataTable } from "@/components/data-table";
 import { ROUTES } from "@/config/enums";
-import { formatDuration } from "@/lib/utils";
-import dayjs from "dayjs";
+import { formatDate, formatDateTime, formatDuration } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 type TestWithCount = Test & { _count?: { questions: number }; questions?: { id: string }[] };
@@ -37,8 +36,8 @@ const columns: ColumnDef<TestWithCount>[] = [
     cell: ({ row }) => {
       const test = row.original;
       if (test.isAlwaysAvailable) return "Har doim";
-      const from = test.availableFrom ? dayjs(test.availableFrom).format("DD.MM.YYYY") : "?";
-      const until = test.availableUntil ? dayjs(test.availableUntil).format("DD.MM.YYYY") : "?";
+      const from = test.availableFrom ? formatDateTime(test.availableFrom) : "?";
+      const until = test.availableUntil ? formatDateTime(test.availableUntil) : "?";
       return `${from} – ${until}`;
     },
   },
@@ -59,7 +58,7 @@ const columns: ColumnDef<TestWithCount>[] = [
   {
     accessorKey: "createdAt",
     header: "Yaratilgan",
-    cell: ({ row }) => dayjs(row.getValue<string>("createdAt")).format("DD.MM.YYYY"),
+    cell: ({ row }) => formatDate(row.getValue<string>("createdAt")),
     enableSorting: true,
   },
 ];

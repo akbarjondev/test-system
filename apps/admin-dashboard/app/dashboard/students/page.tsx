@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import dayjs from "dayjs";
+import { formatDate } from "@/lib/utils";
 import { ChangeRoleButton } from "./ui/ChangeRoleButton";
 
 type User = {
@@ -71,7 +71,7 @@ export default async function StudentsPage() {
                   </span>
                 </TableCell>
                 <TableCell>
-                  {dayjs(user.createdAt).format("DD.MM.YYYY")}
+                  {formatDate(user.createdAt)}
                 </TableCell>
                 <TableCell>
                   <ChangeRoleButton user={user} />

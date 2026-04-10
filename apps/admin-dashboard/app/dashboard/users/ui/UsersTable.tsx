@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import dayjs from "dayjs";
+import { formatDate } from "@/lib/utils";
 import type { User } from "../page";
 
 const columns: ColumnDef<User>[] = [
@@ -39,7 +39,7 @@ const columns: ColumnDef<User>[] = [
     accessorKey: "createdAt",
     header: "Ro'yxatdan o'tgan sana",
     enableSorting: true,
-    cell: ({ row }) => dayjs(row.getValue("createdAt")).format("DD.MM.YYYY"),
+    cell: ({ row }) => formatDate(row.getValue("createdAt")),
   },
 ];
 

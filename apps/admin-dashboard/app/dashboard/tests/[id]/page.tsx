@@ -1,8 +1,7 @@
 import { API_ROUTES, ROUTES } from "@/config/enums";
 import { getAuthOrRedirect } from "@/lib/server-utils";
 import { redirect } from "next/navigation";
-import dayjs from "dayjs";
-import { cn, formatDuration } from "@/lib/utils";
+import { cn, formatDateTime, formatDuration } from "@/lib/utils";
 import Link from "next/link";
 import { API_URL } from "@/config/constants";
 import { TestWithRelations } from "@test-system/types";
@@ -58,9 +57,9 @@ export default async function TestDetailPage({
           <p>
             {testData.isAlwaysAvailable
               ? "Har doim"
-              : dayjs(testData.availableFrom).format("DD.MM.YYYY HH:mm") +
+              : (testData.availableFrom ? formatDateTime(testData.availableFrom) : "?") +
                 " dan " +
-                dayjs(testData.availableUntil).format("DD.MM.YYYY HH:mm") +
+                (testData.availableUntil ? formatDateTime(testData.availableUntil) : "?") +
                 " gacha"}
           </p>
         </div>
