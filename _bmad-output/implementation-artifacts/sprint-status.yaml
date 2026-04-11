@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-04-09
-last_updated: 2026-04-09 # all stories patched, CR resolved by Amelia
+last_updated: 2026-04-11 # Story 6.1 created — Epic 6 in-progress
 project: test-system
 project_key: NOKEY
 tracking_system: file-system
@@ -81,3 +81,17 @@ development_status:
   5-4-users-list-page: done
   5-5-navigation-layout: done
   epic-5-retrospective: done
+
+  # ─── Epic 6: Design System Consistency ───────────────────────────────────
+  epic-6: in-progress
+  6-1-add-semantic-status-color-tokens: ready-for-dev
+  6-2-migrate-badge-variants-to-semantic-tokens: backlog
+  6-3-refactor-statcard-to-use-card-component: backlog
+  6-4-purge-hardcoded-gray-text-across-dashboard: backlog
+  6-5-standardize-table-wrappers-with-token-classes: backlog
+  6-6-replace-inline-pass-fail-spans-with-badge-component: backlog
+  6-7-replace-hardcoded-role-colors-with-badge-in-students-page: backlog
+  6-8-add-styled-table-wrapper-to-students-page: backlog
+  6-9-migrate-question-option-colors-to-token-classes: backlog
+  6-10-add-page-subtitles-to-students-and-tests-list-pages: backlog
+  epic-6-retrospective: optional

@@ -10,6 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { formatDateTime } from "@/lib/utils";
 
@@ -38,10 +40,12 @@ type DashboardStats = {
 
 function StatCard({ label, value, warning }: { label: string; value: string | number; warning?: boolean }) {
   return (
-    <div className={`rounded-xl border p-6 bg-white dark:bg-zinc-900 ${warning ? "border-amber-400 dark:border-amber-500" : "border-zinc-200 dark:border-zinc-800"}`}>
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">{label}</p>
-      <p className={`text-4xl font-bold mt-1 ${warning ? "text-amber-500" : ""}`}>{value}</p>
-    </div>
+    <Card className={warning ? "border-warning" : undefined}>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">{label}</p>
+        <p className={`text-4xl font-bold mt-1 ${warning ? "text-warning" : ""}`}>{value}</p>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -62,7 +66,7 @@ export default async function DashboardPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold">Bosh sahifa</h1>
-        <p className="text-sm text-zinc-500 mt-1">Tizim holati haqida umumiy ma&apos;lumot</p>
+        <p className="text-sm text-muted-foreground mt-1">Tizim holati haqida umumiy ma&apos;lumot</p>
       </div>
 
       {/* Tier 1: Core stats */}
@@ -92,9 +96,9 @@ export default async function DashboardPage() {
       <div>
         <h2 className="text-lg font-semibold mb-3">So&apos;nggi urinishlar</h2>
         {stats.recentAttempts.length === 0 ? (
-          <p className="text-sm text-zinc-500">Hali urinishlar yo&apos;q.</p>
+          <p className="text-sm text-muted-foreground">Hali urinishlar yo&apos;q.</p>
         ) : (
-          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-white dark:bg-zinc-900">
+          <div className="rounded-xl border border-border overflow-hidden bg-card">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -131,16 +135,16 @@ export default async function DashboardPage() {
                       </TableCell>
                       <TableCell>
                         {passed === true && (
-                          <span className="text-green-600 text-sm font-medium">O&apos;tdi</span>
+                          <Badge variant="success">O&apos;tdi</Badge>
                         )}
                         {passed === false && (
-                          <span className="text-red-500 text-sm font-medium">O&apos;tmadi</span>
+                          <Badge variant="error">O&apos;tmadi</Badge>
                         )}
                         {passed === null && (
-                          <span className="text-zinc-400 text-sm">—</span>
+                          <span className="text-muted-foreground text-sm">—</span>
                         )}
                       </TableCell>
-                      <TableCell className="text-zinc-500 text-sm">
+                      <TableCell className="text-muted-foreground text-sm">
                         {completedAt ? formatDateTime(completedAt) : "—"}
                       </TableCell>
                     </TableRow>

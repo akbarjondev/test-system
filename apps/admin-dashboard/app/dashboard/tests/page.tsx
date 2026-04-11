@@ -28,8 +28,11 @@ export default async function TestsPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-10">
-        <h1 className="text-2xl font-bold">Testlar</h1>
+      <div className="flex justify-between items-start mb-6">
+        <div>
+          <h1 className="text-2xl font-bold mb-1">Testlar</h1>
+          <p className="text-sm text-muted-foreground mt-1">Barcha testlar ro&apos;yxati</p>
+        </div>
         <Button asChild>
           <Link href={ROUTES.TESTS_NEW}>
             <PlusIcon className="size-4 inline-flex" />

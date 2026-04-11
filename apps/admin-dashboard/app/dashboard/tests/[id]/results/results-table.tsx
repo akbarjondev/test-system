@@ -119,7 +119,7 @@ interface ResultsTableProps {
 export function ResultsTable({ attempts }: ResultsTableProps) {
   if (attempts.length === 0) {
     return (
-      <p className="text-gray-500">Hali hech kim bu testni topshirmagan.</p>
+      <p className="text-muted-foreground">Hali hech kim bu testni topshirmagan.</p>
     );
   }
 

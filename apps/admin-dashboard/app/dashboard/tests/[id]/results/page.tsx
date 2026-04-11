@@ -47,7 +47,7 @@ export default async function TestResultsPage({
   return (
     <section>
       <h1 className="text-2xl font-bold mb-1">{test.title}</h1>
-      <p className="text-sm text-gray-500 mb-6">
+      <p className="text-sm text-muted-foreground mb-6">
         Jami urinishlar: {attempts.length}
       </p>
 

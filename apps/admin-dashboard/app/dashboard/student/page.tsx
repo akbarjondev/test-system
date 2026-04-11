@@ -2,7 +2,7 @@ export default function StudentPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] text-center gap-4">
       <h1 className="text-2xl font-bold">Telegram orqali kiring</h1>
-      <p className="text-gray-600 max-w-md">
+      <p className="text-muted-foreground max-w-md">
         Testlarni topshirish uchun Telegram botimizdan foydalaning. Bu sahifa
         faqat o&apos;qituvchilar uchun mo&apos;ljallangan.
       </p>

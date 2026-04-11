@@ -41,7 +41,7 @@ const columns: ColumnDef<AttemptRow>[] = [
     header: "Boshlangan",
     enableSorting: true,
     cell: ({ row }) => (
-      <span className="text-sm text-zinc-500">
+      <span className="text-sm text-muted-foreground">
         {formatDateTime(row.getValue("startedAt"))}
       </span>
     ),
@@ -53,7 +53,7 @@ const columns: ColumnDef<AttemptRow>[] = [
     cell: ({ row }) => {
       const val = row.getValue<string | null>("submittedAt");
       return (
-        <span className="text-sm text-zinc-500">
+        <span className="text-sm text-muted-foreground">
           {val ? formatDateTime(val) : "—"}
         </span>
       );
@@ -95,7 +95,7 @@ const columns: ColumnDef<AttemptRow>[] = [
       return (
         <span
           className={
-            percent >= 60 ? "text-green-600 font-medium" : "text-red-500 font-medium"
+            percent >= 60 ? "text-success font-medium" : "text-error font-medium"
           }
         >
           {percent}%
@@ -109,9 +109,9 @@ const columns: ColumnDef<AttemptRow>[] = [
     enableSorting: false,
     cell: ({ row }) =>
       row.original.submittedAt ? (
-        <span className="text-green-600 font-medium text-sm">Topshirildi</span>
+        <span className="text-success font-medium text-sm">Topshirildi</span>
       ) : (
-        <span className="text-yellow-500 font-medium text-sm">Jarayonda</span>
+        <span className="text-muted-foreground font-medium text-sm">Jarayonda</span>
       ),
   },
 ];

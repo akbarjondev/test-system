@@ -26,7 +26,7 @@ export default async function AttemptsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Natijalar</h1>
-        <p className="text-sm text-zinc-500 mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           Barcha testlar bo&apos;yicha urinishlar — jami:{" "}
           {result.pagination?.total ?? 0}
         </p>
@@ -39,7 +39,7 @@ export default async function AttemptsPage() {
       )}
 
       {attempts.length === 0 ? (
-        <p className="text-sm text-zinc-500">
+        <p className="text-sm text-muted-foreground">
           Hali hech qanday urinish mavjud emas.
         </p>
       ) : (
