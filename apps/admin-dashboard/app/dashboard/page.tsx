@@ -1,6 +1,7 @@
 import { API_URL } from "@/config/constants";
 import { API_ROUTES, ROUTES } from "@/config/enums";
-import { getToken } from "@/lib/server-utils";
+import { getAuthOrRedirect } from "@/lib/server-utils";
+import { redirect } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -9,107 +10,146 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import dayjs from "dayjs";
+import { formatDateTime } from "@/lib/utils";
 
-type Test = {
+type RecentAttempt = {
   id: string;
-  title: string;
-  createdAt: string;
-  timeLimitMinutes: number;
-  isAlwaysAvailable: boolean;
+  studentName: string | null;
+  studentEmail: string | null;
+  testTitle: string;
+  score: number | null;
+  passingScore: number | null;
+  submittedAt: string | null;
+  timedOutAt: string | null;
 };
 
-type PaginatedTests = {
-  data: Test[];
-  pagination: { total: number };
+type DashboardStats = {
+  totalTests: number;
+  totalStudents: number;
+  totalAttempts: number;
+  todayAttempts: number;
+  activeTests: number;
+  testsWithNoQuestions: number;
+  incompleteAttempts: number;
+  passRate: number | null;
+  recentAttempts: RecentAttempt[];
 };
 
-type User = { id: string };
+function StatCard({ label, value, warning }: { label: string; value: string | number; warning?: boolean }) {
+  return (
+    <Card className={warning ? "border-warning" : undefined}>
+      <CardContent className="pt-6">
+        <p className="text-sm text-muted-foreground">{label}</p>
+        <p className={`text-4xl font-bold mt-1 ${warning ? "text-warning" : ""}`}>{value}</p>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default async function DashboardPage() {
-  const token = await getToken();
+  const token = await getAuthOrRedirect();
 
-  const [testsRes, usersRes, recentRes] = await Promise.all([
-    fetch(`${API_URL}${API_ROUTES.TESTS}?limit=1`, {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    }),
-    fetch(`${API_URL}/api/users`, {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    }),
-    fetch(`${API_URL}${API_ROUTES.TESTS}?limit=5`, {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    }),
-  ]);
+  const res = await fetch(`${API_URL}${API_ROUTES.STATS}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
 
-  const testsData = (await testsRes.json()) as PaginatedTests;
-  const usersData = (await usersRes.json()) as User[];
-  const recentData = (await recentRes.json()) as PaginatedTests;
+  if (res.status === 401 || res.status === 403) redirect(ROUTES.LOGIN);
+  if (!res.ok) throw new Error("Statistikani yuklashda xatolik yuz berdi");
 
-  const totalTests = testsData.pagination?.total ?? 0;
-  const totalStudents = Array.isArray(usersData) ? usersData.length : 0;
-  const recentTests = recentData.data ?? [];
+  const stats = (await res.json()) as DashboardStats;
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold">Bosh sahifa</h1>
-        <p className="text-sm text-zinc-500 mt-1">Tizim holati haqida umumiy ma&apos;lumot</p>
+        <p className="text-sm text-muted-foreground mt-1">Tizim holati haqida umumiy ma&apos;lumot</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">Jami testlar</p>
-          <p className="text-4xl font-bold mt-1">{totalTests}</p>
-        </div>
-        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">Jami o&apos;quvchilar</p>
-          <p className="text-4xl font-bold mt-1">{totalStudents}</p>
-        </div>
+      {/* Tier 1: Core stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <StatCard label="Jami testlar" value={stats.totalTests} />
+        <StatCard label="Jami o'quvchilar" value={stats.totalStudents} />
+        <StatCard label="Jami urinishlar" value={stats.totalAttempts} />
+        <StatCard label="Bugun urinishlar" value={stats.todayAttempts} />
       </div>
 
+      {/* Tier 2: Status stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <StatCard
+          label="O'tish darajasi"
+          value={stats.passRate !== null ? `${stats.passRate}%` : "—"}
+        />
+        <StatCard label="Faol testlar" value={stats.activeTests} />
+        <StatCard label="Jarayondagi urinishlar" value={stats.incompleteAttempts} />
+        <StatCard
+          label="Savolsiz testlar"
+          value={stats.testsWithNoQuestions}
+          warning={stats.testsWithNoQuestions > 0}
+        />
+      </div>
+
+      {/* Tier 3: Recent attempts */}
       <div>
-        <h2 className="text-lg font-semibold mb-3">So&apos;nggi testlar</h2>
-        {recentTests.length === 0 ? (
-          <p className="text-sm text-zinc-500">Hali testlar yaratilmagan.</p>
+        <h2 className="text-lg font-semibold mb-3">So&apos;nggi urinishlar</h2>
+        {stats.recentAttempts.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Hali urinishlar yo&apos;q.</p>
         ) : (
-          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-white dark:bg-zinc-900">
+          <div className="rounded-xl border border-border overflow-hidden bg-card">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Nomi</TableHead>
-                  <TableHead>Vaqt limiti</TableHead>
-                  <TableHead>Mavjudlik</TableHead>
-                  <TableHead>Yaratilgan</TableHead>
+                  <TableHead>O&apos;quvchi</TableHead>
+                  <TableHead>Test</TableHead>
+                  <TableHead>Ball</TableHead>
+                  <TableHead>Natija</TableHead>
+                  <TableHead>Vaqt</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {recentTests.map((test) => (
-                  <TableRow key={test.id}>
-                    <TableCell>
-                      <Link
-                        href={`${ROUTES.TESTS}/${test.id}`}
-                        className="font-medium hover:underline"
-                      >
-                        {test.title}
-                      </Link>
-                    </TableCell>
-                    <TableCell>{test.timeLimitMinutes} daqiqa</TableCell>
-                    <TableCell>
-                      {test.isAlwaysAvailable ? (
-                        <span className="text-green-600 text-sm font-medium">Har doim</span>
-                      ) : (
-                        <span className="text-zinc-500 text-sm">Cheklangan</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-zinc-500 text-sm">
-                      {dayjs(test.createdAt).format("DD.MM.YYYY")}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {stats.recentAttempts.map((attempt) => {
+                  const passed =
+                    attempt.passingScore !== null && attempt.score !== null
+                      ? attempt.score >= attempt.passingScore
+                      : null;
+                  const completedAt = attempt.submittedAt ?? attempt.timedOutAt;
+
+                  return (
+                    <TableRow key={attempt.id}>
+                      <TableCell className="font-medium">
+                        {attempt.studentName ?? attempt.studentEmail ?? "—"}
+                      </TableCell>
+                      <TableCell>
+                        <Link
+                          href={`${ROUTES.ATTEMPTS}`}
+                          className="hover:underline"
+                        >
+                          {attempt.testTitle}
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        {attempt.score !== null ? attempt.score : "—"}
+                      </TableCell>
+                      <TableCell>
+                        {passed === true && (
+                          <Badge variant="success">O&apos;tdi</Badge>
+                        )}
+                        {passed === false && (
+                          <Badge variant="error">O&apos;tmadi</Badge>
+                        )}
+                        {passed === null && (
+                          <span className="text-muted-foreground text-sm">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {completedAt ? formatDateTime(completedAt) : "—"}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </div>

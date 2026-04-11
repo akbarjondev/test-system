@@ -1,10 +1,12 @@
 ---
-stepsCompleted: ["step-01", "step-02", "step-03", "step-04"]
+stepsCompleted: ["step-01", "step-02", "step-03", "step-04", "step-01-epic6", "step-02-epic6", "step-03-epic6", "step-04-epic6"]
 inputDocuments:
   - "artifacts/architecture.md"
   - "artifacts/data-model.md"
   - "artifacts/api-reference.md"
   - "user task list (session input)"
+  - "_bmad-output/design-system/design-system.md"
+  - "_bmad-output/design-system/design-system-tasks.md"
 ---
 
 # test-system - Epic Breakdown
@@ -29,6 +31,16 @@ FR9: Bot must catch all Telegram API errors globally and never crash — errors 
 FR10: Bot must delete the previous login/register message and inline keyboard after successful authentication
 FR11: Bot must display the selected answer as plain text below the question after selection, and remove the inline answer keyboard
 FR12: Student authentication in the bot must use Telegram user ID (ctx.from.id) for auto-registration — no email or password required
+FR13: `globals.css` must define `--success`, `--error`, `--warning` tokens (+ `*-foreground` variants) with light and dark mode values, mapped in `@theme inline`
+FR14: `Badge` component `success`, `error`, and `warning` variants must reference semantic CSS tokens — no hardcoded Tailwind palette classes
+FR15: Dashboard home `StatCard` must use `<Card>` + `<CardContent>` components; warning state uses `border-warning` / `text-warning` token classes
+FR16: All secondary/helper text across dashboard pages must use `text-muted-foreground`; no `text-gray-500`, `text-zinc-500`, or `text-zinc-400`
+FR17: All `<Table>` instances on dashboard pages must be wrapped in a `rounded-xl border border-border overflow-hidden bg-card` container div
+FR18: Pass/fail status in the dashboard recent attempts table must use `<Badge variant="success">` / `<Badge variant="error">`
+FR19: User role column in students page must use `<Badge variant="default">` (Admin) and `<Badge variant="secondary">` (Student)
+FR20: Students page `<Table>` must be wrapped in the standard styled container div
+FR21: Question option correct/incorrect indicators in test detail page must use `text-success` / `text-error` token classes
+FR22: Students page and Tests list page must each have a subtitle `<p className="text-sm text-muted-foreground mt-1">` below the H1
 
 ### Non-Functional Requirements
 
@@ -57,9 +69,29 @@ UX-DR2: Test creation form must use clear, labeled sections with helper text for
 UX-DR3: Pass/fail status in results must use a visible badge (green/red) — not just a number
 UX-DR4: Navigation must be minimal and flat — teachers should reach any page in 2 clicks maximum
 UX-DR5: Bot messages must be concise and in the local language — avoid technical jargon
+UX-DR6: Color token system must be fully semantic — all status colors flow through CSS variables, enabling theme changes from `globals.css` alone
+UX-DR7: `Badge` component is the sole pattern for status and role indicators across the dashboard — no inline colored `<span>` elements
+UX-DR8: `Card` component is the sole pattern for card/panel surfaces — no raw `<div>` with hardcoded bg/border color classes
+UX-DR9: All list-page tables must be visually contained in a consistent rounded border wrapper
+UX-DR10: All dashboard list pages must have a subtitle under H1 for consistent page structure
 
 ### FR Coverage Map
 
+FR13: Epic 6 — Add `--success`, `--error`, `--warning` CSS tokens to globals.css
+FR14: Epic 6 — Migrate Badge success/error/warning variants to semantic tokens
+FR15: Epic 6 — Refactor StatCard to use Card component with token classes
+FR16: Epic 6 — Replace all hardcoded gray text classes with `text-muted-foreground`
+FR17: Epic 6 — Wrap all dashboard Tables in `border-border bg-card` container
+FR18: Epic 6 — Replace inline pass/fail spans with Badge variant components
+FR19: Epic 6 — Replace hardcoded role colors with Badge variants in students page
+FR20: Epic 6 — Add styled table wrapper to students page
+FR21: Epic 6 — Migrate question option colors to `text-success` / `text-error` tokens
+FR22: Epic 6 — Add subtitle `<p>` under H1 on Students and Tests list pages
+UX-DR6: Epic 6 — Semantic color token system in globals.css
+UX-DR7: Epic 6 — Badge as sole status/role indicator pattern
+UX-DR8: Epic 6 — Card as sole card surface pattern
+UX-DR9: Epic 6 — Consistent table wrapper on all list pages
+UX-DR10: Epic 6 — Subtitle under H1 on all list pages
 FR1: Epic 5 — Dashboard UI overhaul with shadcn/ui components
 FR2: Epic 4 — passingScore field added to Test schema
 FR3: Epic 4 — passingScore accepted in API create/update endpoints
@@ -72,7 +104,7 @@ FR9: Epic 1 — Bot global error handling via bot.catch + try/catch
 FR10: Epic 1 — Delete old auth messages after successful login/register
 FR11: Epic 3 — Show selected answer text, remove inline keyboard
 FR12: Epic 1 — Telegram identity auto-registration (telegramId + phone + fullName)
-FR13: Epic 2 — testPassword on Test schema + unlock API endpoint + bot flow
+FR-E2-password: Epic 2 — testPassword on Test schema + unlock API endpoint + bot flow
 NFR8: Epic 5 — All user-facing text in Uzbek language
 
 ## Epic List
@@ -83,7 +115,7 @@ Students can start using the bot instantly — no email or password. Telegram id
 
 ### Epic 2: Test Access Control
 Teachers control test access via a 3-digit code. Students unlock tests with the code, and the system enforces one-attempt rules with friendly feedback.
-**FRs covered:** FR6, FR7, FR13
+**FRs covered:** FR6, FR7, FR-E2-password
 
 ### Epic 3: Reliable Test-Taking Experience
 Students have a clean, distraction-free test experience with clear answer confirmation and time limit awareness.
@@ -96,6 +128,11 @@ Teachers set minimum passing scores. Both teacher and student see meaningful pas
 ### Epic 5: Teacher Dashboard Overhaul
 Teachers have a modern, Uzbek-language dashboard built for users with limited digital experience. All list views use DataTable with sorting and pagination.
 **FRs covered:** FR1, NFR8
+
+### Epic 6: Design System Consistency
+The admin dashboard speaks one visual language — semantic color tokens replace every hardcoded palette class, Badge and Card components are used consistently throughout, and every list page has a polished, uniform structure.
+**FRs covered:** FR13, FR14, FR15, FR16, FR17, FR18, FR19, FR20, FR21, FR22
+**UX-DRs covered:** UX-DR6, UX-DR7, UX-DR8, UX-DR9, UX-DR10
 
 ---
 
@@ -554,3 +591,182 @@ So that I never feel lost in the dashboard.
 **Given** the dashboard is viewed on a smaller screen
 **When** the viewport is mobile-sized
 **Then** the navigation collapses into a hamburger menu and all pages remain accessible
+
+---
+
+## Epic 6: Design System Consistency
+
+The admin dashboard speaks one visual language — semantic color tokens replace every hardcoded palette class, Badge and Card components are used consistently throughout, and every list page has a polished, uniform structure.
+
+### Story 6.1: Add Semantic Status Color Tokens
+
+As an admin dashboard maintainer,
+I want semantic CSS tokens for success, error, and warning states,
+So that status colors adapt correctly to light/dark mode and can be changed from one place.
+
+**Acceptance Criteria:**
+
+**Given** the file `apps/admin-dashboard/app/globals.css` is opened
+**When** the dev adds `--success`, `--success-foreground`, `--error`, `--error-foreground`, `--warning`, `--warning-foreground` inside `:root {}`
+**Then** each token has a valid OKLCH value matching the visual intent (green/red/amber)
+**And** `.dark {}` contains matching dark-mode overrides for all six tokens
+**And** `@theme inline {}` maps `--color-success`, `--color-error`, `--color-warning` (and foregrounds) to their CSS variable counterparts
+**And** Tailwind utility classes `bg-success`, `text-success-foreground`, `bg-error`, `text-error-foreground`, `bg-warning`, `text-warning-foreground` are usable in component files
+
+---
+
+### Story 6.2: Migrate Badge Variants to Semantic Tokens
+
+As a teacher viewing test results,
+I want pass/fail/warning badges to render correctly in both light and dark mode,
+So that status is always legible regardless of theme.
+
+**Acceptance Criteria:**
+
+**Given** Story 6.1 tokens are in place
+**When** the dev updates `apps/admin-dashboard/components/ui/badge.tsx` lines 14–16
+**Then** `success` variant uses `bg-success text-success-foreground` (not `bg-green-100 text-green-800`)
+**And** `error` variant uses `bg-error text-error-foreground` (not `bg-red-100 text-red-800`)
+**And** `warning` variant uses `bg-warning text-warning-foreground` (not `bg-orange-100 text-orange-700`)
+**And** no hardcoded Tailwind palette color classes remain in `badge.tsx`
+**And** all existing badge usages (`<Badge variant="success">`, etc.) render correctly without any changes to call sites
+
+---
+
+### Story 6.3: Refactor StatCard to Use Card Component
+
+As a teacher viewing the dashboard home,
+I want stat cards to look consistent with the rest of the dashboard's card surfaces,
+So that the home page feels polished and adapts to dark mode correctly.
+
+**Acceptance Criteria:**
+
+**Given** the `StatCard` component in `apps/admin-dashboard/app/dashboard/page.tsx` (lines 39–46)
+**When** the dev replaces the raw `div` with `<Card>` and `<CardContent className="pt-6">`
+**Then** the label uses `text-muted-foreground` (not `text-zinc-500 dark:text-zinc-400`)
+**And** the value text retains `text-4xl font-bold mt-1`
+**And** normal cards use `border-border` via the Card component (not `border-zinc-200 dark:border-zinc-800`)
+**And** warning cards use `border-warning` on the Card and `text-warning` on the value (not `border-amber-400` / `text-amber-500`)
+**And** card backgrounds use `bg-card` via the Card component (not `bg-white dark:bg-zinc-900`)
+**And** the stat grid layout (`grid grid-cols-2 sm:grid-cols-4 gap-4`) is preserved
+
+---
+
+### Story 6.4: Purge Hardcoded Gray Text Across Dashboard
+
+As a developer maintaining the dashboard,
+I want all secondary text to use the `text-muted-foreground` design token,
+So that secondary text color is controlled from one place and dark mode works correctly everywhere.
+
+**Acceptance Criteria:**
+
+**Given** the dashboard pages in `apps/admin-dashboard/app/dashboard/`
+**When** the dev replaces all instances of `text-gray-500`, `text-zinc-500`, and `text-zinc-400` with `text-muted-foreground`
+**Then** a grep for `text-gray-500` and `text-zinc-500` in `app/dashboard/**` (excluding `ui/Sidebar.tsx`) returns zero results
+**And** all affected text visually renders as secondary/muted text in both light and dark modes
+**And** sidebar nav styles (`text-zinc-500` active/inactive states) are left unchanged — they use the sidebar token space intentionally
+
+---
+
+### Story 6.5: Standardize Table Wrappers with Token Classes
+
+As a teacher viewing any list page,
+I want tables to have a consistent visual container that matches the rest of the dashboard,
+So that list pages look uniform regardless of which page I'm on.
+
+**Acceptance Criteria:**
+
+**Given** the recent attempts table wrapper in `apps/admin-dashboard/app/dashboard/page.tsx` (line 97)
+**When** the dev replaces `border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900` with `border-border bg-card`
+**Then** the table container renders with the correct themed border and background in both light and dark modes
+**And** the `rounded-xl` and `overflow-hidden` classes are preserved
+
+**Given** the students page `apps/admin-dashboard/app/dashboard/students/page.tsx`
+**When** the dev wraps the existing `<Table>` in `<div className="rounded-xl border border-border overflow-hidden bg-card">`
+**Then** the table has a consistent visual container matching other list pages
+
+---
+
+### Story 6.6: Replace Inline Pass/Fail Spans with Badge Component
+
+As a teacher reviewing recent attempts on the dashboard home,
+I want pass/fail status to use the same badge style as the test results page,
+So that status indicators look consistent across the whole dashboard.
+
+**Acceptance Criteria:**
+
+**Given** Story 6.2 Badge variants are in place
+**When** the dev updates `apps/admin-dashboard/app/dashboard/page.tsx` lines 133–142
+**Then** `passed === true` renders `<Badge variant="success">O'tdi</Badge>` (not `<span className="text-green-600">`)
+**And** `passed === false` renders `<Badge variant="error">O'tmadi</Badge>` (not `<span className="text-red-500">`)
+**And** `passed === null` renders `<span className="text-muted-foreground text-sm">—</span>`
+**And** no `text-green-*` or `text-red-*` classes remain in `dashboard/page.tsx`
+
+---
+
+### Story 6.7: Replace Hardcoded Role Colors with Badge in Students Page
+
+As a teacher viewing the users list,
+I want Admin and Student roles displayed as styled badges,
+So that roles are immediately scannable and visually consistent with other status indicators.
+
+**Acceptance Criteria:**
+
+**Given** Story 6.2 Badge variants are in place
+**When** the dev updates the role column in `apps/admin-dashboard/app/dashboard/students/page.tsx` (lines 63–70)
+**Then** Admin role renders `<Badge variant="default">Admin</Badge>`
+**And** Student role renders `<Badge variant="secondary">O'quvchi</Badge>`
+**And** the hardcoded `text-blue-600 font-medium` and `text-gray-600` classes are removed
+**And** both badges are correctly styled in light and dark modes
+
+---
+
+### Story 6.8: Add Styled Table Wrapper to Students Page
+
+As a teacher viewing the users list,
+I want the users table to have the same visual container as other list-page tables,
+So that the students page looks consistent with the tests and attempts pages.
+
+**Acceptance Criteria:**
+
+**Given** the `<Table>` in `apps/admin-dashboard/app/dashboard/students/page.tsx`
+**When** the dev wraps it in `<div className="rounded-xl border border-border overflow-hidden bg-card">`
+**Then** the table has a rounded border container in both light and dark modes
+**And** the existing table columns and data are unchanged
+**And** the wrapper matches the pattern used on the dashboard home recent attempts table (after Story 6.5)
+
+---
+
+### Story 6.9: Migrate Question Option Colors to Token Classes
+
+As a teacher reviewing a test's questions,
+I want correct and incorrect options to use themed colors,
+So that the question list renders correctly in both light and dark modes.
+
+**Acceptance Criteria:**
+
+**Given** Story 6.1 tokens are in place
+**When** the dev updates question option rendering in `apps/admin-dashboard/app/dashboard/tests/[id]/page.tsx` (lines 118–122)
+**Then** correct options (`option.isCorrect === true`) use `text-success` (not `text-green-600`)
+**And** incorrect options (`option.isCorrect === false`) use `text-error` (not `text-red-500`)
+**And** the option letter prefix (`a)`, `b)`, etc.) and option text are visually unchanged
+
+---
+
+### Story 6.10: Add Page Subtitles to Students and Tests List Pages
+
+As a teacher navigating the dashboard,
+I want every list page to have a subtitle under the heading,
+So that pages feel polished and consistent with the dashboard home page.
+
+**Acceptance Criteria:**
+
+**Given** `apps/admin-dashboard/app/dashboard/students/page.tsx`
+**When** the dev adds a subtitle `<p>` after the H1
+**Then** the subtitle reads `"Barcha ro'yxatdan o'tgan foydalanuvchilar"` with classes `text-sm text-muted-foreground mt-1`
+**And** the H1 retains `text-2xl font-bold` with `mb-1` (adjusted from `mb-6` since subtitle follows)
+
+**Given** `apps/admin-dashboard/app/dashboard/tests/page.tsx`
+**When** the dev adds a subtitle `<p>` after the H1
+**Then** the subtitle reads `"Barcha testlar ro'yxati"` with classes `text-sm text-muted-foreground mt-1`
+**And** the H1 retains `text-2xl font-bold` with `mb-1`

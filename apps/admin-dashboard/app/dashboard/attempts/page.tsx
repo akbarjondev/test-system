@@ -1,39 +1,54 @@
 import { API_URL } from "@/config/constants";
+import { ROUTES } from "@/config/enums";
 import { getAuthOrRedirect } from "@/lib/server-utils";
 import { redirect } from "next/navigation";
-import { ROUTES } from "@/config/enums";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { AttemptsTable, type AttemptRow } from "./ui/AttemptsTable";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import dayjs from "dayjs";
-
-type Attempt = {
-  id: string;
-  startedAt: string;
-  submittedAt: string | null;
-  score: number | null;
-  student: { email: string };
-  test: {
-    title: string;
-    pointsPerQuestion: number | null;
-    questions: { id: string }[];
-  };
-};
+  CheckCircle2Icon,
+  ClipboardListIcon,
+  ListFilterIcon,
+  PlayCircleIcon,
+} from "lucide-react";
 
 type PaginatedAttempts = {
-  data: Attempt[];
+  data: AttemptRow[];
   pagination: { total: number };
 };
+
+function StatCard({
+  title,
+  value,
+  description,
+  icon: Icon,
+}: {
+  title: string;
+  value: number;
+  description: string;
+  icon: typeof ClipboardListIcon;
+}) {
+  return (
+    <Card>
+      <CardContent className="flex gap-4 pt-6">
+        <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-muted">
+          <Icon className="size-5 text-muted-foreground" aria-hidden />
+        </div>
+        <div className="min-w-0 space-y-1">
+          <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          <p className="text-2xl font-semibold tabular-nums tracking-tight">{value}</p>
+          <p className="text-xs text-muted-foreground leading-snug">{description}</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default async function AttemptsPage() {
   const token = await getAuthOrRedirect();
 
-  const res = await fetch(`${API_URL}/api/attempts?limit=50`, {
+  const res = await fetch(`${API_URL}/api/attempts?limit=200`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
   });
@@ -42,80 +57,97 @@ export default async function AttemptsPage() {
 
   const result = (await res.json()) as PaginatedAttempts;
   const attempts = result.data ?? [];
-  const submitted = attempts.filter((a) => a.submittedAt !== null);
+  const total = result.pagination?.total ?? 0;
+  const submittedInBatch = attempts.filter((a) => a.submittedAt).length;
+  const inProgressInBatch = attempts.length - submittedInBatch;
+  const isTruncated = total > attempts.length;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Natijalar</h1>
-        <p className="text-sm text-zinc-500 mt-1">
-          Barcha testlar bo&apos;yicha urinishlar — jami: {result.pagination?.total ?? 0}
-        </p>
+    <div className="space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold tracking-tight">Natijalar</h1>
+          <p className="text-sm text-muted-foreground max-w-prose">
+            Barcha testlar bo&apos;yicha urinishlar: kim qachon boshlagan, topshirganmi va qanday
+            ball olgan — bir joydan kuzating.
+          </p>
+        </div>
+        <Button variant="outline" size="sm" className="shrink-0 self-start" asChild>
+          <Link href={ROUTES.TESTS}>Testlar ro&apos;yxati</Link>
+        </Button>
       </div>
 
-      {submitted.length === 0 ? (
-        <p className="text-sm text-zinc-500">Hali hech kim testni topshirmagan.</p>
-      ) : (
-        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-white dark:bg-zinc-900">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>#</TableHead>
-                <TableHead>Test nomi</TableHead>
-                <TableHead>O&apos;quvchi</TableHead>
-                <TableHead>Boshlangan</TableHead>
-                <TableHead>Topshirilgan</TableHead>
-                <TableHead>Ball</TableHead>
-                <TableHead>%</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {submitted.map((attempt, index) => {
-                const maxScore =
-                  (attempt.test.questions?.length ?? 0) *
-                  (attempt.test.pointsPerQuestion ?? 1);
-                const percent =
-                  maxScore > 0 && attempt.score !== null
-                    ? Math.round((attempt.score / maxScore) * 100)
-                    : null;
-                return (
-                  <TableRow key={attempt.id}>
-                    <TableCell className="text-zinc-500">{index + 1}</TableCell>
-                    <TableCell className="font-medium">{attempt.test.title}</TableCell>
-                    <TableCell>{attempt.student.email}</TableCell>
-                    <TableCell className="text-sm text-zinc-500">
-                      {dayjs(attempt.startedAt).format("DD.MM.YYYY HH:mm")}
-                    </TableCell>
-                    <TableCell className="text-sm text-zinc-500">
-                      {attempt.submittedAt
-                        ? dayjs(attempt.submittedAt).format("DD.MM.YYYY HH:mm")
-                        : "—"}
-                    </TableCell>
-                    <TableCell>
-                      {attempt.score ?? 0}
-                      {maxScore > 0 ? ` / ${maxScore}` : ""}
-                    </TableCell>
-                    <TableCell>
-                      {percent !== null ? (
-                        <span
-                          className={
-                            percent >= 60
-                              ? "text-green-600 font-medium"
-                              : "text-red-500 font-medium"
-                          }
-                        >
-                          {percent}%
-                        </span>
-                      ) : (
-                        "—"
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+      {attempts.length > 0 && (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <StatCard
+            icon={ClipboardListIcon}
+            title="Jami urinishlar"
+            value={total}
+            description="Tizimda ro&apos;yxatdan o&apos;tgan barcha urinishlar soni."
+          />
+          <StatCard
+            icon={ListFilterIcon}
+            title="Ko&apos;rsatilmoqda"
+            value={attempts.length}
+            description={
+              isTruncated
+                ? "Hozirgi sahifada yuklangan yozuvlar (cheklangan ro'yxat)."
+                : "Barcha urinishlar ro'yxatda."
+            }
+          />
+          <StatCard
+            icon={PlayCircleIcon}
+            title="Jarayonda (bu ro'yxat)"
+            value={inProgressInBatch}
+            description="Hali topshirilmagan, faol urinishlar."
+          />
+          <StatCard
+            icon={CheckCircle2Icon}
+            title="Topshirilgan (bu ro'yxat)"
+            value={submittedInBatch}
+            description="Yakunlangan va ball qo'yilgan urinishlar."
+          />
         </div>
+      )}
+
+      {isTruncated && (
+        <div
+          role="status"
+          className="rounded-lg border border-warning/50 bg-warning/10 px-4 py-3 text-sm text-foreground"
+        >
+          <span className="font-medium text-warning-foreground">Eslatma: </span>
+          Jami {total} ta urinishdan {attempts.length} tasi yuklandi. To&apos;liq tarix uchun keyinroq
+          sahifalash qo&apos;llaniladi.
+        </div>
+      )}
+
+      {attempts.length === 0 ? (
+        <Card className="border-dashed">
+          <CardContent className="flex flex-col items-center px-6 py-12 text-center">
+            <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-muted">
+              <ClipboardListIcon className="size-6 text-muted-foreground" aria-hidden />
+            </div>
+            <h2 className="text-lg font-semibold">Hali urinishlar yo&apos;q</h2>
+            <p className="mt-2 max-w-md text-sm text-muted-foreground text-pretty">
+              O&apos;quvchilar testni boshlagach, ular shu yerda ko&apos;rinadi. Avvalo test yarating
+              va ularni tizimga ulang.
+            </p>
+            <Button className="mt-6" asChild>
+              <Link href={ROUTES.TESTS}>Testlarga o&apos;tish</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <section className="space-y-4">
+          <div className="space-y-1">
+            <h2 className="text-lg font-semibold tracking-tight">Urinishlar jadvali</h2>
+            <p className="text-sm text-muted-foreground max-w-prose">
+              Qidirish va holat bo&apos;yicha filtrlash. Qatorni bosib, shu testning batafsil
+              natijalariga o&apos;tishingiz mumkin.
+            </p>
+          </div>
+          <AttemptsTable attempts={attempts} />
+        </section>
       )}
     </div>
   );

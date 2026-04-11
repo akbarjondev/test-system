@@ -4,7 +4,12 @@
       "Skill(codemie:codemie-commit)",
       "Bash(osascript:*)",
       "Bash(curl -s -X POST http://localhost:5000/api/auth/login -H \"Content-Type: application/json\" -d '{\"\"email\"\":\"\"admin@example.com\"\",\"\"password\"\":\"\"password123\"\"}')",
-      "Bash(echo \"EXIT:$?\")"
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(npx eslint:*)",
+      "Bash(node -e ':*)",
+      "Bash(python3:*)",
+      "Bash(pip3 install:*)",
+      "Bash(python:*)"
     ]
   }
 }

@@ -74,7 +74,7 @@ export const FormEditQuestion = ({
               <FieldLabel>Savol matni</FieldLabel>
               <Input
                 {...form.register("text")}
-                className={cn(form.formState.errors.text && "border-red-500")}
+                className={cn(form.formState.errors.text && "border-destructive")}
               />
               <FieldError errors={[form.formState.errors.text]} />
             </Field>
@@ -85,7 +85,7 @@ export const FormEditQuestion = ({
                   <FieldLabel>Javob varianti {index + 1}</FieldLabel>
                   <Button
                     type="button"
-                    className="cursor-pointer hover:bg-red-500"
+                    variant="destructive"
                     size="icon"
                     onClick={() => optionsFields.remove(index)}
                   >
@@ -96,7 +96,7 @@ export const FormEditQuestion = ({
                   <Input
                     {...form.register(`options.${index}.text`)}
                     className={cn(
-                      form.formState.errors.options?.[index]?.text && "border-red-500",
+                      form.formState.errors.options?.[index]?.text && "border-destructive",
                     )}
                   />
                   <FieldError errors={[form.formState.errors.options?.[index]?.text]} />

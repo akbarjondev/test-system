@@ -1,8 +1,7 @@
 import { API_ROUTES, ROUTES } from "@/config/enums";
 import { getAuthOrRedirect } from "@/lib/server-utils";
 import { redirect } from "next/navigation";
-import dayjs from "dayjs";
-import { cn, formatDuration } from "@/lib/utils";
+import { cn, formatDateTime, formatDuration } from "@/lib/utils";
 import Link from "next/link";
 import { API_URL } from "@/config/constants";
 import { TestWithRelations } from "@test-system/types";
@@ -44,29 +43,33 @@ export default async function TestDetailPage({
 
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div>
-          <span className="text-sm text-gray-500">Izoh:</span>
+          <span className="text-sm text-muted-foreground">Izoh:</span>
           <p>{testData.description}</p>
         </div>
         <div>
-          <span className="text-sm text-gray-500">Vaqt limiti:</span>
+          <span className="text-sm text-muted-foreground">Vaqt limiti:</span>
           <p>{formatDuration(testData.timeLimitMinutes)}</p>
         </div>
         <div>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-muted-foreground">
             Boshlanish va yopilish vaqtlari:
           </span>
           <p>
             {testData.isAlwaysAvailable
               ? "Har doim"
-              : dayjs(testData.availableFrom).format("DD.MM.YYYY HH:mm") +
+              : (testData.availableFrom ? formatDateTime(testData.availableFrom) : "?") +
                 " dan " +
-                dayjs(testData.availableUntil).format("DD.MM.YYYY HH:mm") +
+                (testData.availableUntil ? formatDateTime(testData.availableUntil) : "?") +
                 " gacha"}
           </p>
         </div>
         <div>
-          <span className="text-sm text-gray-500">Savollar soni:</span>
+          <span className="text-sm text-muted-foreground">Savollar soni:</span>
           <p>{testData.questions?.length}</p>
+        </div>
+        <div>
+          <span className="text-sm text-muted-foreground">O&apos;tish bali:</span>
+          <p>{testData.passingScore != null ? testData.passingScore : "Ko'rsatilmagan"}</p>
         </div>
       </div>
 
@@ -113,7 +116,7 @@ export default async function TestDetailPage({
                     <li
                       key={option.id}
                       className={cn(
-                        option.isCorrect ? "text-green-600" : "text-red-500",
+                        option.isCorrect ? "text-success" : "text-error",
                         "flex flex-row items-center gap-1 text-sm",
                       )}
                     >

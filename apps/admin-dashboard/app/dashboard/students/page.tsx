@@ -10,12 +10,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import dayjs from "dayjs";
+import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/utils";
 import { ChangeRoleButton } from "./ui/ChangeRoleButton";
 
 type User = {
   id: string;
   email: string | null;
+  fullName: string | null;
+  phone: string | null;
   role: "ADMIN" | "STUDENT";
   createdAt: string;
 };
@@ -33,47 +36,50 @@ export default async function StudentsPage() {
 
   return (
     <section>
-      <h1 className="text-2xl font-bold mb-6">Foydalanuvchilar</h1>
+      <h1 className="text-2xl font-bold mb-1">Foydalanuvchilar</h1>
+      <p className="text-sm text-muted-foreground mt-1 mb-6">Barcha ro&apos;yxatdan o&apos;tgan foydalanuvchilar</p>
 
       {users.length === 0 ? (
-        <p className="text-gray-500">Foydalanuvchilar yo&apos;q.</p>
+        <p className="text-muted-foreground">Foydalanuvchilar yo&apos;q.</p>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>#</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Rol</TableHead>
-              <TableHead>Ro&apos;yxatdan o&apos;tgan sana</TableHead>
-              <TableHead>Amалlar</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user, index) => (
-              <TableRow key={user.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{user.email ?? ''}</TableCell>
-                <TableCell>
-                  <span
-                    className={
-                      user.role === "ADMIN"
-                        ? "text-blue-600 font-medium"
-                        : "text-gray-600"
-                    }
-                  >
-                    {user.role === "ADMIN" ? "Admin" : "O'quvchi"}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  {dayjs(user.createdAt).format("DD.MM.YYYY")}
-                </TableCell>
-                <TableCell>
-                  <ChangeRoleButton user={user} />
-                </TableCell>
+        <div className="rounded-xl border border-border overflow-hidden bg-card">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>#</TableHead>
+                <TableHead>Ism</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Telefon</TableHead>
+                <TableHead>Rol</TableHead>
+                <TableHead>Ro&apos;yxatdan o&apos;tgan sana</TableHead>
+                <TableHead>Amallar</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {users.map((user, index) => (
+                <TableRow key={user.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{user.fullName ?? '—'}</TableCell>
+                  <TableCell>{user.email ?? '—'}</TableCell>
+                  <TableCell>{user.phone ?? '—'}</TableCell>
+                  <TableCell>
+                    {user.role === "ADMIN" ? (
+                      <Badge variant="default">Admin</Badge>
+                    ) : (
+                      <Badge variant="secondary">O&apos;quvchi</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {formatDate(user.createdAt)}
+                  </TableCell>
+                  <TableCell>
+                    <ChangeRoleButton user={user} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       )}
     </section>
   );

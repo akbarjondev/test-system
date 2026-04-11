@@ -110,6 +110,22 @@ export class AttemptsRepository {
     }) as Promise<AttemptWithRelations | null>;
   }
 
+  static async findCompletedAttemptByTestAndStudent(
+    testId: string,
+    studentId: string
+  ): Promise<TestAttempt | null> {
+    return prisma.testAttempt.findFirst({
+      where: {
+        testId,
+        studentId,
+        OR: [
+          { submittedAt: { not: null } },
+          { timedOutAt: { not: null } },
+        ],
+      },
+    });
+  }
+
   static async getActiveAttemptByTestAndStudent(
     testId: string,
     studentId: string
@@ -193,6 +209,13 @@ export class AttemptsRepository {
     });
   }
 
+  static async setTimedOut(attemptId: string): Promise<void> {
+    await prisma.testAttempt.update({
+      where: { id: attemptId },
+      data: { timedOutAt: new Date() },
+    });
+  }
+
   static async getAttemptsByStudent(studentId: string): Promise<TestAttempt[]> {
     return prisma.testAttempt.findMany({
       where: { studentId },
@@ -220,6 +243,7 @@ export class AttemptsRepository {
           select: {
             id: true,
             email: true,
+            fullName: true,
             role: true,
           },
         },
@@ -243,8 +267,16 @@ export class AttemptsRepository {
         take: limit,
         orderBy: { submittedAt: "desc" },
         include: {
-          student: { select: { email: true } },
-          test: { select: { title: true, pointsPerQuestion: true, questions: { select: { id: true } } } },
+          student: { select: { email: true, fullName: true, phone: true } },
+          test: {
+            select: {
+              id: true,
+              title: true,
+              passingScore: true,
+              pointsPerQuestion: true,
+              questions: { select: { id: true } },
+            },
+          },
         },
       }),
       prisma.testAttempt.count(),

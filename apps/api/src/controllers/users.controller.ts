@@ -88,6 +88,8 @@ export class UsersController {
         users.map((u) => ({
           id: u.id,
           email: u.email,
+          fullName: u.fullName,
+          phone: u.phone,
           role: u.role,
           createdAt: u.createdAt,
         }))

@@ -1,6 +1,6 @@
 # Story 2.2: Test Unlock Endpoint
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -25,25 +25,25 @@ So that I can only take tests the teacher has shared with me.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Add Zod schema to `apps/api/src/config/schemas.ts`
-  - [ ] Add `testUnlockSchema` validating `{ testPassword: z.string().length(3) }`
+- [x] Task 1: Add Zod schema to `apps/api/src/config/schemas.ts`
+  - [x] Add `testUnlockSchema` validating `{ testPassword: z.string().length(3) }`
 
-- [ ] Task 2: Add repository method to `apps/api/src/repositories/tests.repository.ts`
-  - [ ] Add `findByPassword(testPassword: string): Promise<Test | null>` using `prisma.test.findFirst({ where: { testPassword } })`
+- [x] Task 2: Add repository method to `apps/api/src/repositories/tests.repository.ts`
+  - [x] Add `findByPassword(testPassword: string): Promise<Test | null>` using `prisma.test.findFirst({ where: { testPassword } })`
 
-- [ ] Task 3: Add service method to `apps/api/src/services/tests.service.ts`
-  - [ ] Add `unlockTest(testPassword: string): Promise<Test>` — calls `findByPassword`, throws `Error("TEST_NOT_FOUND")` if null
+- [x] Task 3: Add service method to `apps/api/src/services/tests.service.ts`
+  - [x] Add `unlockTest(testPassword: string): Promise<Test>` — calls `findByPassword`, throws `Error("TEST_NOT_FOUND")` if null
 
-- [ ] Task 4: Add controller method to `apps/api/src/controllers/tests.controller.ts`
-  - [ ] Add `static async unlockTest(req, res)` — calls `TestsService.unlockTest(req.body.testPassword)`
-  - [ ] On success: return 200 with `{ id, title, description, timeLimitMinutes, pointsPerQuestion, isAlwaysAvailable, availableFrom, availableUntil }` (exclude testPassword)
-  - [ ] On `TEST_NOT_FOUND` error: return 404 `{ error: "Test topilmadi", code: "TEST_NOT_FOUND" }`
-  - [ ] On other error: return 500 `{ error: "Internal server error" }`
+- [x] Task 4: Add controller method to `apps/api/src/controllers/tests.controller.ts`
+  - [x] Add `static async unlockTest(req, res)` — calls `TestsService.unlockTest(req.body.testPassword)`
+  - [x] On success: return 200 with `{ id, title, description, timeLimitMinutes, pointsPerQuestion, isAlwaysAvailable, availableFrom, availableUntil }` (exclude testPassword)
+  - [x] On `TEST_NOT_FOUND` error: return 404 `{ error: "Test topilmadi", code: "TEST_NOT_FOUND" }`
+  - [x] On other error: return 500 `{ error: "Internal server error" }`
 
-- [ ] Task 5: Register route in `apps/api/src/routes/tests.ts`
-  - [ ] Add `router.post("/unlock", validate(testUnlockSchema), verifyTokenMiddleware, TestsController.unlockTest)`
-  - [ ] Route: `POST /api/tests/unlock`
-  - [ ] Requires JWT (student must be authenticated) — NO verifyAdmin
+- [x] Task 5: Register route in `apps/api/src/routes/tests.ts`
+  - [x] Add `router.post("/unlock", validate(testUnlockSchema), verifyTokenMiddleware, TestsController.unlockTest)`
+  - [x] Route: `POST /api/tests/unlock`
+  - [x] Requires JWT (student must be authenticated) — NO verifyAdmin
 
 ## Dev Notes
 
@@ -108,6 +108,27 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
+No issues encountered during implementation.
+
 ### Completion Notes List
 
+- Implemented `testUnlockSchema` in schemas.ts: `z.object({ testPassword: z.string().length(3) })`
+- Added `TestsRepository.findByPassword(testPassword)` using `prisma.test.findFirst({ where: { testPassword } })`
+- Added `TestsService.unlockTest(testPassword)` which throws `Error("TEST_NOT_FOUND")` when no test is found
+- Added `TestsController.unlockTest(req, res)` with destructured response (testPassword excluded), 404 on TEST_NOT_FOUND, 500 on other errors
+- Registered `POST /unlock` route before `POST /` to avoid route conflicts, with validate + verifyTokenMiddleware + controller
+- The route file already applies `router.use(verifyTokenMiddleware)` globally; the route also specifies it explicitly per story spec (idempotent)
+- All Acceptance Criteria satisfied: AC1 (200 with test data, no testPassword), AC2 (404 TEST_NOT_FOUND), AC3 (400 Zod validation)
+- No test framework exists in the project; implementation was validated through TypeScript type checking and code review
+
 ### File List
+
+- apps/api/src/config/schemas.ts
+- apps/api/src/repositories/tests.repository.ts
+- apps/api/src/services/tests.service.ts
+- apps/api/src/controllers/tests.controller.ts
+- apps/api/src/routes/tests.ts
+
+## Change Log
+
+- 2026-04-09: Story 2.2 implemented by Amelia (claude-sonnet-4-6). Added POST /api/tests/unlock endpoint with full layered implementation (schema, repository, service, controller, route). All 5 tasks complete.

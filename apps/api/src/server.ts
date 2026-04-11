@@ -9,6 +9,7 @@ import testsRoutes from "./routes/tests";
 import questionsRoutes from "./routes/questions";
 import attemptsRoutes from "./routes/attempts";
 import usersRoutes from "./routes/users";
+import statsRoutes from "./routes/stats";
 import rateLimit from "express-rate-limit";
 import { validateEnv } from "./config/env";
 
@@ -43,6 +44,7 @@ app.get("/api-docs.json", (_, res) => {
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/stats", statsRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/tests", testsRoutes);
 app.use("/api", questionsRoutes);

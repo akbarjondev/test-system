@@ -1,6 +1,6 @@
 # Story 5.3: Test Results Page
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -14,7 +14,7 @@ So that I can evaluate how students performed.
    **When** the page loads,
    **Then** a DataTable shows columns: Talaba ismi, Ball, Maksimal ball, Natija, Holat, Topshirilgan vaqt, Sarflangan vaqt
    **And** the Natija column shows a shadcn Badge: "O'tdi" (green), "O'tmadi" (red), or empty if no passingScore set
-   **And** the Holat column shows: "Topshirilgan", "Vaqt tugadi", or "Jarayonda"
+   **And** the Holat column shows: "Topshirildan", "Vaqt tugadi", or "Jarayonda"
 
 2. **Given** no attempts exist for the test,
    **When** the page loads,
@@ -22,13 +22,13 @@ So that I can evaluate how students performed.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Find the existing results page
-  - [ ] Glob: `apps/admin-dashboard/app/dashboard/tests/[id]/**/*.tsx`
-  - [ ] Read current results page implementation
+- [x] Task 1: Find the existing results page
+  - [x] Glob: `apps/admin-dashboard/app/dashboard/tests/[id]/**/*.tsx`
+  - [x] Read current results page implementation
 
-- [ ] Task 2: Replace or update the attempts table with DataTable
-  - [ ] Use shadcn DataTable (from Story 5.1) with new column definitions
-  - [ ] Columns:
+- [x] Task 2: Replace or update the attempts table with DataTable
+  - [x] Use shadcn DataTable (from Story 5.1) with new column definitions
+  - [x] Columns:
     - **Talaba ismi**: `student.fullName ?? student.email ?? "Noma'lum"`
     - **Ball**: `attempt.score ?? 0`
     - **Maksimal ball**: computed from `questionCount * pointsPerQuestion`
@@ -37,17 +37,17 @@ So that I can evaluate how students performed.
     - **Topshirilgan vaqt**: formatted `attempt.submittedAt`
     - **Sarflangan vaqt**: computed from `startedAt` to `submittedAt`
 
-- [ ] Task 3: Fetch enriched attempt data
-  - [ ] Call `GET /api/tests/:testId/attempts` — response now includes `passed` and `status` (Story 4.2)
-  - [ ] Include student name in response — check if API currently returns `student.fullName`
-  - [ ] Update server action/fetch if needed to include student fullName
+- [x] Task 3: Fetch enriched attempt data
+  - [x] Call `GET /api/tests/:testId/attempts` — response now includes `passed` and `status` (Story 4.2)
+  - [x] Include student name in response — check if API currently returns `student.fullName`
+  - [x] Update server action/fetch if needed to include student fullName
 
-- [ ] Task 4: Add empty state
-  - [ ] If `attempts.length === 0`: show "Hali hech kim bu testni topshirmagan."
+- [x] Task 4: Add empty state
+  - [x] If `attempts.length === 0`: show "Hali hech kim bu testni topshirmagan."
 
-- [ ] Task 5: Compute "Sarflangan vaqt" (time spent)
-  - [ ] `timeTaken = (submittedAt - startedAt) / 1000 / 60` — format as "X daqiqa Y soniya"
-  - [ ] If not submitted (in_progress): show "-"
+- [x] Task 5: Compute "Sarflangan vaqt" (time spent)
+  - [x] `timeTaken = (submittedAt - startedAt) / 1000 / 60` — format as "X daqiqa Y soniya"
+  - [x] If not submitted (in_progress): show "-"
 
 ## Dev Notes
 
@@ -115,6 +115,30 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
+- Story 4.2 not yet implemented; `passed` and `status` fields computed in `AttemptsService.getTestAttempts` directly in this story.
+- `student.fullName` added to `AttemptsRepository.getAttemptsByTest` Prisma select.
+- Badge UI component created (`components/ui/badge.tsx`) — was missing from codebase.
+- ResultsTable extracted into a separate `"use client"` component (`results-table.tsx`) to allow DataTable (client component) to be used from the server page.
+
 ### Completion Notes List
 
+- Implemented `ResultsTable` client component with all 7 required columns using DataTable from Story 5.1.
+- Added `Badge` UI component (`components/ui/badge.tsx`) with success/error/warning/outline variants.
+- Updated `AttemptsRepository.getAttemptsByTest` to include `student.fullName` in the Prisma select.
+- Updated `AttemptsService.getTestAttempts` to compute `passed` (boolean | null based on `passingScore`) and `status` ("submitted" | "timed_out" | "in_progress") for each attempt.
+- Server page (`results/page.tsx`) fetches test + attempts, computes `maxScore = questionCount * pointsPerQuestion`, and passes enriched data to `ResultsTable`.
+- Empty state "Hali hech kim bu testni topshirmagan." shown when `attempts.length === 0`.
+- "Sarflangan vaqt" formatted as "X daqiqa Y soniya"; shows "-" for in-progress attempts.
+- TypeScript compiles cleanly (zero errors in admin-dashboard and api).
+
 ### File List
+
+- `apps/admin-dashboard/app/dashboard/tests/[id]/results/page.tsx` — rewritten (server page, fetches data, renders ResultsTable)
+- `apps/admin-dashboard/app/dashboard/tests/[id]/results/results-table.tsx` — new (client component, DataTable + Badge column definitions)
+- `apps/admin-dashboard/components/ui/badge.tsx` — new (Badge UI component)
+- `apps/api/src/repositories/attempts.repository.ts` — updated (add `fullName` to student select in `getAttemptsByTest`)
+- `apps/api/src/services/attempts.service.ts` — updated (`getTestAttempts` now returns enriched attempts with `passed` and `status`)
+
+## Change Log
+
+- 2026-04-09: Implemented Story 5.3 — Test Results Page with DataTable, Badge, and enriched API response (fullName, passed, status). All tasks complete.

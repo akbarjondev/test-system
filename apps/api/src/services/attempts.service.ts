@@ -34,12 +34,16 @@ export class AttemptsService {
     // Check test availability
     this.validateTestAvailability(test);
 
-    // Check if there's already an active attempt (allow multiple if test is open)
-    // For MVP, we'll allow multiple attempts - can be restricted later if needed
-    // const activeAttempt = await AttemptsRepository.getActiveAttemptByTestAndStudent(testId, studentId);
-    // if (activeAttempt) {
-    //   throw new Error("You already have an active attempt for this test");
-    // }
+    // Enforce one-attempt restriction if configured
+    if (test.allowOnlyOneAttempt) {
+      const existing = await AttemptsRepository.findCompletedAttemptByTestAndStudent(
+        testId,
+        studentId
+      );
+      if (existing) {
+        throw new Error("ATTEMPT_ALREADY_EXISTS");
+      }
+    }
 
     // Shuffle questions using Fisher-Yates algorithm
     const shuffledQuestionIds = this.shuffleArray(questions.map((q) => q.id));
@@ -151,7 +155,7 @@ export class AttemptsService {
   static async submitTest(
     attemptId: string,
     studentId: string
-  ): Promise<TestAttempt & { totalScore: number; maxPossibleScore: number }> {
+  ): Promise<TestAttempt & { totalScore: number; maxPossibleScore: number; passingScore: number | null }> {
     // Validate attempt exists and belongs to student
     const attempt = await AttemptsRepository.getAttemptById(attemptId, true);
     if (!attempt) {
@@ -170,6 +174,12 @@ export class AttemptsService {
     const test = await TestsRepository.getOneTest(attempt.testId);
     if (!test) {
       throw new Error("Test not found");
+    }
+
+    // Enforce time limit — record timedOutAt before throwing
+    if (this.isTimeLimitExceeded(attempt, test)) {
+      await AttemptsRepository.setTimedOut(attemptId);
+      throw new Error("TIME_LIMIT_EXCEEDED");
     }
 
     // Calculate points per question (default to 1 if not set)
@@ -210,6 +220,7 @@ export class AttemptsService {
       ...submittedAttempt,
       totalScore,
       maxPossibleScore,
+      passingScore: test.passingScore ?? null,
     };
   }
 
@@ -269,12 +280,13 @@ export class AttemptsService {
 
   /**
    * Get all attempts for a test (admin/creator only)
+   * Enriches each attempt with computed `passed` and `status` fields.
    */
   static async getTestAttempts(
     testId: string,
     userRole: UserRole,
     userId: string
-  ): Promise<TestAttempt[]> {
+  ): Promise<(TestAttempt & { passed: boolean | null; status: string })[]> {
     // Validate test exists
     const test = await TestsRepository.getOneTest(testId);
     if (!test) {
@@ -288,7 +300,31 @@ export class AttemptsService {
       );
     }
 
-    return await AttemptsRepository.getAttemptsByTest(testId);
+    const attempts = await AttemptsRepository.getAttemptsByTest(testId);
+
+    return attempts.map((attempt) => {
+      // Determine status
+      let status: string;
+      if (attempt.timedOutAt !== null) {
+        status = "timed_out";
+      } else if (attempt.submittedAt !== null) {
+        status = "submitted";
+      } else {
+        status = "in_progress";
+      }
+
+      // Determine passed (only when submitted or timed out and passingScore is set)
+      let passed: boolean | null = null;
+      if (
+        test.passingScore !== null &&
+        (attempt.submittedAt !== null || attempt.timedOutAt !== null) &&
+        attempt.score !== null
+      ) {
+        passed = attempt.score >= test.passingScore;
+      }
+
+      return { ...attempt, passed, status };
+    });
   }
 
   /**

@@ -61,8 +61,6 @@ export const FormQuestion = ({ testId }: FormQuestionProps) => {
   };
 
   const onError = (errors: FieldErrors<z.infer<typeof questionFormSchema>>) => {
-    console.log("errors:", errors);
-
     // for isCorrect
     if (
       errors.options &&
@@ -83,7 +81,7 @@ export const FormQuestion = ({ testId }: FormQuestionProps) => {
               <FieldLabel>Savol matni</FieldLabel>
               <Input
                 {...form.register("text")}
-                className={cn(form.formState.errors.text && "border-red-500")}
+                className={cn(form.formState.errors.text && "border-destructive")}
                 autoFocus
                 placeholder="Savol matnini kiriting"
               />
@@ -95,8 +93,9 @@ export const FormQuestion = ({ testId }: FormQuestionProps) => {
                 <div className="flex justify-between items-center">
                   <FieldLabel>Javob varianti {index + 1}</FieldLabel>
                   <Button
-                    className="cursor-pointer hover:bg-red-500"
-                    size={"icon"}
+                    type="button"
+                    variant="destructive"
+                    size="icon"
                     onClick={() => optionsFields.remove(index)}
                   >
                     <Trash2Icon className="size-4" />
@@ -108,7 +107,7 @@ export const FormQuestion = ({ testId }: FormQuestionProps) => {
                     {...form.register(`options.${index}.text`)}
                     className={cn(
                       form.formState.errors.options?.[index]?.text &&
-                        "border-red-500",
+                        "border-destructive",
                     )}
                   />
                   <FieldError
@@ -132,7 +131,7 @@ export const FormQuestion = ({ testId }: FormQuestionProps) => {
                         }
                         className={cn(
                           form.formState.errors.options?.[index]?.isCorrect &&
-                            "border-red-500",
+                            "border-destructive",
                         )}
                       />
                       <FieldError
@@ -152,7 +151,7 @@ export const FormQuestion = ({ testId }: FormQuestionProps) => {
                         type="number"
                         className={cn(
                           form.formState.errors.options?.[index]?.order &&
-                            "border-red-500",
+                            "border-destructive",
                         )}
                         onChange={(e) => {
                           const value = parseInt(e.target.value);
@@ -173,7 +172,7 @@ export const FormQuestion = ({ testId }: FormQuestionProps) => {
                         {...form.register(`options.${index}.explanation`)}
                         className={cn(
                           form.formState.errors.options?.[index]?.explanation &&
-                            "border-red-500",
+                            "border-destructive",
                         )}
                       />
                       <FieldError

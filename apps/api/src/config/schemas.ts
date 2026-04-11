@@ -18,6 +18,9 @@ export const createTestSchema = z.object({
   isAlwaysAvailable: z.boolean().optional(),
   availableFrom: z.string().datetime({ offset: true }).optional().nullable(),
   availableUntil: z.string().datetime({ offset: true }).optional().nullable(),
+  testPassword: z.string().length(3).regex(/^\d{3}$/).optional().nullable(),
+  allowOnlyOneAttempt: z.boolean().optional(),
+  passingScore: z.number().min(0).optional().nullable(),
 });
 
 export const updateTestSchema = createTestSchema.partial();
@@ -53,4 +56,8 @@ export const telegramAuthSchema = z.object({
   telegramId: z.string().min(1),
   fullName: z.string().min(1),
   phone: z.string().min(1),
+});
+
+export const testUnlockSchema = z.object({
+  testPassword: z.string().length(3).regex(/^\d{3}$/),
 });

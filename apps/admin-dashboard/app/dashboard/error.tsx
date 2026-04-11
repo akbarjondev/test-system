@@ -15,7 +15,7 @@ export default function DashboardError({
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
       <h2 className="text-xl font-semibold">Xatolik yuz berdi</h2>
-      <p className="text-sm text-zinc-500 max-w-sm">
+      <p className="text-sm text-muted-foreground max-w-sm">
         {error.message || "Sahifani yuklashda xatolik. Iltimos, qayta urinib ko'ring."}
       </p>
       <div className="flex gap-2">
@@ -27,7 +27,7 @@ export default function DashboardError({
         </button>
         <button
           onClick={() => router.push(ROUTES.DASHBOARD)}
-          className="px-4 py-2 text-sm rounded-md border border-zinc-200 hover:bg-zinc-50"
+          className="px-4 py-2 text-sm rounded-md border border-border hover:bg-muted"
         >
           Bosh sahifaga
         </button>

@@ -1,5 +1,10 @@
 import { prisma } from "@test-system/database/lib/prisma";
-import { Option, Question, Test, User } from "@test-system/database/prisma/generated/client";
+import {
+  Option,
+  Question,
+  Test,
+  User,
+} from "@test-system/database/prisma/generated/client";
 import { PaginationParams, PaginatedResponse } from "@test-system/types";
 
 export interface UpdateTestData {
@@ -10,6 +15,9 @@ export interface UpdateTestData {
   isAlwaysAvailable?: boolean;
   availableFrom?: Date | null;
   availableUntil?: Date | null;
+  testPassword?: string | null;
+  allowOnlyOneAttempt?: boolean;
+  passingScore?: number | null;
 }
 
 export class TestsRepository {
@@ -20,8 +28,8 @@ export class TestsRepository {
   }
 
   static async getAllTests(
-    pagination?: PaginationParams
-  ): Promise<PaginatedResponse<Test>> {
+    pagination?: PaginationParams,
+  ): Promise<PaginatedResponse<Test & { _count: { questions: number } }>> {
     const page = pagination?.page ?? 1;
     const limit = pagination?.limit ?? 20;
     const skip = (page - 1) * limit;
@@ -32,6 +40,11 @@ export class TestsRepository {
         take: limit,
         orderBy: {
           createdAt: "desc",
+        },
+        include: {
+          _count: {
+            select: { questions: true },
+          },
         },
       }),
       prisma.test.count(),
@@ -53,7 +66,7 @@ export class TestsRepository {
   }
 
   static async getAvailableTests(
-    pagination?: PaginationParams
+    pagination?: PaginationParams,
   ): Promise<PaginatedResponse<Test>> {
     const page = pagination?.page ?? 1;
     const limit = pagination?.limit ?? 20;
@@ -98,7 +111,7 @@ export class TestsRepository {
 
   static async getTestsByStudentAttempts(
     studentId: string,
-    pagination?: PaginationParams
+    pagination?: PaginationParams,
   ): Promise<PaginatedResponse<Test>> {
     const page = pagination?.page ?? 1;
     const limit = pagination?.limit ?? 20;
@@ -170,8 +183,14 @@ export class TestsRepository {
 
   static async getOneTest(
     id: string,
-    includeRelations: boolean = false
-  ): Promise<(Test & { createdBy?: Omit<User, "password">; questions?: (Question & { options: Option[] })[] }) | null> {
+    includeRelations: boolean = false,
+  ): Promise<
+    | (Test & {
+        createdBy?: Omit<User, "password">;
+        questions?: (Question & { options: Option[] })[];
+      })
+    | null
+  > {
     return prisma.test.findUnique({
       where: {
         id,
@@ -203,10 +222,7 @@ export class TestsRepository {
     });
   }
 
-  static async updateTest(
-    id: string,
-    data: UpdateTestData
-  ): Promise<Test> {
+  static async updateTest(id: string, data: UpdateTestData): Promise<Test> {
     return prisma.test.update({
       where: {
         id,
@@ -221,6 +237,12 @@ export class TestsRepository {
       where: {
         id,
       },
+    });
+  }
+
+  static async findByPassword(testPassword: string): Promise<Test | null> {
+    return prisma.test.findFirst({
+      where: { testPassword },
     });
   }
 }

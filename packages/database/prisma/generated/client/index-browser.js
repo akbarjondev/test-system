@@ -137,9 +137,12 @@ exports.Prisma.TestScalarFieldEnum = {
   description: 'description',
   pointsPerQuestion: 'pointsPerQuestion',
   timeLimitMinutes: 'timeLimitMinutes',
+  testPassword: 'testPassword',
+  allowOnlyOneAttempt: 'allowOnlyOneAttempt',
   isAlwaysAvailable: 'isAlwaysAvailable',
   availableFrom: 'availableFrom',
   availableUntil: 'availableUntil',
+  passingScore: 'passingScore',
   createdById: 'createdById',
   createdAt: 'createdAt'
 };
@@ -166,6 +169,7 @@ exports.Prisma.TestAttemptScalarFieldEnum = {
   studentId: 'studentId',
   startedAt: 'startedAt',
   submittedAt: 'submittedAt',
+  timedOutAt: 'timedOutAt',
   score: 'score'
 };
 
