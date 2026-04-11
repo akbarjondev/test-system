@@ -4,12 +4,13 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -19,13 +20,24 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ChevronLeftIcon, ChevronRightIcon, ChevronsUpDownIcon, ChevronUpIcon, ChevronDownIcon } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronsUpDownIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
+  SearchIcon,
+} from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   pageSize?: number;
   onRowClick?: (row: TData) => void;
+  /** Search box; filters rows where `row.original[searchAccessor]` contains the query (case-insensitive). */
+  searchPlaceholder?: string;
+  searchAccessor?: keyof TData;
 }
 
 export function DataTable<TData, TValue>({
@@ -33,16 +45,31 @@ export function DataTable<TData, TValue>({
   data,
   pageSize = 10,
   onRowClick,
+  searchPlaceholder,
+  searchAccessor,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const searchEnabled = Boolean(searchPlaceholder && searchAccessor);
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: (row, _columnId, filterValue) => {
+      if (!searchAccessor) return true;
+      const needle = String(filterValue ?? "")
+        .toLowerCase()
+        .trim();
+      if (!needle) return true;
+      const hay = String(row.original[searchAccessor] ?? "").toLowerCase();
+      return hay.includes(needle);
+    },
     initialState: {
       pagination: {
         pageSize,
@@ -50,12 +77,46 @@ export function DataTable<TData, TValue>({
     },
     state: {
       sorting,
+      globalFilter,
     },
   });
 
+  useEffect(() => {
+    if (!searchEnabled) return;
+    table.setPageIndex(0);
+  }, [globalFilter, searchEnabled]); // eslint-disable-line react-hooks/exhaustive-deps -- reset page when query changes; `table` from latest render
+
+  const filteredCount = table.getFilteredRowModel().rows.length;
+  const totalCount = data.length;
+
   return (
-    <div>
-      <div className="rounded-md border">
+    <div className="space-y-4">
+      {searchPlaceholder ? (
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative max-w-md flex-1">
+            <SearchIcon
+              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden
+            />
+            <Input
+              type="search"
+              value={globalFilter}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              placeholder={searchPlaceholder}
+              className="pl-9"
+              aria-label={searchPlaceholder}
+            />
+          </div>
+          {searchEnabled && globalFilter.trim() ? (
+            <p className="text-sm text-muted-foreground tabular-nums">
+              {filteredCount === 0
+                ? "Mos keladigan yozuv yo'q"
+                : `${filteredCount} ta mos keldi (jami ${totalCount})`}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+      <div className="rounded-xl border border-border overflow-hidden bg-card">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -129,7 +190,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       {table.getPageCount() > 1 && (
-        <div className="flex items-center justify-between mt-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mt-4">
           <p className="text-sm text-muted-foreground">
             {table.getFilteredRowModel().rows.length} ta yozuvdan{" "}
             {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}–

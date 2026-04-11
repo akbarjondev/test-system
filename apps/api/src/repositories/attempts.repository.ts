@@ -268,7 +268,15 @@ export class AttemptsRepository {
         orderBy: { submittedAt: "desc" },
         include: {
           student: { select: { email: true, fullName: true, phone: true } },
-          test: { select: { title: true, pointsPerQuestion: true, questions: { select: { id: true } } } },
+          test: {
+            select: {
+              id: true,
+              title: true,
+              passingScore: true,
+              pointsPerQuestion: true,
+              questions: { select: { id: true } },
+            },
+          },
         },
       }),
       prisma.testAttempt.count(),

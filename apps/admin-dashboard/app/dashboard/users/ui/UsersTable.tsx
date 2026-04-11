@@ -29,9 +29,9 @@ const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const role = row.getValue("role") as string;
       return role === "ADMIN" ? (
-        <Badge className="bg-blue-100 text-blue-800">O&apos;qituvchi</Badge>
+        <Badge variant="default">O&apos;qituvchi</Badge>
       ) : (
-        <Badge className="bg-gray-100 text-gray-800">Talaba</Badge>
+        <Badge variant="secondary">Talaba</Badge>
       );
     },
   },

@@ -41,7 +41,7 @@ type DashboardStats = {
 function StatCard({ label, value, warning }: { label: string; value: string | number; warning?: boolean }) {
   return (
     <Card className={warning ? "border-warning" : undefined}>
-      <CardContent>
+      <CardContent className="pt-6">
         <p className="text-sm text-muted-foreground">{label}</p>
         <p className={`text-4xl font-bold mt-1 ${warning ? "text-warning" : ""}`}>{value}</p>
       </CardContent>

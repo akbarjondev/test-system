@@ -96,7 +96,7 @@ export const FormTest = () => {
             <FieldLabel>Nomi</FieldLabel>
             <Input
               {...form.register("title")}
-              className={cn(form.formState.errors.title && "border-red-500")}
+              className={cn(form.formState.errors.title && "border-destructive")}
               autoFocus
               placeholder="Test nomini kiriting"
             />
@@ -109,7 +109,7 @@ export const FormTest = () => {
             <Input
               {...form.register("description")}
               className={cn(
-                form.formState.errors.description && "border-red-500",
+                form.formState.errors.description && "border-destructive",
               )}
               placeholder="Test tavsifini kiriting (ixtiyoriy)"
             />
@@ -127,7 +127,7 @@ export const FormTest = () => {
               type="number"
               step="0.1"
               className={cn(
-                form.formState.errors.pointsPerQuestion && "border-red-500",
+                form.formState.errors.pointsPerQuestion && "border-destructive",
               )}
               placeholder="Masalan: 1"
             />
@@ -144,7 +144,7 @@ export const FormTest = () => {
               {...form.register("timeLimitMinutes", { valueAsNumber: true })}
               type="number"
               className={cn(
-                form.formState.errors.timeLimitMinutes && "border-red-500",
+                form.formState.errors.timeLimitMinutes && "border-destructive",
               )}
               placeholder="Masalan: 30"
             />
@@ -172,7 +172,7 @@ export const FormTest = () => {
                 }
                 className={cn(
                   "cursor-pointer",
-                  form.formState.errors.isAlwaysAvailable && "border-red-500",
+                  form.formState.errors.isAlwaysAvailable && "border-destructive",
                 )}
               />
               <FieldError errors={[form.formState.errors.isAlwaysAvailable]} />
@@ -194,7 +194,7 @@ export const FormTest = () => {
                       id="availableFrom"
                       type="date"
                       className={cn(
-                        form.formState.errors.availableFrom && "border-red-500",
+                        form.formState.errors.availableFrom && "border-destructive",
                       )}
                       value={
                         field.value
@@ -226,7 +226,7 @@ export const FormTest = () => {
                       type="date"
                       className={cn(
                         form.formState.errors.availableUntil &&
-                          "border-red-500",
+                          "border-destructive",
                       )}
                       value={
                         field.value
@@ -262,7 +262,7 @@ export const FormTest = () => {
               type="text"
               maxLength={3}
               className={cn(
-                form.formState.errors.testPassword && "border-red-500",
+                form.formState.errors.testPassword && "border-destructive",
               )}
               placeholder="Masalan: 472"
             />
@@ -316,7 +316,7 @@ export const FormTest = () => {
               step="0.1"
               min="0"
               className={cn(
-                form.formState.errors.passingScore && "border-red-500",
+                form.formState.errors.passingScore && "border-destructive",
               )}
               placeholder="Masalan: 60"
             />
