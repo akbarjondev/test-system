@@ -1,5 +1,5 @@
 ---
-stepsCompleted: ["step-01", "step-02", "step-03", "step-04", "step-01-epic6", "step-02-epic6", "step-03-epic6", "step-04-epic6"]
+stepsCompleted: ["step-01", "step-02", "step-03", "step-04", "step-01-epic6", "step-02-epic6", "step-03-epic6", "step-04-epic6", "step-01-miniapp", "step-02-miniapp", "step-03-miniapp", "step-04-miniapp"]
 inputDocuments:
   - "artifacts/architecture.md"
   - "artifacts/data-model.md"
@@ -7,6 +7,8 @@ inputDocuments:
   - "user task list (session input)"
   - "_bmad-output/design-system/design-system.md"
   - "_bmad-output/design-system/design-system-tasks.md"
+  - "_bmad-output/planning-artifacts/prd.md"
+  - "session input (Telegram Mini App scope)"
 ---
 
 # test-system - Epic Breakdown
@@ -770,3 +772,341 @@ So that pages feel polished and consistent with the dashboard home page.
 **When** the dev adds a subtitle `<p>` after the H1
 **Then** the subtitle reads `"Barcha testlar ro'yxati"` with classes `text-sm text-muted-foreground mt-1`
 **And** the H1 retains `text-2xl font-bold` with `mb-1`
+
+---
+
+## Telegram Mini App — Requirements Inventory
+
+> **Context:** Epics 7–9 cover the Telegram Mini App (TWA) for students. This is a temporary bridge client before the Flutter app — deployed to Vercel, running inside Telegram's in-app browser. Existing bot flows remain unchanged.
+
+### Functional Requirements (Mini App)
+
+FR-MA1: A new `apps/mini-app` workspace must be scaffolded with Vite + React + TypeScript + Tailwind CSS within the existing Turborepo monorepo.
+FR-MA2: The `@twa-dev/sdk` package must be integrated to access the Telegram Web App JS SDK (theme params, back button, viewport, etc.).
+FR-MA3: Student must authenticate using Telegram's `initData` payload — no email or password required.
+FR-MA4: API must expose a new endpoint `POST /api/auth/telegram-miniapp` that validates `initData` via HMAC-SHA256, auto-registers the student if not already registered, and returns a JWT with STUDENT role.
+FR-MA5: Student can view a list of available/accessible tests in the Mini App.
+FR-MA6: Student can enter a test unlock code in the Mini App when the test requires one.
+FR-MA7: Student can start a test attempt, answer questions one at a time, and submit through the Mini App UI.
+FR-MA8: Student can view their result (score, pass/fail status) immediately after submission.
+FR-MA9: Telegram bot must expose a Menu Button (configured via @BotFather) that opens the Mini App Vercel URL.
+FR-MA10: Mini App must be deployed to Vercel with HTTPS (required by Telegram for Mini Apps).
+FR-MA11: Mini App must apply Telegram's native color theme using CSS variables from `tg.themeParams` so the UI blends with the user's Telegram theme.
+FR-MA12: Mini App must handle Telegram's native Back Button for in-app navigation between screens.
+
+### Non-Functional Requirements (Mini App)
+
+NFR-MA1: `initData` validation must use HMAC-SHA256 per the Telegram Bot API specification — no raw trust of client-sent user data.
+NFR-MA2: JWT issued from `initData` auth must carry STUDENT role and must not grant dashboard or admin access.
+NFR-MA3: The Mini App must be responsive and function correctly inside Telegram's in-app browser on Android and iOS.
+NFR-MA4: API CORS configuration must whitelist the Vercel production domain.
+NFR-MA5: No `console.log` in committed code; TypeScript strict mode throughout.
+NFR-MA6: Existing Telegram bot conversation flows must remain fully functional after the menu button is added.
+NFR-MA7: Telegram `initData` has a 24-hour expiry — the API must reject expired payloads with a clear error.
+
+### Additional Requirements (Architecture — Mini App)
+
+- `apps/mini-app` is a standalone Vite app in the Turborepo monorepo; no SSR or Next.js needed.
+- New Zod schema for `initData` validation body goes in `apps/api/src/config/schemas.ts` — not inline in the route file.
+- The new auth endpoint follows the existing middleware chain: `validate(schema) → Controller → Service → Prisma`.
+- `packages/ui` (shadcn components) and `packages/types` can be reused in `apps/mini-app`.
+- Bot menu button URL must point to the Vercel production URL; local dev uses a tunnel (e.g. ngrok) for testing.
+- No new student-facing pages in `apps/admin-dashboard` — Mini App is a separate app entirely.
+
+### FR Coverage Map (Mini App)
+
+FR-MA1: Epic 7 — Scaffold apps/mini-app with Vite + React + TS + Tailwind
+FR-MA2: Epic 7 — Integrate @twa-dev/sdk and Telegram theme
+FR-MA3: Epic 7 — Student auth via initData (no password)
+FR-MA4: Epic 7 — New API endpoint POST /api/auth/telegram-miniapp
+FR-MA5: Epic 8 — Tests list screen in Mini App
+FR-MA6: Epic 8 — Test unlock code entry in Mini App
+FR-MA7: Epic 8 — Test-taking screen (questions + answers + submit)
+FR-MA8: Epic 8 — Results screen after submission
+FR-MA9: Epic 9 — Bot menu button pointing to Mini App
+FR-MA10: Epic 7 — Vercel deployment + HTTPS
+FR-MA11: Epic 7 — Telegram theme integration via tg.themeParams
+FR-MA12: Epic 8 — Telegram Back Button handling in-app navigation
+NFR-MA1: Epic 7 — HMAC-SHA256 initData validation in API service
+NFR-MA4: Epic 7 — CORS whitelist for Vercel domain
+NFR-MA6: Epic 9 — Bot menu button added without breaking existing flows
+
+## Epic List (Mini App Epics)
+
+### Epic 7: Mini App Foundation & Student Auth
+Students can open the Mini App from Telegram, authenticate instantly using their Telegram identity, and land on a home screen — no passwords, no sign-up forms. The app is deployed and live on Vercel.
+**FRs covered:** FR-MA1, FR-MA2, FR-MA3, FR-MA4, FR-MA10, FR-MA11
+**NFRs covered:** NFR-MA1, NFR-MA2, NFR-MA4, NFR-MA5, NFR-MA7
+
+### Epic 8: Test-Taking in the Mini App
+Students can browse tests, unlock them with a code, take a full attempt with question-by-question navigation, submit, and immediately see their score and pass/fail result — all inside Telegram.
+**FRs covered:** FR-MA5, FR-MA6, FR-MA7, FR-MA8, FR-MA12
+**NFRs covered:** NFR-MA3, NFR-MA5
+
+### Epic 9: Bot Integration
+The Telegram bot surfaces the Mini App through a persistent Menu Button. Students no longer need to remember a command — one tap launches the full Mini App experience. Existing bot flows are unaffected.
+**FRs covered:** FR-MA9
+**NFRs covered:** NFR-MA6
+
+---
+
+## Epic 7: Mini App Foundation & Student Auth
+
+Students can open the Mini App from Telegram, authenticate instantly via Telegram identity, and land on a home screen — no passwords, no sign-up. The app is live on Vercel.
+
+### Story 7.1: Mini App Monorepo Scaffold
+
+As a developer,
+I want a new `apps/mini-app` workspace bootstrapped in the Turborepo,
+So that the team has a working React app foundation to build the Mini App on.
+
+**Acceptance Criteria:**
+
+**Given** the monorepo root
+**When** `apps/mini-app` is created
+**Then** it is a Vite + React + TypeScript project with Tailwind CSS configured
+**And** `@twa-dev/sdk` is installed
+**And** `packages/ui` and `packages/types` are added as workspace dependencies
+**And** the app is added to `turbo.json` so `npm run dev` and `npm run build` include it
+**And** `tg.expand()` is called on mount so the Mini App takes full height in Telegram
+
+**Given** the app runs locally with a tunnel (e.g. ngrok)
+**When** opened inside Telegram
+**Then** the Telegram Web App JS SDK initializes without errors and `tg.themeParams` CSS variables are applied to the root element
+
+---
+
+### Story 7.2: Telegram initData Auth API Endpoint
+
+As a student,
+I want the API to recognize me from my Telegram identity,
+So that I can authenticate without entering a username or password.
+
+**Acceptance Criteria:**
+
+**Given** a valid `POST /api/auth/telegram-miniapp` request with `{ initData: string }`
+**When** the API processes it
+**Then** it validates `initData` using HMAC-SHA256 with `BOT_TOKEN` as the secret key per the Telegram Bot API spec
+**And** if the student does not exist, creates a new User with role STUDENT, storing `telegramId` and `fullName` from `initData`
+**And** returns `{ token, user: { id, fullName, telegramId } }`
+
+**Given** `initData` was issued more than 24 hours ago
+**When** the API validates it
+**Then** it returns `{ error: "Auth data expired", code: "INIT_DATA_EXPIRED" }` with status 401
+
+**Given** `initData` signature does not match
+**When** the API validates it
+**Then** it returns `{ error: "Invalid auth data", code: "INIT_DATA_INVALID" }` with status 401
+
+**Given** a student calls the endpoint a second time
+**When** their `telegramId` already exists in the database
+**Then** the API finds the existing user and returns a fresh token without creating a duplicate
+**And** the Zod schema for this endpoint body is added to `apps/api/src/config/schemas.ts`
+
+---
+
+### Story 7.3: Mini App Auth Flow & Home Screen
+
+As a student,
+I want to be silently authenticated when I open the Mini App,
+So that I land directly on a home screen without any login form.
+
+**Acceptance Criteria:**
+
+**Given** a student opens the Mini App inside Telegram
+**When** the app initializes
+**Then** it reads `window.Telegram.WebApp.initData` and calls `POST /api/auth/telegram-miniapp`
+**And** the returned JWT is stored in `sessionStorage` (cleared when Telegram closes the app)
+**And** the student is shown a home screen displaying their name: "Salom, {fullName}!"
+
+**Given** the auth API returns an error (network failure or invalid initData)
+**When** the app handles the response
+**Then** it shows a user-friendly error screen in Uzbek: "Autentifikatsiya xatosi. Iltimos qayta urinib ko'ring."
+**And** a retry button is visible
+
+**Given** the student is authenticated
+**When** the home screen renders
+**Then** it shows a "Testlarga o'tish" button that navigates to the tests list screen
+
+---
+
+### Story 7.4: Vercel Deployment & API CORS
+
+As a developer,
+I want the Mini App deployed to Vercel and the API configured to accept requests from it,
+So that students can access the live app inside Telegram.
+
+**Acceptance Criteria:**
+
+**Given** the `apps/mini-app` Vite build
+**When** deployed to Vercel
+**Then** the app is served over HTTPS at the assigned Vercel domain
+
+**Given** the Vercel domain is known
+**When** `apps/api/src/server.ts` CORS configuration is updated
+**Then** the Vercel domain is included in the allowed origins list (read from `MINI_APP_URL` env var)
+**And** the env var is documented in `.env.example`
+
+**Given** the Mini App is registered with `@BotFather` as the Mini App URL
+**When** a student opens Telegram and taps the bot's menu button (added in Epic 9)
+**Then** the Mini App loads correctly at the Vercel URL
+
+---
+
+## Epic 8: Test-Taking in the Mini App
+
+Students can browse tests, unlock with a code, take a full attempt question-by-question, submit, and immediately see their score and pass/fail result — entirely inside Telegram.
+
+### Story 8.1: Tests List Screen
+
+As a student,
+I want to see a list of tests I can take in the Mini App,
+So that I know what's available and can choose which to unlock.
+
+**Acceptance Criteria:**
+
+**Given** an authenticated student taps "Testlarga o'tish" from the home screen
+**When** the tests list screen loads
+**Then** it calls `GET /api/tests` with the student's JWT and displays each test's title, time limit, and points per question
+**And** each test row has an "Ochish" (Unlock) button
+
+**Given** no tests are available
+**When** the screen renders
+**Then** an empty state message shows: "Hozircha testlar mavjud emas."
+
+**Given** the API call fails (network error or 401)
+**When** the screen handles the error
+**Then** a retry button is shown with message: "Testlarni yuklashda xatolik yuz berdi."
+
+**Given** the student is on the tests list screen
+**When** Telegram's Back Button is visible
+**Then** tapping it navigates back to the home screen
+
+---
+
+### Story 8.2: Test Unlock Screen
+
+As a student,
+I want to enter a 3-digit code to unlock a specific test,
+So that I can only access tests my teacher has shared with me.
+
+**Acceptance Criteria:**
+
+**Given** a student taps "Ochish" on a test row
+**When** the unlock screen renders
+**Then** a numeric input field is shown with label "Test kodini kiriting:" and a "Tasdiqlash" button
+
+**Given** the student enters a correct 3-digit code and taps "Tasdiqlash"
+**When** `POST /api/tests/unlock` is called with `{ testPassword: code }`
+**Then** on success, the app navigates to the test detail/start screen showing: title, question count, time limit, and a "Boshlash" button
+
+**Given** the student enters an incorrect code
+**When** the API returns 404
+**Then** an inline error shows: "Noto'g'ri kod. Qayta urinib ko'ring."
+**And** the input is cleared for retry
+
+**Given** the test has no password (`testPassword` is null)
+**When** the student taps "Ochish"
+**Then** the app skips the unlock screen and goes directly to the test detail/start screen
+
+**Given** the student is on the unlock screen
+**When** they tap Telegram's Back Button
+**Then** they return to the tests list screen
+
+---
+
+### Story 8.3: Test-Taking Screen
+
+As a student,
+I want to answer questions one at a time with clear navigation,
+So that I can complete a test attempt with a focused, distraction-free experience.
+
+**Acceptance Criteria:**
+
+**Given** a student taps "Boshlash" on the test detail screen
+**When** `POST /api/tests/:testId/attempts/start` is called
+**Then** the app receives the shuffled question list and displays the first question with answer options as tappable buttons
+
+**Given** a student taps an answer option
+**When** `POST /api/attempts/:attemptId/answers` is called with `{ questionId, optionId }`
+**Then** the selected option is visually highlighted and locked (no re-selection)
+**And** a "Keyingisi" (Next) button appears to advance to the next question
+
+**Given** the student is on question N of M
+**When** the question renders
+**Then** a progress indicator shows "N / M savol" at the top of the screen
+
+**Given** the student reaches the last question and taps "Keyingisi"
+**When** `POST /api/attempts/:attemptId/submit` is called
+**Then** the app navigates to the results screen
+
+**Given** `submit` returns 403 with `TIME_LIMIT_EXCEEDED`
+**When** the app handles the error
+**Then** it navigates to the results screen showing: "⏱ Vaqt tugadi! Javoblaringiz qabul qilinmadi."
+
+**Given** the student is mid-test
+**When** Telegram's Back Button is tapped
+**Then** a confirmation dialog shows: "Testni tark etmoqchimisiz? Progress saqlanmaydi." with "Ha" and "Yo'q" options
+
+---
+
+### Story 8.4: Results Screen
+
+As a student,
+I want to see my score and pass/fail result immediately after submitting,
+So that I get clear feedback on my performance.
+
+**Acceptance Criteria:**
+
+**Given** the test is submitted successfully
+**When** the results screen renders
+**Then** it displays: "🎉 Test yakunlandi!" with the score `{score} / {maxScore} ({percent}%)`
+
+**Given** the test has a `passingScore` set and the student passed
+**When** the results screen renders
+**Then** it shows: "✅ Natija: O'tdingiz!" in green
+
+**Given** the test has a `passingScore` set and the student did not pass
+**When** the results screen renders
+**Then** it shows: "❌ Natija: O'tmadingiz." in red
+
+**Given** the test has no `passingScore`
+**When** the results screen renders
+**Then** only the score is shown, with no pass/fail indicator
+
+**Given** the student views the results screen
+**When** they tap "Bosh sahifaga qaytish"
+**Then** they are navigated back to the home screen
+**And** Telegram's Back Button is hidden on this screen (result is a terminal state)
+
+---
+
+## Epic 9: Bot Integration
+
+The Telegram bot surfaces the Mini App through a persistent Menu Button. Students no longer need to remember a command — one tap launches the full Mini App experience. Existing bot flows are unaffected.
+
+### Story 9.1: Bot Menu Button for Mini App
+
+As a student,
+I want a persistent button in the Telegram bot that opens the Mini App,
+So that I can launch the Mini App with one tap without needing to know any bot commands.
+
+**Acceptance Criteria:**
+
+**Given** the Vercel deployment URL is known (from Epic 7)
+**When** the bot starts up
+**Then** `bot.api.setChatMenuButton()` is called with `{ type: "web_app", text: "Testlar", web_app: { url: MINI_APP_URL } }` using the `MINI_APP_URL` environment variable
+
+**Given** `MINI_APP_URL` is not set in the environment
+**When** the bot starts
+**Then** it logs a startup warning and falls back to the default menu button (no crash)
+
+**Given** the menu button is configured
+**When** a student opens the bot in Telegram
+**Then** a "Testlar" button appears in the bottom-left of the message input area
+**And** tapping it opens the Mini App at the Vercel URL inside Telegram
+
+**Given** the menu button is added
+**When** a student uses any existing bot commands (`/start`, test unlock flow, etc.)
+**Then** all existing bot flows work exactly as before — no regressions
+**And** `MINI_APP_URL` is documented in `.env.example`

@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-04-09
-last_updated: 2026-04-11 # Epic 6 closed — all stories done
+last_updated: 2026-05-05 # Epics 7-9 stories created — all ready-for-dev
 project: test-system
 project_key: NOKEY
 tracking_system: file-system
@@ -95,3 +95,24 @@ development_status:
   6-9-migrate-question-option-colors-to-token-classes: done
   6-10-add-page-subtitles-to-students-and-tests-list-pages: done
   epic-6-retrospective: optional
+
+  # ─── Epic 7: Mini App Foundation & Student Auth ──────────────────────────
+  epic-7: in-progress
+  7-1-mini-app-monorepo-scaffold: ready-for-dev
+  7-2-telegram-initdata-auth-api-endpoint: ready-for-dev
+  7-3-mini-app-auth-flow-home-screen: ready-for-dev
+  7-4-vercel-deployment-api-cors: ready-for-dev
+  epic-7-retrospective: optional
+
+  # ─── Epic 8: Test-Taking in the Mini App ─────────────────────────────────
+  epic-8: in-progress
+  8-1-tests-list-screen: ready-for-dev
+  8-2-test-unlock-screen: ready-for-dev
+  8-3-test-taking-screen: ready-for-dev
+  8-4-results-screen: ready-for-dev
+  epic-8-retrospective: optional
+
+  # ─── Epic 9: Bot Integration ──────────────────────────────────────────────
+  epic-9: in-progress
+  9-1-bot-menu-button-for-mini-app: ready-for-dev
+  epic-9-retrospective: optional
