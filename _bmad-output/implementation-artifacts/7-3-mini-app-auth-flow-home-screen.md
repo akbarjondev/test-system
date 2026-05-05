@@ -1,6 +1,6 @@
 # Story 7.3: Mini App Auth Flow & Home Screen
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -27,43 +27,43 @@ So that I land directly on a home screen without any login form.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create API client utility (AC: #1)
-  - [ ] Create `apps/mini-app/src/lib/api.ts` with a `apiFetch` helper that reads JWT from `sessionStorage` and sets `Authorization: Bearer <token>` header
-  - [ ] Export constants: `API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000"`
+- [x] Task 1: Create API client utility (AC: #1)
+  - [x] Create `apps/mini-app/src/lib/api.ts` with a `apiFetch` helper that reads JWT from `sessionStorage` and sets `Authorization: Bearer <token>` header
+  - [x] Export constants: `API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000"`
 
-- [ ] Task 2: Create auth service (AC: #1, #2)
-  - [ ] Create `apps/mini-app/src/services/auth.ts`
-  - [ ] Export `async function authenticate(): Promise<{ token: string; user: { id: string; fullName: string; telegramId: string } }>`
-  - [ ] Read `WebApp.initData` from `@twa-dev/sdk`
-  - [ ] POST `{ initData }` to `${API_URL}/api/auth/telegram-miniapp`
-  - [ ] On success: store token in `sessionStorage.setItem("token", token)`, return user
-  - [ ] On failure: throw error for caller to handle
+- [x] Task 2: Create auth service (AC: #1, #2)
+  - [x] Create `apps/mini-app/src/services/auth.ts`
+  - [x] Export `async function authenticate(): Promise<{ token: string; user: { id: string; fullName: string; telegramId: string } }>`
+  - [x] Read `WebApp.initData` from `@twa-dev/sdk`
+  - [x] POST `{ initData }` to `${API_URL}/api/auth/telegram-miniapp`
+  - [x] On success: store token in `sessionStorage.setItem("token", token)`, return user
+  - [x] On failure: throw error for caller to handle
 
-- [ ] Task 3: Create app state / routing (AC: #1, #2, #3)
-  - [ ] Use simple screen-based state in `App.tsx` — no router library needed for this story (4 screens total across all stories)
-  - [ ] State: `screen: "loading" | "error" | "home" | "tests-list" | "test-unlock" | "test-taking" | "results"`
-  - [ ] On mount: call `authenticate()`, set screen to "home" on success, "error" on failure
-  - [ ] Store `user` in state (fullName needed for home screen greeting)
+- [x] Task 3: Create app state / routing (AC: #1, #2, #3)
+  - [x] Use simple screen-based state in `App.tsx` — no router library needed for this story (4 screens total across all stories)
+  - [x] State: `screen: "loading" | "error" | "home" | "tests-list" | "test-unlock" | "test-taking" | "results"`
+  - [x] On mount: call `authenticate()`, set screen to "home" on success, "error" on failure
+  - [x] Store `user` in state (fullName needed for home screen greeting)
 
-- [ ] Task 4: Create LoadingScreen component (AC: #1)
-  - [ ] Create `apps/mini-app/src/screens/LoadingScreen.tsx`
-  - [ ] Show a centered spinner or "Yuklanmoqda..." text using Telegram theme colors
+- [x] Task 4: Create LoadingScreen component (AC: #1)
+  - [x] Create `apps/mini-app/src/screens/LoadingScreen.tsx`
+  - [x] Show a centered spinner or "Yuklanmoqda..." text using Telegram theme colors
 
-- [ ] Task 5: Create ErrorScreen component (AC: #2)
-  - [ ] Create `apps/mini-app/src/screens/ErrorScreen.tsx`
-  - [ ] Display error message: "Autentifikatsiya xatosi. Iltimos qayta urinib ko'ring."
-  - [ ] Show "Qayta urinish" button that calls `onRetry` prop (re-triggers auth)
+- [x] Task 5: Create ErrorScreen component (AC: #2)
+  - [x] Create `apps/mini-app/src/screens/ErrorScreen.tsx`
+  - [x] Display error message: "Autentifikatsiya xatosi. Iltimos qayta urinib ko'ring."
+  - [x] Show "Qayta urinish" button that calls `onRetry` prop (re-triggers auth)
 
-- [ ] Task 6: Create HomeScreen component (AC: #1, #3)
-  - [ ] Create `apps/mini-app/src/screens/HomeScreen.tsx`
-  - [ ] Display greeting: `"Salom, {fullName}!"`
-  - [ ] Render "Testlarga o'tish" button — calls `onNavigate("tests-list")` prop
-  - [ ] Style with Telegram theme CSS variables: `--tg-bg-color`, `--tg-text-color`, `--tg-button-color`
+- [x] Task 6: Create HomeScreen component (AC: #1, #3)
+  - [x] Create `apps/mini-app/src/screens/HomeScreen.tsx`
+  - [x] Display greeting: `"Salom, {fullName}!"`
+  - [x] Render "Testlarga o'tish" button — calls `onNavigate("tests-list")` prop
+  - [x] Style with Telegram theme CSS variables: `--tg-bg-color`, `--tg-text-color`, `--tg-button-color`
 
-- [ ] Task 7: Wire up App.tsx (AC: #1, #2, #3)
-  - [ ] Render correct screen based on state
-  - [ ] Retry: re-call authenticate() on retry button press
-  - [ ] Navigation: update screen state on "Testlarga o'tish" press
+- [x] Task 7: Wire up App.tsx (AC: #1, #2, #3)
+  - [x] Render correct screen based on state
+  - [x] Retry: re-call authenticate() on retry button press
+  - [x] Navigation: update screen state on "Testlarga o'tish" press
 
 ## Dev Notes
 
@@ -162,9 +162,25 @@ Vite requires env vars to be prefixed with `VITE_` to be available in client cod
 ## Dev Agent Record
 
 ### Agent Model Used
+Claude Haiku 4.5
 
 ### Debug Log References
+- TypeScript compilation: ✅ Zero errors
+- Dev server startup: ✅ Successful on port 5174
+- Import validation: ✅ All imports correctly resolved
 
 ### Completion Notes List
+✅ **AC#1 Complete**: App initializes with `WebApp.initData`, calls `/api/auth/telegram-miniapp`, stores JWT in `sessionStorage`, shows home screen with personalized greeting
+✅ **AC#2 Complete**: Error handling with Uzbek message "Autentifikatsiya xatosi. Iltimos qayta urinib ko'ring." and functional retry button
+✅ **AC#3 Complete**: HomeScreen displays "Testlarga o'tish" button with navigation callback to tests-list screen
+
+All 7 tasks completed successfully. App implements clean state machine pattern with 3 screens: Loading, Error, Home. Auth service handles WebApp initData and session storage. API client includes Bearer token injection.
 
 ### File List
+- `apps/mini-app/src/lib/api.ts` — Created: API client with Bearer token authentication
+- `apps/mini-app/src/services/auth.ts` — Created: Telegram initData authentication service
+- `apps/mini-app/src/screens/LoadingScreen.tsx` — Created: Loading state UI with Telegram theme
+- `apps/mini-app/src/screens/ErrorScreen.tsx` — Created: Error handling UI with retry button
+- `apps/mini-app/src/screens/HomeScreen.tsx` — Created: Authenticated home screen with navigation
+- `apps/mini-app/src/App.tsx` — Modified: Updated to implement state machine and screen routing
+- `apps/mini-app/.env.example` — Created: VITE_API_URL environment variable example
