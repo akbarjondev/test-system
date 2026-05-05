@@ -1,6 +1,6 @@
 # Story 7.1: Mini App Monorepo Scaffold
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -24,39 +24,39 @@ So that the team has a working React app foundation to build the Mini App on.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create `apps/mini-app` package (AC: #1)
-  - [ ] Create `apps/mini-app/package.json` with name `@test-system/mini-app`, vite, react, react-dom, typescript, tailwindcss, @twa-dev/sdk as deps
-  - [ ] Add `@test-system/ui` and `@test-system/types` as workspace deps (`"workspace:*"`)
-  - [ ] Verify root `package.json` workspaces includes `apps/*` (already does — no change needed)
+- [x] Task 1: Create `apps/mini-app` package (AC: #1)
+  - [x] Create `apps/mini-app/package.json` with name `@test-system/mini-app`, vite, react, react-dom, typescript, tailwindcss, @twa-dev/sdk as deps
+  - [x] Add `@repo/ui` and `@test-system/types` as workspace deps (`"*"`)
+  - [x] Verify root `package.json` workspaces includes `apps/*` (already does — no change needed)
 
-- [ ] Task 2: Scaffold Vite + React + TypeScript config (AC: #1)
-  - [ ] Create `apps/mini-app/vite.config.ts` using `@vitejs/plugin-react`
-  - [ ] Create `apps/mini-app/tsconfig.json` extending `@test-system/typescript-config/vite.json` (or base.json if vite config doesn't exist — check `packages/typescript-config/`)
-  - [ ] Create `apps/mini-app/index.html` as Vite entry point
-  - [ ] Create `apps/mini-app/src/main.tsx` and `apps/mini-app/src/App.tsx`
+- [x] Task 2: Scaffold Vite + React + TypeScript config (AC: #1)
+  - [x] Create `apps/mini-app/vite.config.ts` using `@vitejs/plugin-react`
+  - [x] Create `apps/mini-app/tsconfig.json` extending `@repo/typescript-config/base.json` (no vite.json exists)
+  - [x] Create `apps/mini-app/index.html` as Vite entry point
+  - [x] Create `apps/mini-app/src/main.tsx` and `apps/mini-app/src/App.tsx`
 
-- [ ] Task 3: Configure Tailwind CSS (AC: #1)
-  - [ ] Create `apps/mini-app/tailwind.config.ts`
-  - [ ] Create `apps/mini-app/src/index.css` with `@tailwind base/components/utilities` directives
+- [x] Task 3: Configure Tailwind CSS (AC: #1)
+  - [x] Create `apps/mini-app/tailwind.config.ts`
+  - [x] Create `apps/mini-app/src/index.css` with `@tailwind base/components/utilities` directives
 
-- [ ] Task 4: Integrate Telegram Web App SDK (AC: #1, #2)
-  - [ ] In `src/main.tsx`, import `@twa-dev/sdk` and call `WebApp.ready()` and `WebApp.expand()` before rendering
-  - [ ] Apply Telegram theme params as CSS variables to `document.documentElement` on mount:
+- [x] Task 4: Integrate Telegram Web App SDK (AC: #1, #2)
+  - [x] In `src/main.tsx`, import `@twa-dev/sdk` and call `WebApp.ready()` and `WebApp.expand()` before rendering
+  - [x] Apply Telegram theme params as CSS variables to `document.documentElement` on mount:
     ```ts
     const tg = window.Telegram.WebApp;
     const tp = tg.themeParams;
     document.documentElement.style.setProperty("--tg-bg-color", tp.bg_color ?? "#fff");
     // repeat for other theme params
     ```
-  - [ ] Type `window.Telegram` using `@twa-dev/sdk` types (no manual `declare global` needed)
+  - [x] Type `window.Telegram` using `@twa-dev/sdk` types (no manual `declare global` needed)
 
-- [ ] Task 5: Add scripts to package.json (AC: #1)
-  - [ ] `"dev": "vite"`, `"build": "tsc && vite build"`, `"preview": "vite preview"`, `"lint": "eslint src"`
-  - [ ] Verify Turborepo picks it up by checking `turbo.json` tasks (build/dev/lint already defined globally — no change needed)
+- [x] Task 5: Add scripts to package.json (AC: #1)
+  - [x] `"dev": "vite"`, `"build": "tsc && vite build"`, `"preview": "vite preview"`, `"lint": "eslint src"`
+  - [x] Verify Turborepo picks it up by checking `turbo.json` tasks (build/dev/lint already defined globally — no change needed)
 
-- [ ] Task 6: Verify local dev works (AC: #2)
-  - [ ] Run `npm run dev --filter=@test-system/mini-app` — confirm Vite starts without errors
-  - [ ] Confirm TypeScript compiles (no strict errors)
+- [x] Task 6: Verify local dev works (AC: #2)
+  - [x] Run `npx vite build` in apps/mini-app — Vite builds successfully (36 modules, no errors)
+  - [x] Confirm TypeScript compiles (no strict errors via `tsc --noEmit`)
 
 ## Dev Notes
 
@@ -158,8 +158,45 @@ export default {
 
 ### Agent Model Used
 
+claude-sonnet-4-6
+
 ### Debug Log References
+
+- `@twa-dev/sdk@^2.0.0` didn't exist — latest is `^8.0.0`. Updated package.json.
+- Postcss.config.js needed `"type": "module"` in package.json to suppress ESM warning from Vite.
+- `packages/typescript-config` is named `@repo/typescript-config` (not `@test-system/typescript-config`); `packages/ui` is `@repo/ui`. Used actual names.
+- Used `noEmit: true` in tsconfig.json instead of `outDir: "dist"` so `tsc` only type-checks; Vite handles build output.
 
 ### Completion Notes List
 
+- Created `apps/mini-app` as a Vite 6 + React 19 + TypeScript + Tailwind CSS v3 workspace app.
+- `@twa-dev/sdk` v8 installed; `WebApp.ready()`, `WebApp.expand()`, and all 5 theme CSS variables applied in `src/main.tsx` before render.
+- TypeScript strict mode enabled, `tsc --noEmit` passes clean.
+- `vite build` produces clean output (36 modules, 248 kB JS, 4.9 kB CSS).
+- Turborepo picks up the app automatically via `apps/*` workspace pattern — no turbo.json changes needed.
+
 ### File List
+
+- apps/mini-app/package.json
+- apps/mini-app/vite.config.ts
+- apps/mini-app/tsconfig.json
+- apps/mini-app/index.html
+- apps/mini-app/postcss.config.js
+- apps/mini-app/tailwind.config.ts
+- apps/mini-app/src/main.tsx
+- apps/mini-app/src/App.tsx
+- apps/mini-app/src/index.css
+
+### Review Findings
+
+- [x] [Review][Patch] WebApp.backgroundColor lacks `??` fallback unlike sibling theme reads [apps/mini-app/src/main.tsx:11]
+- [x] [Review][Patch] tailwind.config.ts content glob omits @repo/ui workspace sources — classes from shared UI will be purged once consumed [apps/mini-app/tailwind.config.ts:4]
+- [x] [Review][Defer] App crashes when opened outside Telegram (no guard around WebApp.ready/expand/themeParams) [apps/mini-app/src/main.tsx:7-15] — deferred, dev-ergonomics outside story 7-1 scope
+- [x] [Review][Defer] `npm run lint` fails — no ESLint config file in apps/mini-app/ [apps/mini-app/package.json:10] — deferred, needs repo-wide ESLint setup decision
+- [x] [Review][Defer] No Vite `base` config for Mini App deployment subpath [apps/mini-app/vite.config.ts] — deferred, belongs to story 7-4 (Vercel deployment)
+- [x] [Review][Defer] Telegram polish — missing viewport-fit=cover and <meta name="theme-color"> [apps/mini-app/index.html] — deferred, post-MVP polish
+
+## Change Log
+
+- 2026-05-05: Story 7.1 implemented — created apps/mini-app Vite+React+TS+Tailwind scaffold with Telegram Web App SDK integration
+- 2026-05-05: Code review complete — 2 patches identified, 4 deferred, 8 dismissed; AC #1 and AC #2 verified compliant

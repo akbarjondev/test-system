@@ -23,13 +23,13 @@ export class UsersRepository {
   static async createTelegramUser(data: {
     telegramId: string;
     fullName: string;
-    phone: string;
+    phone?: string | null;
   }): Promise<User> {
     return prisma.user.create({
       data: {
         telegramId: data.telegramId,
         fullName: data.fullName,
-        phone: data.phone,
+        phone: data.phone ?? null,
         role: "STUDENT",
       },
     });
@@ -45,5 +45,21 @@ export class UsersRepository {
 
   static async updateUserRole(id: string, role: User["role"]): Promise<User> {
     return prisma.user.update({ where: { id }, data: { role } });
+  }
+
+  static async upsertTelegramUser(data: {
+    telegramId: string;
+    fullName: string;
+  }): Promise<User> {
+    return prisma.user.upsert({
+      where: { telegramId: data.telegramId },
+      update: { fullName: data.fullName },
+      create: {
+        telegramId: data.telegramId,
+        fullName: data.fullName,
+        phone: null,
+        role: "STUDENT",
+      },
+    });
   }
 }

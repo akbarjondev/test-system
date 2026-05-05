@@ -58,6 +58,10 @@ export const telegramAuthSchema = z.object({
   phone: z.string().min(1),
 });
 
+export const telegramMiniAppAuthSchema = z.object({
+  initData: z.string().min(1),
+});
+
 export const testUnlockSchema = z.object({
   testPassword: z.string().length(3).regex(/^\d{3}$/),
 });

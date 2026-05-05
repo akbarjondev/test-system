@@ -120,6 +120,44 @@ export class UsersController {
     }
   }
 
+  static async telegramMiniAppAuth(req: Request, res: Response) {
+    try {
+      const { initData } = req.body;
+      const botToken = process.env.TELEGRAM_BOT_TOKEN;
+
+      if (!botToken) {
+        return res.status(500).json({ error: "Bot token not configured" });
+      }
+
+      const validation = UsersService.validateInitData(initData, botToken);
+
+      if (!validation.valid) {
+        return res.status(401).json({ error: "Invalid auth data", code: "INIT_DATA_INVALID" });
+      }
+
+      if (validation.expired) {
+        return res.status(401).json({ error: "Auth data expired", code: "INIT_DATA_EXPIRED" });
+      }
+
+      const user = await UsersService.findOrCreateByTelegramMiniApp({
+        telegramId: validation.telegramId!,
+        fullName: validation.fullName!,
+      });
+
+      const token = generateToken(user);
+      return res.status(200).json({
+        token,
+        user: {
+          id: user.id,
+          fullName: user.fullName,
+          telegramId: user.telegramId,
+        },
+      });
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
   static async updateUserRole(
     req: Request<{ userId: string }, {}, { role: string }>,
     res: Response

@@ -15,4 +15,8 @@ export function validateEnv() {
     console.error("[startup] JWT_SECRET must not be 'secret' in production");
     process.exit(1);
   }
+
+  if (!process.env.TELEGRAM_BOT_TOKEN) {
+    console.warn("[startup] TELEGRAM_BOT_TOKEN not set - Telegram Mini App auth will not work");
+  }
 }
