@@ -1,0 +1,87 @@
+name: test-system-prod
+
+services:
+  # ── Database ──────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ── API ───────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: ..
+      dockerfile: docker/api.Dockerfile
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      JWT_SECRET: ${JWT_SECRET}
+      PORT: 5000
+      NODE_ENV: production
+    ports:
+      - "5000:5000"
+    # Run migrations before starting the server
+    command: >
+      sh -c "cd /app/packages/database && npx prisma migrate deploy &&
+             cd /app/apps/api && npx ts-node -r tsconfig-paths/register src/server.ts"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── Admin Dashboard ───────────────────────────────────────────────────────
+  dashboard:
+    build:
+      context: ..
+      dockerfile: docker/admin.Dockerfile
+      args:
+        # Baked into the Next.js client bundle at build time.
+        # Dashboard server actions call this URL server-side (Docker internal network),
+        # so http://api:5000 is correct. Override if you expose the API publicly.
+        NEXT_PUBLIC_API_URL: http://api:5000
+    environment:
+      NODE_ENV: production
+      # Allows runtime override of the API URL for server-side code
+      NEXT_PUBLIC_API_URL: http://api:5000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # ── Telegram Bot ──────────────────────────────────────────────────────────
+  bot:
+    build:
+      context: ..
+      dockerfile: docker/bot.Dockerfile
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      API_URL: http://api:5000
+      NODE_ENV: production
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # ── Mini App ──────────────────────────────────────────────────────────────
+  mini-app:
+    build:
+      context: ..
+      dockerfile: docker/mini-app.Dockerfile
+      args:
+        # Public-facing API URL accessible from the user's browser
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:5000}
+    ports:
+      - "80:80"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

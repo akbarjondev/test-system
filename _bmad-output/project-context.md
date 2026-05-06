@@ -1,9 +1,11 @@
 ---
 project_name: 'test-system'
 user_name: 'Akbar'
-date: '2026-04-08'
-sections_completed: ['technology_stack', 'critical_rules', 'api_patterns', 'dashboard_patterns', 'database_patterns', 'auth_patterns', 'telegram_bot_patterns']
-existing_patterns_found: 42
+date: '2026-05-06'
+sections_completed: ['technology_stack', 'critical_rules', 'api_patterns', 'dashboard_patterns', 'database_patterns', 'auth_patterns', 'telegram_bot_patterns', 'mini_app_patterns', 'docker_patterns']
+status: 'complete'
+rule_count: 55
+optimized_for_llm: true
 ---
 
 # Project Context for AI Agents
@@ -22,7 +24,7 @@ _Critical rules and patterns AI agents MUST follow when implementing code in thi
 | App | Framework | Version |
 |-----|-----------|---------|
 | `apps/api` | Express | `^5.2.1` |
-| `apps/admin-dashboard` | Next.js | `16.1.1` |
+| `apps/admin-dashboard` | Next.js | `16.2.4` |
 | `apps/telegram-bot` | grammY | `^1.36.3` |
 
 ### Packages
@@ -386,3 +388,74 @@ API_URL=http://localhost:5000
 8. **`verifyAdminMiddleware`** is separate from `verifyTokenMiddleware` — apply both for admin-only routes
 9. **`console.log` exists in some controllers** — do NOT add more; existing ones are tech debt, not a pattern to follow
 10. **UI language** — Dashboard UI text is in Uzbek; keep new UI text consistent in Uzbek
+
+---
+
+## Mini App Patterns (`apps/mini-app`)
+
+### Stack
+- **Vite** + **React** + **@twa-dev/sdk** (Telegram WebApp SDK)
+- Tailwind CSS v4, no router library — screen-based state machine only
+- No TypeScript path aliases — use plain relative imports (`../lib/api`, `./screens/HomeScreen`)
+
+### Authentication
+- On mount, `App.tsx` calls `authenticate()` from `services/auth.ts`
+- `authenticate()` reads `WebApp.initData` from `@twa-dev/sdk` and POSTs to `POST /api/auth/telegram-miniapp`
+- Token stored in **`sessionStorage`** (not localStorage, not httpOnly cookie)
+- All subsequent API calls read token from `sessionStorage.getItem("token")`
+
+### API Helper (`lib/api.ts`)
+```typescript
+// Always use apiFetch<T>(path, options?) — never raw fetch
+// Automatically attaches Bearer token from sessionStorage
+// Throws enriched Error with .status and .code on non-ok responses
+const result = await apiFetch<SomeType>("/api/some-endpoint");
+```
+
+### Screen Navigation
+- `App.tsx` owns a `Screen` union type state — no React Router
+- Add new screens: new value in `Screen` type + new `if (screen === "...")` branch in `App.tsx`
+- Pass `onNavigate` callback prop down to screens for navigation
+
+### Environment Variable
+- `VITE_API_URL` — must be **browser-reachable** (never `http://api:5000` — that's Docker-internal)
+- Falls back to `http://localhost:5000` in dev
+- Baked in at **build time** via `docker/mini-app.Dockerfile` build arg in prod
+
+---
+
+## Docker Patterns
+
+### Two Compose Files
+| File | Purpose | Creds |
+|------|---------|-------|
+| `docker/docker-compose.yml` | Dev — all services, bind mounts, hot-reload | Hardcoded |
+| `docker/docker-compose.prod.yml` | Prod — built images, no mounts | `.env` at repo root |
+
+### Dev Stack (`docker-compose.yml`)
+- All services use a single `docker/dev.Dockerfile` (installs deps, pre-generates Prisma client)
+- Source code bind-mounted into `/app` — edits reflect immediately without rebuilds
+- Hardcoded values: Postgres `postgres/password`, JWT `dev-secret-change-in-prod`
+- `npm run docker:dev` starts everything; `npm run docker:dev:down` stops it
+
+### Prod Stack (`docker-compose.prod.yml`)
+- Per-service Dockerfiles: `api.Dockerfile`, `admin.Dockerfile`, `bot.Dockerfile`, `mini-app.Dockerfile`
+- Requires `.env` at **repo root** (copy from `docker/.env.example`, fill in secrets)
+- `npm run docker:prod` builds + starts detached; `npm run docker:prod:down` stops it
+- Mini-app served by nginx on port **80**; API on **5000**; dashboard on **3000**
+
+### Critical Behaviours
+- API container runs `npx prisma migrate deploy` **automatically on startup** — do not run migrations manually when using Docker
+- `VITE_API_URL` build arg is baked into the mini-app JS bundle at image build time — changing it requires a rebuild
+- `NEXT_PUBLIC_API_URL` is set both as a build arg and runtime env var in prod compose (dashboard uses internal `http://api:5000`)
+- `.env*` files are excluded from Docker build context via `.dockerignore` — secrets never leak into images
+
+---
+
+## Usage Guidelines
+
+**For AI Agents:** Read this file before implementing any code. Follow ALL rules exactly. When in doubt, prefer the more restrictive option.
+
+**For Humans:** Keep this lean. Update when the stack changes. Remove rules that become obvious over time.
+
+_Last Updated: 2026-05-06_

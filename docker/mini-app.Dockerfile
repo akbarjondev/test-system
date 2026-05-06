@@ -16,33 +16,20 @@ COPY packages/eslint-config/package.json      packages/eslint-config/
 
 RUN npm install
 
-COPY packages/database/prisma           packages/database/prisma
-COPY packages/database/prisma.config.ts packages/database/prisma.config.ts
-RUN cd packages/database && npm run db:generate
+COPY packages       packages
+COPY apps/mini-app  apps/mini-app
 
-COPY packages                  packages
-COPY apps/admin-dashboard      apps/admin-dashboard
+# VITE_* vars are baked into the JS bundle at build time.
+# Pass the public-facing API URL here.
+ARG VITE_API_URL=http://localhost:5000
+ENV VITE_API_URL=$VITE_API_URL
 
-# NEXT_PUBLIC_API_URL is baked into the client bundle at build time.
-# Override with the actual public API URL when building for non-Docker environments.
-ARG NEXT_PUBLIC_API_URL=http://api:5000
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-
-RUN cd apps/admin-dashboard && npm run build
+RUN cd apps/mini-app && npm run build
 
 # ─── Runtime stage ────────────────────────────────────────────────────────────
-FROM node:20-alpine AS runtime
-WORKDIR /app
+FROM nginx:alpine AS runtime
 
-ENV NODE_ENV=production
+COPY --from=builder /app/apps/mini-app/dist /usr/share/nginx/html
+COPY docker/nginx.mini-app.conf             /etc/nginx/conf.d/default.conf
 
-# Standalone output bundles only the files needed at runtime
-COPY --from=builder /app/apps/admin-dashboard/.next/standalone            ./
-COPY --from=builder /app/apps/admin-dashboard/.next/static                ./apps/admin-dashboard/.next/static
-COPY --from=builder /app/apps/admin-dashboard/public                      ./apps/admin-dashboard/public
-
-EXPOSE 3000
-ENV PORT=3000
-ENV HOSTNAME=0.0.0.0
-
-CMD ["node", "apps/admin-dashboard/server.js"]
+EXPOSE 80

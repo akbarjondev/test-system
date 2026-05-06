@@ -1,7 +1,6 @@
 FROM node:20-alpine
 WORKDIR /app
 
-# Copy all workspace manifests
 COPY package.json package-lock.json turbo.json ./
 COPY apps/api/package.json                    apps/api/
 COPY apps/admin-dashboard/package.json        apps/admin-dashboard/
@@ -14,19 +13,17 @@ COPY packages/ui/package.json                 packages/ui/
 COPY packages/typescript-config/package.json  packages/typescript-config/
 COPY packages/eslint-config/package.json      packages/eslint-config/
 
-# Include devDeps — ts-node is required at runtime because workspace packages
-# export raw .ts files; tsc+node alone cannot resolve them across the monorepo.
+# Include devDeps — ts-node needed at runtime (see api.Dockerfile comment)
 RUN npm install
 
 COPY packages/database/prisma           packages/database/prisma
 COPY packages/database/prisma.config.ts packages/database/prisma.config.ts
 RUN cd packages/database && npm run db:generate
 
-COPY packages packages
-COPY apps/api apps/api
+COPY packages             packages
+COPY apps/telegram-bot    apps/telegram-bot
 
-WORKDIR /app/apps/api
-EXPOSE 5000
+WORKDIR /app/apps/telegram-bot
 ENV NODE_ENV=production
 
-CMD ["npx", "ts-node", "-r", "tsconfig-paths/register", "src/server.ts"]
+CMD ["npx", "ts-node", "-r", "tsconfig-paths/register", "src/bot.ts"]
