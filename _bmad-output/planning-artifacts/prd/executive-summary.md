@@ -1,0 +1,16 @@
+# Executive Summary
+
+**test-system** is a **brownfield** **edtech** platform: teachers run **tests** and see **results** through a **Next.js admin dashboard** (Uzbek UI), backed by an **Express API** and **PostgreSQL (Prisma)**; **students** take assessments through a **Telegram Mini App** (Telegram-native experience; bot flows may coexist per deployment). There is **no** student-facing web app in the admin product surface. A **Flutter** mobile app for learners is **planned** as a future client on the **same** API rules. The near-term product push is **trustworthy multi-teacher operation** on one deployment: **explicit teacher–student relationships**, **role-based access (e.g. super admin vs teacher admin vs student)**, and **strictly scoped data** so each teacher sees **their students, their tests, and their attempts**—with **dashboard statistics** following the **same** scope rules. Teachers get a **profile** area to maintain their own information safely. The **students** roster page becomes a **student-focused** experience: **no staff rows**, **no role column**, **no actions column**, and **no in-row promotion to admin**—reducing accidental privilege escalation and cognitive load.
+
+**Release focus (this PRD cycle):** ship **scoped multi-teacher access** (teacher–student links, role model, consistent filtering for **students, tests, attempts, stats**), **staff profile** self-service, **students page** UX cleanup (no staff on roster, no promote-to-admin, no role/actions columns), and **automated API tests** for changed surfaces and **cross-teacher isolation**. **Strategic direction:** evolve toward an **AI-assisted learning and quiz** layer for learners (practice, feedback, personalization—**specific capabilities and governance TBD** in follow-on requirements). **MVP does not depend on shipping production ML**; any near-term AI must be **additive**, **optional**, and **subordinate** to teacher-defined assessments and visibility rules. **Human-authored tests remain the source of truth** for high-stakes assessment; AI must not **silently substitute** teacher intent—where AI touches items learners see in real attempts, **teacher review and logging** apply as specified in later sections.
+
+### What Makes It Special
+
+- **Ownership by design:** A **teacher–student relation** (not a flat global user list) matches how schools think about classes.
+- **One authorization story:** Roster, tests, attempts, and stats **must not disagree** on who may see what (avoid “scoped students / global tests”).
+- **Low friction for learners:** **Telegram-native** flows for registration and test-taking; **JWT**-secured API for all clients.
+- **Safer, calmer admin UX:** Roster is for **learners**, not RBAC experimentation; **profile** self-service for staff.
+- **Quality bar:** **Automated tests** for **changed APIs** and critical scope rules (cross-teacher isolation, role matrix).
+- **Forward path:** Positioning as an **AI + quiz** platform for learners differentiates long-term value beyond a static quiz engine.
+- **Compared to Telegram + sheets:** institutional **ownership** of classes and outcomes, not just messaging.
+
