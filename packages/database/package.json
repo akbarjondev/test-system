@@ -9,6 +9,7 @@
     "./lib/prisma": "./lib/prisma.ts"
   },
   "scripts": {
+    "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
@@ -16,14 +17,14 @@
     "db:reset": "prisma migrate reset"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.2.0",
-    "@prisma/client": "^7.2.0",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "pg": "^8.16.3"
   },
   "devDependencies": {
     "@types/node": "^25.0.3",
     "@types/pg": "^8.16.0",
     "dotenv": "^17.2.3",
-    "prisma": "^7.2.0"
+    "prisma": "^7.8.0"
   }
 }
