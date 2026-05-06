@@ -1,6 +1,6 @@
 # Story 9.1: Bot Menu Button for Mini App
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -131,9 +131,15 @@ Per CLAUDE.md: no `console.log` in committed code. Use `console.error` for error
 ## Dev Agent Record
 
 ### Agent Model Used
-
-### Debug Log References
+claude-sonnet-4.6
 
 ### Completion Notes List
+- Added `MINI_APP_URL` read and `setChatMenuButton` call in `bot.ts` before webhook/start block
+- Falls back gracefully with `console.warn` when `MINI_APP_URL` not set
+- `.catch()` on the API call prevents startup crash
+- No existing handlers modified
+- Added `MINI_APP_URL` to `apps/telegram-bot/.env.example`
 
 ### File List
+- `apps/telegram-bot/src/bot.ts` (setChatMenuButton + MINI_APP_URL added)
+- `apps/telegram-bot/.env.example` (MINI_APP_URL documented)

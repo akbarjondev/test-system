@@ -796,6 +796,24 @@ function escapeMarkdown(text: string): string {
 
 // ─── Start ────────────────────────────────────────────────────────────────────
 
+const MINI_APP_URL = process.env.MINI_APP_URL;
+
+if (MINI_APP_URL) {
+  bot.api
+    .setChatMenuButton({
+      menu_button: {
+        type: "web_app",
+        text: "Testlar",
+        web_app: { url: MINI_APP_URL },
+      },
+    })
+    .catch((err) =>
+      console.error("[startup] Menu button setup failed:", err.message),
+    );
+} else {
+  console.warn("[startup] MINI_APP_URL not set — skipping menu button setup");
+}
+
 if (process.env.NODE_ENV === "production") {
   const WEBHOOK_URL = process.env.WEBHOOK_URL;
   if (!WEBHOOK_URL) {

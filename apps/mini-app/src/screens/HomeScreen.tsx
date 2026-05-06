@@ -1,4 +1,4 @@
-type Screen = "loading" | "error" | "home" | "tests-list";
+import type { Screen } from "../types";
 
 interface HomeScreenProps {
   user: {

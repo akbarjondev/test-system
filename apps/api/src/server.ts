@@ -21,7 +21,24 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  process.env.MINI_APP_URL,
+].filter(Boolean) as string[];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed"));
+      }
+    },
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(
   rateLimit({

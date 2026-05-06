@@ -1,6 +1,6 @@
 # Story 8.2: Test Unlock Screen
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -129,9 +129,17 @@ Define it once — future stories just add new values.
 ## Dev Agent Record
 
 ### Agent Model Used
-
-### Debug Log References
+claude-sonnet-4.6
 
 ### Completion Notes List
+- Added `unlockTest()` to `apps/mini-app/src/services/tests.ts`
+- Created `TestUnlockScreen` with numeric input, 404 detection, inline error, loading state
+- Created `TestDetailScreen` showing test info from `TestItem` (has `_count.questions`)
+- Updated `App.tsx`: no-password tests skip directly to test-detail; unlock navigates to test-detail; back from test-detail handles both paths
+- TestDetailScreen uses `TestItem` (not a separate UnlockedTest type) since it carries all needed info
 
 ### File List
+- `apps/mini-app/src/services/tests.ts` (unlockTest added)
+- `apps/mini-app/src/screens/TestUnlockScreen.tsx` (created)
+- `apps/mini-app/src/screens/TestDetailScreen.tsx` (created)
+- `apps/mini-app/src/App.tsx` (updated)

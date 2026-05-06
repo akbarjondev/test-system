@@ -9,7 +9,8 @@
     "docker:dev:down": "podman compose -f docker/docker-compose.yml down",
     "docker:prod": "podman compose -f docker/docker-compose.prod.yml up --build -d",
     "docker:prod:down": "podman compose -f docker/docker-compose.prod.yml down",
-    "docker:down": "podman compose -f docker/docker-compose.yml down"
+    "docker:down": "podman compose -f docker/docker-compose.yml down",
+    "docker:postgres": "podman compose -f docker/docker-compose.yml up postgres"
   },
   "devDependencies": {
     "turbo": "latest"

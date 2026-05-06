@@ -1,6 +1,6 @@
 # Story 8.1: Tests List Screen
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -133,9 +133,18 @@ useEffect(() => {
 ## Dev Agent Record
 
 ### Agent Model Used
-
-### Debug Log References
+claude-sonnet-4.6
 
 ### Completion Notes List
+- Created `apps/mini-app/src/types.ts` with shared `Screen`, `TestItem`, `AttemptQuestion`, `AttemptResult` types
+- Created `apps/mini-app/src/services/tests.ts` with `getTests()` and `unlockTest()`
+- Created `apps/mini-app/src/screens/TestsListScreen.tsx` with loading/error/empty/loaded states and Telegram Back Button
+- Updated `apps/mini-app/src/screens/HomeScreen.tsx` to import `Screen` from types
+- Updated `apps/mini-app/src/App.tsx` with `tests-list` routing and `onSelectTest` handler
 
 ### File List
+- `apps/mini-app/src/types.ts` (created)
+- `apps/mini-app/src/services/tests.ts` (created)
+- `apps/mini-app/src/screens/TestsListScreen.tsx` (created)
+- `apps/mini-app/src/screens/HomeScreen.tsx` (updated)
+- `apps/mini-app/src/App.tsx` (updated)

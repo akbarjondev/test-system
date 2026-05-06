@@ -1,6 +1,6 @@
 # Story 8.4: Results Screen
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -138,9 +138,15 @@ export function ResultsScreen({ result, onHome }: Props) {
 ## Dev Agent Record
 
 ### Agent Model Used
-
-### Debug Log References
+claude-sonnet-4.6
 
 ### Completion Notes List
+- Created `apps/mini-app/src/screens/ResultsScreen.tsx` with timedOut, score, pass/fail display
+- `AttemptResult` type defined in `types.ts` with `timedOut?: boolean`
+- `onHome()` resets selectedTest and result state before navigating to home
+- `onTimedOut()` sets `{ score: 0, maxScore: 0, passed: null, timedOut: true }` and navigates to results
 
 ### File List
+- `apps/mini-app/src/screens/ResultsScreen.tsx` (created)
+- `apps/mini-app/src/types.ts` (AttemptResult type included)
+- `apps/mini-app/src/App.tsx` (updated)

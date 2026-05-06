@@ -101,18 +101,18 @@ development_status:
   7-1-mini-app-monorepo-scaffold: done
   7-2-telegram-initdata-auth-api-endpoint: done
   7-3-mini-app-auth-flow-home-screen: review
-  7-4-vercel-deployment-api-cors: ready-for-dev
+  7-4-vercel-deployment-api-cors: done
   epic-7-retrospective: optional
 
   # ─── Epic 8: Test-Taking in the Mini App ─────────────────────────────────
   epic-8: in-progress
-  8-1-tests-list-screen: ready-for-dev
-  8-2-test-unlock-screen: ready-for-dev
-  8-3-test-taking-screen: ready-for-dev
-  8-4-results-screen: ready-for-dev
+  8-1-tests-list-screen: done
+  8-2-test-unlock-screen: done
+  8-3-test-taking-screen: done
+  8-4-results-screen: done
   epic-8-retrospective: optional
 
   # ─── Epic 9: Bot Integration ──────────────────────────────────────────────
   epic-9: in-progress
-  9-1-bot-menu-button-for-mini-app: ready-for-dev
+  9-1-bot-menu-button-for-mini-app: done
   epic-9-retrospective: optional

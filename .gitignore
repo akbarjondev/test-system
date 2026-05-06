@@ -39,3 +39,5 @@ yarn-error.log*
 
 # Claude local settings (machine-specific)
 .claude/settings.local.json
+
+packages/database/prisma/generated

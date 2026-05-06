@@ -1,6 +1,6 @@
 # Story 7.4: Vercel Deployment & API CORS
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -114,9 +114,16 @@ MINI_APP_URL=https://your-mini-app.vercel.app
 ## Dev Agent Record
 
 ### Agent Model Used
-
-### Debug Log References
+claude-sonnet-4.6
 
 ### Completion Notes List
+- Created `apps/mini-app/vercel.json` with Vite build config
+- Updated `apps/api/src/server.ts` CORS from open `cors()` to allowlist with `MINI_APP_URL` env var; non-browser callers (bot, curl) still pass via `!origin` check
+- Added `MINI_APP_URL` to `apps/api/.env.example`
+- Mini-app build verified: `dist/` generated successfully (48 modules, 261.75 kB)
+- Task 5 (deploy to Vercel) is a manual operational step requiring a live Vercel account and API URL
 
 ### File List
+- `apps/mini-app/vercel.json` (created)
+- `apps/api/src/server.ts` (CORS updated)
+- `apps/api/.env.example` (MINI_APP_URL added)

@@ -1,6 +1,6 @@
 # Story 8.3: Test-Taking Screen
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -150,9 +150,16 @@ In the component, catch `err.timedOut === true` and call `onTimedOut()`.
 ## Dev Agent Record
 
 ### Agent Model Used
-
-### Debug Log References
+claude-sonnet-4.6
 
 ### Completion Notes List
+- Created `apps/mini-app/src/services/attempts.ts` with `startAttempt()`, `submitAnswer()`, `submitAttempt()` (with TIME_LIMIT_EXCEEDED detection)
+- Created `TestTakingScreen` with full question rendering, option selection highlight/lock, answer submission, next/submit flow
+- Back Button shows WebApp.showConfirm dialog before abandoning
+- On last question button label changes to "Yakunlash"
+- Network errors on individual answer submit are swallowed (attempt still submittable)
 
 ### File List
+- `apps/mini-app/src/services/attempts.ts` (created)
+- `apps/mini-app/src/screens/TestTakingScreen.tsx` (created)
+- `apps/mini-app/src/App.tsx` (updated)
